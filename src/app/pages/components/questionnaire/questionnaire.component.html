@@ -1,0 +1,170 @@
+<form [formGroup]="questionnaireForm" (ngSubmit)="onSubmit()" class="space-y-8">
+
+    <!-- Section 1 : Informations démographiques -->
+    <div *ngIf="currentSection === 1" class="section p-8 bg-white rounded-lg shadow-lg">
+      <h3 class="text-2xl font-semibold mb-4">Section 1 : Informations démographiques</h3>
+      <div formGroupName="section1" class="space-y-6">
+
+        <!-- Âge -->
+        <div class="form-group">
+          <label for="age" class="block text-lg font-medium text-gray-700">Âge :</label>
+          <select id="age" formControlName="age" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="">Sélectionnez votre âge</option>
+            <option value="18-25">18-25 ans</option>
+            <option value="26-35">26-35 ans</option>
+            <option value="36-45">36-45 ans</option>
+            <option value="46-55">46-55 ans</option>
+            <option value="56+">56 ans et plus</option>
+          </select>
+        </div>
+
+        <!-- Genre -->
+        <div class="form-group">
+          <label for="gender" class="block text-lg font-medium text-gray-700">Genre :</label>
+          <select id="gender" formControlName="gender" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="">Sélectionnez votre genre</option>
+            <option value="Femme">Femme</option>
+            <option value="Homme">Homme</option>
+            <option value="Autre">Autre</option>
+            <option value="Ne pas répondre">Je préfère ne pas répondre</option>
+          </select>
+        </div>
+
+        <!-- Région de résidence -->
+        <div class="form-group">
+          <label for="region" class="block text-lg font-medium text-gray-700">Région de résidence :</label>
+          <select id="region" formControlName="region" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="">Sélectionnez votre région</option>
+            <option value="Région 1">Région 1</option>
+            <option value="Région 2">Région 2</option>
+            <option value="Région 3">Région 3</option>
+          </select>
+        </div>
+
+        <!-- Commune de résidence -->
+        <div class="form-group">
+          <label for="commune" class="block text-lg font-medium text-gray-700">Commune de résidence :</label>
+          <input type="text" id="commune" formControlName="commune" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+        </div>
+
+      </div>
+
+      <div class="flex justify-between mt-8">
+        <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Suivant
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div *ngIf="currentSection === 2" class="section p-8 bg-white rounded-lg shadow-lg">
+        <h3 class="text-2xl font-semibold mb-4">Section 2 : Connaissances sur la corruption électorale</h3>
+        <div formGroupName="section2" class="space-y-6">
+
+          <!-- Corruption électorale - Plusieurs réponses possibles -->
+          <div formArrayName="corruptionElectoral" class="space-y-4">
+            <div *ngFor="let control of corruptionElectoral.controls; let i = index">
+              <div class="flex items-center">
+                <input type="checkbox" [formControlName]="i" class="mr-2" />
+                <label class="text-lg">{{ control.value.option }} ({{ control.value.points }} points)</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pensez-vous que la corruption électorale est un problème dans votre pays ? -->
+          <div class="form-group">
+            <label for="corruptionProblem" class="block text-lg font-medium text-gray-700">Pensez-vous que la corruption électorale est un problème dans votre pays ?</label>
+            <select id="corruptionProblem" formControlName="corruptionProblem" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="Oui">Oui</option>
+              <option value="Non">Non</option>
+              <option value="Je ne sais pas">Je ne sais pas</option>
+            </select>
+          </div>
+
+          <!-- À quel point êtes-vous informé(e) sur les lois et les mécanismes de lutte contre la corruption électorale ? -->
+          <div class="form-group">
+            <label for="informedAboutLaws" class="block text-lg font-medium text-gray-700">À quel point êtes-vous informé(e) sur les lois et les mécanismes de lutte contre la corruption électorale ?</label>
+            <select id="informedAboutLaws" formControlName="informedAboutLaws" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="Très informé(e)">Très informé(e)</option>
+              <option value="Un peu informé(e)">Un peu informé(e)</option>
+              <option value="Pas du tout informé(e)">Pas du tout informé(e)</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="flex justify-between mt-8">
+          <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            Précédent
+          </button>
+          <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            Suivant
+          </button>
+        </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div *ngIf="currentSection === 3" class="section p-8 bg-white rounded-lg shadow-lg">
+      <h3 class="text-2xl font-semibold mb-4">Section 3 : Autres Informations</h3>
+      <div formGroupName="section3" class="space-y-6">
+        <!-- Ajoutez des champs pour la section 3 ici -->
+      </div>
+      <div class="flex justify-between mt-8">
+        <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Précédent
+        </button>
+        <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Suivant
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div *ngIf="currentSection === 4" class="section p-8 bg-white rounded-lg shadow-lg">
+      <h3 class="text-2xl font-semibold mb-4">Section 4 : Autres Informations</h3>
+      <div formGroupName="section4" class="space-y-6">
+        <!-- Ajoutez des champs pour la section 4 ici -->
+      </div>
+      <div class="flex justify-between mt-8">
+        <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Précédent
+        </button>
+        <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Suivant
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div *ngIf="currentSection === 5" class="section p-8 bg-white rounded-lg shadow-lg">
+      <h3 class="text-2xl font-semibold mb-4">Section 5 : Autres Informations</h3>
+      <div formGroupName="section5" class="space-y-6">
+        <!-- Ajoutez des champs pour la section 5 ici -->
+      </div>
+      <div class="flex justify-between mt-8">
+        <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Précédent
+        </button>
+        <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Suivant
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div *ngIf="currentSection === 6" class="section p-8 bg-white rounded-lg shadow-lg">
+      <h3 class="text-2xl font-semibold mb-4">Section 6 : Autres Informations</h3>
+      <div formGroupName="section6" class="space-y-6">
+        <!-- Ajoutez des champs pour la section 6 ici -->
+      </div>
+      <div class="flex justify-between mt-8">
+        <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Précédent
+        </button>
+        <button type="submit" class="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" [disabled]="!questionnaireForm.valid">
+          Soumettre
+        </button>
+      </div>
+    </div>
+
+  </form>
