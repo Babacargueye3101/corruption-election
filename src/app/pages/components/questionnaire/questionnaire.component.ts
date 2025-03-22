@@ -238,45 +238,73 @@ export class QuestionnaireComponent implements OnInit{
 
 
   generateCertificate(name: string, score: number) {
-    const doc = new jsPDF();
+    const doc = new jsPDF('landscape'); // Mode paysage pour plus d'espace
 
-    // Titre du certificat
-    doc.setFontSize(22);
-    doc.text('Certificat de Réussite au questionnaire sur la sensibilisation à la corruption électorale', 10, 20, { align: 'center' });
+    // Ajouter une bordure
+    doc.setDrawColor(0); // Couleur de la bordure (noir)
+    doc.setLineWidth(1); // Épaisseur de la bordure
+    doc.rect(10, 10, 280, 190); // Rectangle pour la bordure
 
-    // Numéro de certificat
-    doc.setFontSize(14);
-    const certificateNumber = `#CORR-2023-${Math.floor(Math.random() * 10000)}`; // Génère un numéro aléatoire
-    doc.text(`Numéro de certificat : ${certificateNumber}`, 10, 40);
+    // Ajouter le logo
+    const img = new Image();
+    img.src = 'assets/vote.png'; // Chemin vers votre logo
+    img.onload = () => {
+      doc.addImage(img, 'PNG', 20, 20, 50, 50); // Position et taille du logo
 
-    // Félicitations
-    doc.setFontSize(16);
-    doc.text('Félicitations !', 10, 60);
-    doc.setFontSize(14);
-    doc.text('Nous avons le plaisir de vous décerner ce Certificat de Réussite pour avoir démontré une', 10, 70);
-    doc.text('compréhension approfondie des enjeux liés à la corruption électorale et pour votre', 10, 80);
-    doc.text('engagement en faveur de la transparence et de l\'intégrité dans les processus démocratiques.', 10, 90);
+      // Ajouter le nom du site
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Nom du Site', 80, 40);
 
-    // Informations du participant
-    doc.setFontSize(16);
-    doc.text(`Nom du participant : ${name}`, 10, 110);
-    doc.text(`Score obtenu : ${score} / 97`, 10, 120);
-    doc.text(`Date de délivrance : ${new Date().toLocaleDateString()}`, 10, 130);
+      // Titre du certificat
+      doc.setFontSize(28);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Certificat de Réussite', 105, 70, { align: 'center' });
 
-    // Message d'engagement
-    doc.setFontSize(14);
-    doc.text('En obtenant plus de 45 points à ce questionnaire, vous avez prouvé votre sensibilisation', 10, 150);
-    doc.text('aux défis posés par la corruption électorale et votre volonté de contribuer à une', 10, 160);
-    doc.text('démocratie plus juste et équitable. Votre engagement est essentiel pour préserver la', 10, 170);
-    doc.text('confiance des citoyens dans les institutions et pour garantir des élections libres et', 10, 180);
-    doc.text('transparentes.', 10, 190);
+      // Sous-titre
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Questionnaire sur la sensibilisation à la corruption électorale', 105, 85, { align: 'center' });
 
-    // Signature
-    doc.setFontSize(16);
-    doc.text('Ce certificat symbolise votre rôle actif dans la lutte contre la corruption', 10, 210);
-    doc.text('et votre contribution à un avenir démocratique plus solide.', 10, 220);
+      // Numéro de certificat
+      doc.setFontSize(14);
+      const certificateNumber = `#CORR-2023-${Math.floor(Math.random() * 10000)}`; // Génère un numéro aléatoire
+      doc.text(`Numéro de certificat : ${certificateNumber}`, 20, 110);
 
-    // Enregistrer le PDF
-    doc.save(`certificat_${name.replace(/ /g, '_')}.pdf`);
+      // Félicitations
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Félicitations !', 20, 130);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Nous avons le plaisir de vous décerner ce Certificat de Réussite pour avoir démontré une', 20, 140);
+      doc.text('compréhension approfondie des enjeux liés à la corruption électorale et pour votre', 20, 150);
+      doc.text('engagement en faveur de la transparence et de l\'intégrité dans les processus démocratiques.', 20, 160);
+
+      // Informations du participant
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Nom du participant : ${name}`, 20, 180);
+      doc.text(`Score obtenu : ${score} / 97`, 20, 190);
+      doc.text(`Date de délivrance : ${new Date().toLocaleDateString()}`, 20, 200);
+
+      // Message d'engagement
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'normal');
+      doc.text('En obtenant plus de 45 points à ce questionnaire, vous avez prouvé votre sensibilisation', 20, 220);
+      doc.text('aux défis posés par la corruption électorale et votre volonté de contribuer à une', 20, 230);
+      doc.text('démocratie plus juste et équitable. Votre engagement est essentiel pour préserver la', 20, 240);
+      doc.text('confiance des citoyens dans les institutions et pour garantir des élections libres et', 20, 250);
+      doc.text('transparentes.', 20, 260);
+
+      // Signature
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Ce certificat symbolise votre rôle actif dans la lutte contre la corruption', 20, 280);
+      doc.text('et votre contribution à un avenir démocratique plus solide.', 20, 290);
+
+      // Enregistrer le PDF
+      doc.save(`certificat_${name.replace(/ /g, '_')}.pdf`);
+    };
   }
 }
