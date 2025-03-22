@@ -65,7 +65,22 @@ export class QuestionnaireComponent implements OnInit{
         alternativeOptions: this.fb.array([], Validators.required),
         needHelp: ['', Validators.required],
         willingToRefuseCorruption: ['', Validators.required]
+      }),
+      section6: this.fb.group({
+        intentionVoter: this.fb.control('', Validators.required),
+        raisonsNonVoter: this.fb.array([]),
+        aideObstaclesPratiques: this.fb.control('', Validators.required),
+        impactCorruption: this.fb.control('', Validators.required),
+        impactsCorruptionDetails: this.fb.array([]),
+        encouragerVoteLibre: this.fb.array([]),
+      }),
+      section7: this.fb.group({
+        questionnaireHelpful: ['', Validators.required],
+        intentionVoteLibre: ['', Validators.required],
+        candidatureType: ['', Validators.required],
+        needHelpForCandidature: ['']
       })
+
     });
   }
 
@@ -82,7 +97,7 @@ export class QuestionnaireComponent implements OnInit{
   }
   // Handle next section navigation
   nextSection() {
-    if (this.currentSection < 6) {
+    if (this.currentSection < 7) {
       this.currentSection++;
     }
   }
