@@ -56,115 +56,313 @@
       </div>
     </div>
 
-    <!-- Section 2 -->
+   <!-- Section 2 : Connaissances sur la corruption électorale -->
     <div *ngIf="currentSection === 2" class="section p-8 bg-white rounded-lg shadow-lg">
-        <h3 class="text-2xl font-semibold mb-4">Section 2 : Connaissances sur la corruption électorale</h3>
-        <div formGroupName="section2" class="space-y-6">
+      <h3 class="text-2xl font-semibold mb-4">Section 2 : Connaissances sur la corruption électorale</h3>
+    <div formGroupName="section2" class="space-y-6">
 
-          <!-- Corruption électorale - Plusieurs réponses possibles -->
-          <div formArrayName="corruptionElectoral" class="space-y-4">
-            <div *ngFor="let control of corruptionElectoral.controls; let i = index">
-              <div class="flex items-center">
-                <input type="checkbox" [formControlName]="i" class="mr-2" />
-                <label class="text-lg">{{ control.value.option }} ({{ control.value.points }} points)</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pensez-vous que la corruption électorale est un problème dans votre pays ? -->
-          <div class="form-group">
-            <label for="corruptionProblem" class="block text-lg font-medium text-gray-700">Pensez-vous que la corruption électorale est un problème dans votre pays ?</label>
-            <select id="corruptionProblem" formControlName="corruptionProblem" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-              <option value="Oui">Oui</option>
-              <option value="Non">Non</option>
-              <option value="Je ne sais pas">Je ne sais pas</option>
-            </select>
-          </div>
-
-          <!-- À quel point êtes-vous informé(e) sur les lois et les mécanismes de lutte contre la corruption électorale ? -->
-          <div class="form-group">
-            <label for="informedAboutLaws" class="block text-lg font-medium text-gray-700">À quel point êtes-vous informé(e) sur les lois et les mécanismes de lutte contre la corruption électorale ?</label>
-            <select id="informedAboutLaws" formControlName="informedAboutLaws" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-              <option value="Très informé(e)">Très informé(e)</option>
-              <option value="Un peu informé(e)">Un peu informé(e)</option>
-              <option value="Pas du tout informé(e)">Pas du tout informé(e)</option>
-            </select>
-          </div>
-
+      <!-- Qu’est-ce que la corruption électorale ? -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Selon vous, qu’est-ce que la corruption électorale ? (Plusieurs réponses possibles)</label>
+        <div class="mt-2 space-y-2">
+          <label class="flex items-center">
+            <input type="radio" formControlName="voteBuying" value="1" class="mr-2">
+            Achat de votes (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="resultFalsification" value="1" class="mr-2">
+            Falsification des résultats (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="voterIntimidation" value="1" class="mr-2">
+            Intimidation des électeurs (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="abuseOfPublicResources" value="1" class="mr-2">
+            Utilisation abusive des ressources publiques à des fins de campagne (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="renovationOfVotersHouses" value="1" class="mr-2">
+            Rénovation de la maison des électeurs à quelques mois des élections (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="fuelExpenses" value="1" class="mr-2">
+            Prise en charge de frais de carburant (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="jobPromise" value="1" class="mr-2">
+            Promesse d'emploi (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="subsidyToAssociations" value="1" class="mr-2">
+            Subvention versée à certaines associations (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="contractWithCollectivity" value="1" class="mr-2">
+            Obtention d'un contrat avec la collectivité (2 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="otherCorruption" value="1" class="mr-2">
+            Autre (précisez) :
+            <input type="text" formControlName="otherCorruptionDescription" class="ml-2 p-2 border border-gray-300 rounded-md">
+          </label>
         </div>
+      </div>
 
-        <div class="flex justify-between mt-8">
-          <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            Précédent
-          </button>
-          <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            Suivant
-          </button>
+      <!-- La corruption électorale est-elle un problème dans votre pays ? -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Pensez-vous que la corruption électorale est un problème dans votre pays ?</label>
+        <div class="mt-2 space-y-2">
+          <label class="flex items-center">
+            <input type="radio" formControlName="electoralCorruptionProblem" value="Oui" class="mr-2">
+            Oui (3 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="electoralCorruptionProblem" value="Non" class="mr-2">
+            Non (0 point)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="electoralCorruptionProblem" value="Ne sais pas" class="mr-2">
+            Je ne sais pas (1 point)
+          </label>
         </div>
+      </div>
+
+      <!-- À quel point êtes-vous informé(e) sur les lois et les mécanismes de lutte contre la corruption électorale ? -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">À quel point êtes-vous informé(e) sur les lois et les mécanismes de lutte contre la corruption électorale ?</label>
+        <div class="mt-2 space-y-2">
+          <label class="flex items-center">
+            <input type="radio" formControlName="knowledgeAboutLaws" value="Très informé" class="mr-2">
+            Très informé(e) (5 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="knowledgeAboutLaws" value="Un peu informé" class="mr-2">
+            Un peu informé(e) (3 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="knowledgeAboutLaws" value="Pas informé" class="mr-2">
+            Pas du tout informé(e) (0 point)
+          </label>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Section 3 -->
-    <div *ngIf="currentSection === 3" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h3 class="text-2xl font-semibold mb-4">Section 3 : Autres Informations</h3>
-      <div formGroupName="section3" class="space-y-6">
-        <!-- Ajoutez des champs pour la section 3 ici -->
+    <div class="flex justify-between mt-8">
+      <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Précédent
+      </button>
+      <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Suivant
+      </button>
+    </div>
+  </div>
+
+   <!-- Section 3 : Expériences personnelles -->
+   <div *ngIf="currentSection === 3" class="section p-8 bg-white rounded-lg shadow-lg">
+    <h3 class="text-2xl font-semibold mb-4">Section 3 : Expériences personnelles</h3>
+    <div formGroupName="section3" class="space-y-6">
+
+      <!-- Avez-vous déjà été témoin ou victime de corruption électorale ? -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Avez-vous déjà été témoin ou victime de corruption électorale ?</label>
+        <select formControlName="corruptionExperience" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">Sélectionnez une option</option>
+          <option value="Oui">Oui (0 point)</option>
+          <option value="Non">Non (5 points)</option>
+          <option value="Ne pas répondre">Je préfère ne pas répondre (2 points)</option>
+        </select>
       </div>
-      <div class="flex justify-between mt-8">
-        <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          Précédent
-        </button>
-        <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          Suivant
-        </button>
+
+      <!-- Si oui, pouvez-vous décrire brièvement la situation ? -->
+      <div *ngIf="questionnaireForm.get('section3.corruptionExperience')?.value === 'Oui'" class="form-group">
+        <label for="corruptionDescription" class="block text-lg font-medium text-gray-700">Si oui, pouvez-vous décrire brièvement la situation ? (Optionnel)</label>
+        <textarea id="corruptionDescription" formControlName="corruptionDescription" rows="4" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"></textarea>
       </div>
+
+      <!-- Avez-vous déjà été incité(e) à voter pour un candidat en échange d’argent, de biens ou de services ? -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Avez-vous déjà été incité(e) à voter pour un candidat en échange d’argent, de biens ou de services ?</label>
+        <select formControlName="voteIncentive" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">Sélectionnez une option</option>
+          <option value="Oui">Oui (0 point)</option>
+          <option value="Non">Non (5 points)</option>
+          <option value="Ne pas répondre">Je préfère ne pas répondre (2 points)</option>
+        </select>
+      </div>
+
+      <!-- Avez-vous déjà ressenti une pression pour voter d’une certaine manière ? -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Avez-vous déjà ressenti une pression pour voter d’une certaine manière (par exemple, intimidation, menaces) ?</label>
+        <select formControlName="votingPressure" class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">Sélectionnez une option</option>
+          <option value="Oui">Oui (0 point)</option>
+          <option value="Non">Non (5 points)</option>
+          <option value="Ne pas répondre">Je préfère ne pas répondre (2 points)</option>
+        </select>
+      </div>
+
     </div>
 
-    <!-- Section 4 -->
-    <div *ngIf="currentSection === 4" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h3 class="text-2xl font-semibold mb-4">Section 4 : Autres Informations</h3>
-      <div formGroupName="section4" class="space-y-6">
-        <!-- Ajoutez des champs pour la section 4 ici -->
+    <div class="flex justify-between mt-8">
+      <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Précédent
+      </button>
+      <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Suivant
+      </button>
+    </div>
+  </div>
+
+    <!-- Section 4 : Question spécifique pour les personnes à faible score (corrompus) -->
+   <div *ngIf="currentSection === 4" class="section p-8 bg-white rounded-lg shadow-lg">
+    <h3 class="text-2xl font-semibold mb-4">Section 4 : Question spécifique pour les personnes à faible score (corrompus)</h3>
+    <div formGroupName="section4" class="space-y-6">
+
+      <p class="text-lg font-medium">Cette section s'adresse aux personnes ayant répondu "Oui" aux questions 7, 9 ou 10 (corruption électorale).</p>
+
+      <!-- Montant donné lors des élections passées -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Si de l’argent vous a été promis ou donné lors des élections passées :</label>
+        <input type="text" formControlName="moneyGivenAmount" class="p-2 border border-gray-300 rounded-md" placeholder="Montant proposé ou donné">
       </div>
-      <div class="flex justify-between mt-8">
-        <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          Précédent
-        </button>
-        <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          Suivant
-        </button>
+
+      <!-- Estimation de la valeur du vote -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">À combien estimez-vous la valeur de votre vote aujourd’hui ?</label>
+        <input type="text" formControlName="voteValueEstimate" class="p-2 border border-gray-300 rounded-md" placeholder="Estimation de la valeur de votre vote">
       </div>
+
+      <!-- Accepteriez-vous de vendre votre vote ? -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Accepteriez-vous de vendre votre vote ?</label>
+        <div class="mt-2 space-y-2">
+          <label class="flex items-center">
+            <input type="radio" formControlName="sellVote" value="Oui" class="mr-2">
+            Oui (0 point)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="sellVote" value="Non" class="mr-2">
+            Non (5 points)
+          </label>
+          <label class="flex items-center">
+            <input type="radio" formControlName="sellVote" value="Je ne sais pas" class="mr-2">
+            Je ne sais pas (1 point)
+          </label>
+        </div>
+      </div>
+
+      <!-- Si oui, pour quel montant ? -->
+      <div class="form-group" *ngIf="questionnaireForm.get('section4.sellVote')?.value === 'Oui'">
+        <label class="block text-lg font-medium text-gray-700">Si oui, pour quel montant ?</label>
+        <input type="text" formControlName="moneyForVote" class="p-2 border border-gray-300 rounded-md" placeholder="Montant demandé pour votre vote">
+      </div>
+
+      <!-- Qui a tenté de vous corrompre ? -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Qui a tenté de vous corrompre ? (Plusieurs réponses possibles)</label>
+        <div class="mt-2 space-y-2">
+          <label class="flex items-center">
+            <input type="checkbox" formControlName="corruptPersonMayor" class="mr-2">
+            Le maire sortant
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" formControlName="corruptPersonMayorFriend" class="mr-2">
+            Une connaissance du maire
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" formControlName="corruptPersonFamily" class="mr-2">
+            Un membre de votre famille
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" formControlName="corruptPersonCandidate" class="mr-2">
+            Un élu ou un candidat tête de liste à l’élection municipale
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" formControlName="corruptPersonFriend" class="mr-2">
+            Un ami
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" formControlName="corruptPersonOther" class="mr-2">
+            Autre (précisez) :
+            <input type="text" formControlName="otherCorruptPerson" class="ml-2 p-2 border border-gray-300 rounded-md">
+          </label>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Section 5 -->
-    <div *ngIf="currentSection === 5" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h3 class="text-2xl font-semibold mb-4">Section 5 : Autres Informations</h3>
-      <div formGroupName="section5" class="space-y-6">
-        <!-- Ajoutez des champs pour la section 5 ici -->
-      </div>
-      <div class="flex justify-between mt-8">
-        <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          Précédent
-        </button>
-        <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          Suivant
-        </button>
-      </div>
+    <div class="flex justify-between mt-8">
+      <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Précédent
+      </button>
+      <button type="button" (click)="nextSection()" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Suivant
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="currentSection === 5" class="p-6 bg-white rounded-lg shadow-md max-w-3xl mx-auto">
+    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Section 5 : Alternatives à la corruption</h3>
+
+    <div formGroupName="section5">
+      <label class="block mb-4">
+        <span class="text-lg font-medium text-gray-700">Que pourriez-vous faire à la place pour répondre à vos besoins sans participer à la corruption ?</span>
+        <div class="mt-2 space-y-3">
+          <div class="flex items-center space-x-2">
+            <input type="checkbox" formControlName="alternativeOptions" value="Chercher un emploi ou une formation professionnelle" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"/>
+            <span class="text-gray-700">Chercher un emploi ou une formation professionnelle (2 points)</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <input type="checkbox" formControlName="alternativeOptions" value="Participer à des programmes d’aide sociale" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"/>
+            <span class="text-gray-700">Participer à des programmes d’aide sociale ou communautaire (2 points)</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <input type="checkbox" formControlName="alternativeOptions" value="Refuser les offres et signaler la corruption" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"/>
+            <span class="text-gray-700">Refuser les offres et signaler les cas de corruption (2 points)</span>
+          </div>
+          <div class="mt-2">
+            <input type="text" formControlName="alternativeOptions" placeholder="Autre (précisez)" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+          </div>
+        </div>
+      </label>
+
+      <label class="block mb-4">
+        <span class="text-lg font-medium text-gray-700">Pensez-vous avoir besoin d'aide pour atteindre l'objectif ci-dessus ?</span>
+        <div class="mt-2">
+          <select formControlName="needHelp" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="Oui">Oui (5 points)</option>
+            <option value="Non">Non (0 points)</option>
+            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+          </select>
+        </div>
+      </label>
+
+      <label class="block mb-6">
+        <span class="text-lg font-medium text-gray-700">Seriez-vous prêt(e) à refuser des offres de corruption à l’avenir si vous aviez accès à des alternatives ?</span>
+        <div class="mt-2">
+          <select formControlName="willingToRefuseCorruption" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="Oui">Oui (5 points)</option>
+            <option value="Non">Non (0 points)</option>
+            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+          </select>
+        </div>
+      </label>
     </div>
 
-    <!-- Section 6 -->
-    <div *ngIf="currentSection === 6" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h3 class="text-2xl font-semibold mb-4">Section 6 : Autres Informations</h3>
-      <div formGroupName="section6" class="space-y-6">
-        <!-- Ajoutez des champs pour la section 6 ici -->
-      </div>
-      <div class="flex justify-between mt-8">
-        <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          Précédent
-        </button>
-        <button type="submit" class="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" [disabled]="!questionnaireForm.valid">
-          Soumettre
-        </button>
-      </div>
+    <!-- Boutons Précédent et Suivant -->
+    <div class="flex justify-between mt-6">
+      <button type="button" (click)="previousSection()" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+        Précédent
+      </button>
+      <button type="button" (click)="nextSection()" class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        Suivant
+      </button>
     </div>
+  </div>
+
+
+
 
   </form>

@@ -10,14 +10,16 @@ import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Va
 })
 export class QuestionnaireComponent implements OnInit{
 
-  questionnaireForm!: FormGroup;
-  currentSection: number = 1; // Suivi de la section actuelle
+
+
+  questionnaireForm: FormGroup;
+  currentSection: number = 1;
   totalScore: number = 0;
 
-  constructor(private fb: FormBuilder) { }
 
-  ngOnInit(): void {
-    // Initialisation du formulaire avec la section 1
+
+
+  constructor(private fb: FormBuilder) {
     this.questionnaireForm = this.fb.group({
       section1: this.fb.group({
         age: ['', Validators.required],
@@ -26,82 +28,58 @@ export class QuestionnaireComponent implements OnInit{
         commune: ['', Validators.required]
       }),
       section2: this.fb.group({
-        corruptionElectoral: this.fb.array([]),
-        corruptionProblem: ['', Validators.required],
-        informedAboutLaws: ['', Validators.required]
+        voteBuying: [false],
+        resultFalsification: [false],
+        voterIntimidation: [false],
+        abuseOfPublicResources: [false],
+        renovationOfVotersHouses: [false],
+        fuelExpenses: [false],
+        jobPromise: [false],
+        subsidyToAssociations: [false],
+        contractWithCollectivity: [false],
+        otherCorruption: [false],
+        otherCorruptionDescription: [''],
+        electoralCorruptionProblem: ['', Validators.required],
+        knowledgeAboutLaws: ['', Validators.required]
       }),
       section3: this.fb.group({
-        // Ajoutez des contrôles pour la section 3 ici
+        corruptionExperience: ['', Validators.required],
+        corruptionDescription: [''],
+        voteIncentive: ['', Validators.required],
+        votingPressure: ['', Validators.required]
       }),
       section4: this.fb.group({
-        // Ajoutez des contrôles pour la section 4 ici
+        moneyGivenAmount: [''],
+        voteValueEstimate: [''],
+        sellVote: ['', Validators.required],
+        moneyForVote: [''],
+        corruptPersonMayor: [false],
+        corruptPersonMayorFriend: [false],
+        corruptPersonFamily: [false],
+        corruptPersonCandidate: [false],
+        corruptPersonFriend: [false],
+        corruptPersonOther: [false],
+        otherCorruptPerson: ['']
       }),
       section5: this.fb.group({
-        // Ajoutez des contrôles pour la section 5 ici
-      }),
-      section6: this.fb.group({
-        // Ajoutez des contrôles pour la section 6 ici
-      }),
+        alternativeOptions: this.fb.array([], Validators.required),
+        needHelp: ['', Validators.required],
+        willingToRefuseCorruption: ['', Validators.required]
+      })
     });
   }
 
-  // Get the corruption answers FormArray
-  get corruptionElectoral(): FormArray {
-    return this.questionnaireForm.get('section2.corruptionElectoral') as FormArray;
-  }
+  ngOnInit(): void {}
 
-  // Add checkbox form controls to the FormArray
-  addCorruptionOption(option: string, points: number) {
-    this.corruptionElectoral.push(this.fb.group({
-      option: [option],
-      points: [points, Validators.required]
-    }));
-  }
 
-  // Add all options for corruption electoral question
-  loadCorruptionOptions() {
-    const options = [
-      { option: 'Achat de votes', points: 2 },
-      { option: 'Falsification des résultats', points: 2 },
-      { option: 'Intimidation des électeurs', points: 2 },
-      { option: 'Utilisation abusive des ressources publiques', points: 2 },
-      { option: 'Rénovation de la maison des électeurs', points: 2 },
-      { option: 'Prise en charge de frais de carburant', points: 2 },
-      { option: 'Promesse d\'emploi', points: 2 },
-      { option: 'Subvention versée à certaines associations', points: 2 },
-      { option: 'Obtention d\'un contrat avec la collectivité', points: 2 },
-      { option: 'Autre', points: 1 }
-    ];
 
-    options.forEach(option => {
-      this.addCorruptionOption(option.option, option.points);
-    });
-  }
 
-  // Calculate the score based on selected answers
-  calculateScore() {
-    this.totalScore = 0;
-    this.corruptionElectoral.controls.forEach(control => {
-      if (control.value.selected) {
-        this.totalScore += control.value.points;
-      }
-    });
-
-    const corruptionProblem = this.questionnaireForm.get('section2.corruptionProblem')?.value;
-    if (corruptionProblem === 'Oui') {
-      this.totalScore += 3;
-    } else if (corruptionProblem === 'Je ne sais pas') {
-      this.totalScore += 1;
-    }
-
-    const informedAboutLaws = this.questionnaireForm.get('section2.informedAboutLaws')?.value;
-    if (informedAboutLaws === 'Très informé(e)') {
-      this.totalScore += 5;
-    } else if (informedAboutLaws === 'Un peu informé(e)') {
-      this.totalScore += 3;
+  checkVisibilityOfSection4() {
+    const section2Responses = this.questionnaireForm.get('section2')?.value;
+    if (section2Responses.electoralCorruptionProblem === 'Oui' || section2Responses.knowledgeAboutLaws === 'Pas informé') {
+      this.currentSection = 4; // Afficher la Section 4
     }
   }
-
   // Handle next section navigation
   nextSection() {
     if (this.currentSection < 6) {
@@ -121,5 +99,96 @@ export class QuestionnaireComponent implements OnInit{
     this.calculateScore();
     console.log('Score final:', this.totalScore);
     // Save the data or submit the form to a server
+  }
+
+
+
+
+
+
+  calculateScore() {
+    // Section 3 : Expériences personnelles
+    let score = 0;
+
+    const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
+    if (corruptionExperience === 'Oui') {
+      score += 0;
+    } else if (corruptionExperience === 'Non') {
+      score += 5;
+    } else if (corruptionExperience === 'Ne pas répondre') {
+      score += 2;
+    }
+
+    const voteIncentive = this.questionnaireForm.get('section3.voteIncentive')?.value;
+    if (voteIncentive === 'Oui') {
+      score += 0;
+    } else if (voteIncentive === 'Non') {
+      score += 5;
+    } else if (voteIncentive === 'Ne pas répondre') {
+      score += 2;
+    }
+
+    const votingPressure = this.questionnaireForm.get('section3.votingPressure')?.value;
+    if (votingPressure === 'Oui') {
+      score += 0;
+    } else if (votingPressure === 'Non') {
+      score += 5;
+    } else if (votingPressure === 'Ne pas répondre') {
+      score += 2;
+    }
+
+    this.totalScore = score;
+
+  // Ajouter les points pour les radiobuttons (réponses uniques)
+  if (this.questionnaireForm.get('section2.voteBuying')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.resultFalsification')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.voterIntimidation')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.abuseOfPublicResources')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.renovationOfVotersHouses')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.fuelExpenses')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.jobPromise')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.subsidyToAssociations')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.contractWithCollectivity')?.value) {
+    score += 2;
+  }
+  if (this.questionnaireForm.get('section2.otherCorruption')?.value) {
+    score += 1;
+  }
+
+  const electoralCorruptionProblem = this.questionnaireForm.get('section2.electoralCorruptionProblem')?.value;
+  if (electoralCorruptionProblem === 'Oui') {
+    score += 3;
+  } else if (electoralCorruptionProblem === 'Non') {
+    score += 0;
+  } else if (electoralCorruptionProblem === 'Ne sais pas') {
+    score += 1;
+  }
+
+  const knowledgeAboutLaws = this.questionnaireForm.get('section2.knowledgeAboutLaws')?.value;
+  if (knowledgeAboutLaws === 'Très informé') {
+    score += 5;
+  } else if (knowledgeAboutLaws === 'Un peu informé') {
+    score += 3;
+  } else if (knowledgeAboutLaws === 'Pas informé') {
+    score += 0;
+  }
+
+  this.totalScore = score;
   }
 }
