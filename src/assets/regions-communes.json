@@ -1,0 +1,52 @@
+{
+    "regions": [
+      {
+        "nom": "Basse-Terre",
+        "communes": [
+          "Basse-Terre",
+          "Gourbeyre",
+          "Saint-Claude",
+          "Terre-de-Bas",
+          "Terre-de-Haut",
+          "Trois-Rivières",
+          "Vieux-Fort",
+          "Vieux-Habitants"
+        ]
+      },
+      {
+        "nom": "Grande-Terre",
+        "communes": [
+          "Anse-Bertrand",
+          "Le Gosier",
+          "Les Abymes",
+          "Morne-à-l'Eau",
+          "Petit-Canal",
+          "Pointe-à-Pitre",
+          "Port-Louis",
+          "Saint-François",
+          "Sainte-Anne"
+        ]
+      },
+      {
+        "nom": "Marie-Galante",
+        "communes": [
+          "Capesterre-de-Marie-Galante",
+          "Grand-Bourg",
+          "Saint-Louis"
+        ]
+      },
+      {
+        "nom": "La Désirade",
+        "communes": [
+          "La Désirade"
+        ]
+      },
+      {
+        "nom": "Les Saintes",
+        "communes": [
+          "Terre-de-Bas",
+          "Terre-de-Haut"
+        ]
+      }
+    ]
+  }

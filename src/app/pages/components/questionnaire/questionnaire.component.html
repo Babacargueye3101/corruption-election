@@ -9,7 +9,7 @@
             <div class="form-group">
                 <label for="age" class="block text-lg font-medium text-gray-700">Âge :</label>
                 <select id="age" formControlName="age"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez votre âge</option>
                     <option value="18-25">18-25 ans</option>
                     <option value="26-35">26-35 ans</option>
@@ -23,7 +23,7 @@
             <div class="form-group">
                 <label for="gender" class="block text-lg font-medium text-gray-700">Genre :</label>
                 <select id="gender" formControlName="gender"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez votre genre</option>
                     <option value="Femme">Femme</option>
                     <option value="Homme">Homme</option>
@@ -32,30 +32,38 @@
                 </select>
             </div>
 
-            <!-- Région de résidence -->
+            <!-- Sélection de la région -->
             <div class="form-group">
-                <label for="region" class="block text-lg font-medium text-gray-700">Région de résidence :</label>
-                <select id="region" formControlName="region"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                    <option value="">Sélectionnez votre région</option>
-                    <option value="Région 1">Région 1</option>
-                    <option value="Région 2">Région 2</option>
-                    <option value="Région 3">Région 3</option>
+                <label for="region" class="block text-sm font-medium text-gray-700">Région :</label>
+                <select
+                id="region"
+                formControlName="region"
+                (change)="onRegionChange($event)"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                >
+                <option value="">Sélectionnez votre région</option>
+                <option *ngFor="let region of regions" [value]="region.nom">{{ region.nom }}</option>
                 </select>
             </div>
 
-            <!-- Commune de résidence -->
+            <!-- Sélection de la commune -->
             <div class="form-group">
-                <label for="commune" class="block text-lg font-medium text-gray-700">Commune de résidence :</label>
-                <input type="text" id="commune" formControlName="commune"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+                <label for="commune" class="block text-sm font-medium text-gray-700">Commune :</label>
+                <select
+                id="commune"
+                formControlName="commune"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                >
+                <option value="">Sélectionnez votre commune</option>
+                <option *ngFor="let commune of communes" [value]="commune">{{ commune }}</option>
+                </select>
             </div>
 
         </div>
 
         <div class="flex justify-between mt-8">
             <button type="button" (click)="nextSection()"
-                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Suivant
             </button>
         </div>
@@ -71,7 +79,7 @@
                 <label class="block text-lg font-medium text-gray-700">Selon vous, qu’est-ce que la corruption
                     électorale ?</label>
                 <select formControlName="corruptionType"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="voteBuying">Achat de votes (2 points)</option>
                     <option value="resultFalsification">Falsification des résultats (2 points)</option>
@@ -88,7 +96,7 @@
                 </select>
                 <div *ngIf="questionnaireForm.get('section2.corruptionType')?.value === 'otherCorruption'" class="mt-2">
                     <input type="text" formControlName="otherCorruptionDescription" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
 
@@ -97,7 +105,7 @@
                 <label class="block text-lg font-medium text-gray-700">Pensez-vous que la corruption électorale est un
                     problème dans votre pays ?</label>
                 <select formControlName="electoralCorruptionProblem"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (3 points)</option>
                     <option value="Non">Non (0 point)</option>
@@ -110,7 +118,7 @@
                 <label class="block text-lg font-medium text-gray-700">À quel point êtes-vous informé(e) sur les lois et
                     les mécanismes de lutte contre la corruption électorale ?</label>
                 <select formControlName="knowledgeAboutLaws"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Très informé">Très informé(e) (5 points)</option>
                     <option value="Un peu informé">Un peu informé(e) (3 points)</option>
@@ -122,11 +130,11 @@
 
         <div class="flex justify-between mt-8">
             <button type="button" (click)="previousSection()"
-                class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Précédent
             </button>
             <button type="button" (click)="nextSection()"
-                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Suivant
             </button>
         </div>
@@ -142,7 +150,7 @@
                 <label class="block text-lg font-medium text-gray-700">Avez-vous déjà été témoin ou victime de
                     corruption électorale ?</label>
                 <select formControlName="corruptionExperience"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une option</option>
                     <option value="Oui">Oui (0 point)</option>
                     <option value="Non">Non (5 points)</option>
@@ -155,7 +163,7 @@
                 <label for="corruptionDescription" class="block text-lg font-medium text-gray-700">Si oui, pouvez-vous
                     décrire brièvement la situation ? (Optionnel)</label>
                 <textarea id="corruptionDescription" formControlName="corruptionDescription" rows="4"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
             </div>
 
             <!-- Avez-vous déjà été incité(e) à voter pour un candidat en échange d’argent, de biens ou de services ? -->
@@ -163,7 +171,7 @@
                 <label class="block text-lg font-medium text-gray-700">Avez-vous déjà été incité(e) à voter pour un
                     candidat en échange d’argent, de biens ou de services ?</label>
                 <select formControlName="voteIncentive"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une option</option>
                     <option value="Oui">Oui (0 point)</option>
                     <option value="Non">Non (5 points)</option>
@@ -176,7 +184,7 @@
                 <label class="block text-lg font-medium text-gray-700">Avez-vous déjà ressenti une pression pour voter
                     d’une certaine manière (par exemple, intimidation, menaces) ?</label>
                 <select formControlName="votingPressure"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une option</option>
                     <option value="Oui">Oui (0 point)</option>
                     <option value="Non">Non (5 points)</option>
@@ -188,11 +196,11 @@
 
         <div class="flex justify-between mt-8">
             <button type="button" (click)="previousSection()"
-                class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Précédent
             </button>
             <button type="button" (click)="nextSection()"
-                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Suivant
             </button>
         </div>
@@ -227,7 +235,7 @@
             <div class="form-group">
                 <label class="block text-lg font-medium text-gray-700">Accepteriez-vous de vendre votre vote ?</label>
                 <select formControlName="sellVote"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une option</option>
                     <option value="Oui">Oui (0 point)</option>
                     <option value="Non">Non (5 points)</option>
@@ -246,7 +254,7 @@
             <div class="form-group">
                 <label class="block text-lg font-medium text-gray-700">Qui a tenté de vous corrompre ?</label>
                 <select formControlName="corruptPerson"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une option</option>
                     <option value="Le maire sortant">Le maire sortant</option>
                     <option value="Une connaissance du maire">Une connaissance du maire</option>
@@ -257,7 +265,7 @@
                 </select>
                 <div *ngIf="questionnaireForm.get('section4.corruptPerson')?.value === 'Autre'" class="mt-2">
                     <input type="text" formControlName="otherCorruptPerson" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
 
@@ -265,18 +273,18 @@
 
         <div class="flex justify-between mt-8">
             <button type="button" (click)="previousSection()"
-                class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Précédent
             </button>
             <button type="button" (click)="nextSection()"
-                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Suivant
             </button>
         </div>
     </div>
 
     <!-- Section 5 : Alternatives à la corruption -->
-    <div *ngIf="currentSection === 5" class="p-6 bg-white rounded-lg shadow-md max-w-3xl mx-auto">
+    <div *ngIf="currentSection === 5" class="section p-8 bg-white rounded-lg shadow-lg" style="margin-top: 0px;">
         <h3 class="text-2xl font-semibold text-gray-800 mb-4">Section 5 : Alternatives à la corruption</h3>
         <div formGroupName="section5" class="space-y-6">
 
@@ -285,7 +293,7 @@
                 <label class="block text-lg font-medium text-gray-700">Que pourriez-vous faire à la place pour répondre
                     à vos besoins sans participer à la corruption ?</label>
                 <select formControlName="alternativeOptions"
-                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Chercher un emploi ou une formation professionnelle">Chercher un emploi ou une
                         formation professionnelle (2 points)</option>
@@ -297,7 +305,7 @@
                 </select>
                 <div *ngIf="questionnaireForm.get('section5.alternativeOptions')?.value === 'Autre'" class="mt-2">
                     <input type="text" formControlName="alternativeOptionsDescription" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
             </div>
 
@@ -306,7 +314,7 @@
                 <label class="block text-lg font-medium text-gray-700">Pensez-vous avoir besoin d'aide pour atteindre
                     l'objectif ci-dessus ?</label>
                 <select formControlName="needHelp"
-                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (5 points)</option>
                     <option value="Non">Non (0 points)</option>
@@ -319,7 +327,7 @@
                 <label class="block text-lg font-medium text-gray-700">Seriez-vous prêt(e) à refuser des offres de
                     corruption à l’avenir si vous aviez accès à des alternatives ?</label>
                 <select formControlName="willingToRefuseCorruption"
-                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (5 points)</option>
                     <option value="Non">Non (0 points)</option>
@@ -335,7 +343,7 @@
                 Précédent
             </button>
             <button type="button" (click)="nextSection()"
-                class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 Suivant
             </button>
         </div>
@@ -351,7 +359,7 @@
                 <label class="block text-lg font-medium text-gray-700">Avez-vous l'intention d'aller voter aux élections
                     municipales ?</label>
                 <select formControlName="intentionVoter"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (5 points)</option>
                     <option value="Non">Non (0 point)</option>
@@ -365,7 +373,7 @@
                 <label class="block text-lg font-medium text-gray-700">Si vous ne votez pas, quelles en sont les raisons
                     principales ?</label>
                 <select formControlName="raisonsNonVoter"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Manque de confiance dans les politiciens">Manque de confiance dans les politiciens
                     </option>
@@ -384,7 +392,7 @@
                 </select>
                 <div *ngIf="questionnaireForm.get('section6.raisonsNonVoter')?.value === 'Autre'" class="mt-2">
                     <input type="text" formControlName="autreRaisonNonVoter" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
 
@@ -394,7 +402,7 @@
                 <label class="block text-lg font-medium text-gray-700">Si vous avez choisi Obstacles pratiques,
                     pensez-vous avoir besoin d'aide pour y remédier ?</label>
                 <select formControlName="aideObstaclesPratiques"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (5 points)</option>
                     <option value="Non">Non (0 point)</option>
@@ -407,7 +415,7 @@
                 <label class="block text-lg font-medium text-gray-700">Saviez-vous que la corruption électorale peut
                     fausser les résultats des élections et avoir un impact direct sur votre avenir ?</label>
                 <select formControlName="impactCorruption"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (5 points)</option>
                     <option value="Non">Non (0 point)</option>
@@ -420,7 +428,7 @@
                 <label class="block text-lg font-medium text-gray-700">Selon vous, quels impacts pourraient avoir des
                     conséquences dans votre vie ?</label>
                 <select formControlName="impactsCorruptionDetails"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Détérioration des services publics (hôpitaux sous-équipés, pénuries de médicaments)">
                         Détérioration des services publics (hôpitaux sous-équipés, pénuries de médicaments)</option>
@@ -455,7 +463,7 @@
                 </select>
                 <div *ngIf="questionnaireForm.get('section6.impactsCorruptionDetails')?.value === 'Autre'" class="mt-2">
                     <input type="text" formControlName="autreImpactCorruption" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
 
@@ -464,7 +472,7 @@
                 <label class="block text-lg font-medium text-gray-700">Que pourriez-vous faire pour encourager un vote
                     libre et indépendant ?</label>
                 <select formControlName="encouragerVoteLibre"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Sensibiliser votre entourage">Sensibiliser votre entourage (2 points)</option>
                     <option value="Participer à des initiatives de surveillance électorale">Participer à des initiatives
@@ -476,7 +484,7 @@
                 </select>
                 <div *ngIf="questionnaireForm.get('section6.encouragerVoteLibre')?.value === 'Autre'" class="mt-2">
                     <input type="text" formControlName="autreEncouragerVoteLibre" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
 
@@ -484,11 +492,11 @@
 
         <div class="flex justify-between mt-8">
             <button type="button" (click)="previousSection()"
-                class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Précédent
             </button>
             <button type="button" (click)="nextSection()"
-                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Suivant
             </button>
         </div>
@@ -504,7 +512,7 @@
                 <label class="block text-lg font-medium text-gray-700 mb-2">Ce questionnaire vous a-t-il aidé à mieux
                     comprendre les enjeux du vote et les risques de la corruption électorale ?</label>
                 <select formControlName="questionnaireHelpful"
-                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (2 points)</option>
                     <option value="Non">Non (0 point)</option>
@@ -517,7 +525,7 @@
                 <label class="block text-lg font-medium text-gray-700 mb-2">Avez-vous maintenant l’intention d'aller
                     voter de manière libre et indépendante aux prochaines élections ?</label>
                 <select formControlName="intentionVoteLibre"
-                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (5 points)</option>
                     <option value="Non">Non (0 point)</option>
@@ -531,7 +539,7 @@
                     représentativité, pourriez-vous être tenté de vous présenter aux élections municipales en tant que
                     :</label>
                 <select formControlName="candidatureType"
-                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Tête de liste">Tête de liste (5 points)</option>
                     <option value="Colistier ou colistière">Colistier ou colistière (3 points)</option>
@@ -546,7 +554,7 @@
                 <label class="block text-lg font-medium text-gray-700 mb-2">Pensez-vous avoir besoin d'aide pour former
                     une liste ou un programme électoral ?</label>
                 <select formControlName="needHelpForCandidature"
-                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Sélectionnez une réponse</option>
                     <option value="Oui">Oui (5 points)</option>
                     <option value="Non">Non (0 point)</option>
@@ -561,7 +569,7 @@
                     Précédent
                 </button>
                 <button type="submit"
-                    class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     Soumettre
                 </button>
             </div>
