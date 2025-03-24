@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { jsPDF } from 'jspdf';
 import Swal from 'sweetalert2';
+import { FirebaseService } from '../../../services/firebase.service';
 @Component({
   selector: 'app-questionnaire',
   imports: [ReactiveFormsModule, FormsModule, CommonModule, HttpClientModule],
@@ -18,7 +19,7 @@ export class QuestionnaireComponent implements OnInit{
   regions: any[] = [];
   communes: string[] = [];
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private firebaseService: FirebaseService) {
     this.questionnaireForm = this.fb.group({
       section1: this.fb.group({
         age: ['', Validators.required],
@@ -107,33 +108,61 @@ export class QuestionnaireComponent implements OnInit{
     const formData = this.questionnaireForm.value;
     formData.totalScore = this.totalScore;
 
-    // Afficher une boîte de dialogue de confirmation
+    // Afficher une boîte de dialogue de confirmation avec champ email
     Swal.fire({
       title: 'Confirmation',
-      text: 'Êtes-vous sûr de bien répondre avec sincérité aux différentes questions ?',
+      html: `
+        <p>Êtes-vous sûr de bien répondre avec sincérité aux différentes questions ?</p>
+        <input type="email" id="swal-email" class="swal2-input" placeholder="Votre email">
+      `,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Télécharger mon certificat',
       cancelButtonText: 'Annuler',
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
+      preConfirm: () => {
+        const email = (document.getElementById('swal-email') as HTMLInputElement).value;
+        if (!email) {
+          Swal.showValidationMessage('Veuillez entrer votre email');
+          return false;
+        }
+        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+          Swal.showValidationMessage('Veuillez entrer un email valide');
+          return false;
+        }
+        return email;
+      }
     }).then((result) => {
-      if (result.isConfirmed) {
-        // Si l'utilisateur clique sur "Télécharger mon certificat"
-        const name = 'Nom Prénom'; // Remplacez par le nom du participant
+      if (result.isConfirmed && result.value) {
+        const email = result.value; // Récupère l'email validé
+        const name = 'Jimmy David'; // Remplacez par le nom du participant
+
+        // Sauvegarder les données avec l'email comme clé Firebase
+        this.saveToFirebase(email, formData);
 
         if (this.totalScore >= 50) {
-          const name = 'Jimmy David'; // Remplacez par le nom du participant
           this.generateCertificate(name, this.totalScore);
-        }else{
-          const name = 'Jimmy David';
+        } else {
           this.generateCertificate(name, this.totalScore);
         }
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // Si l'utilisateur clique sur "Annuler"
         Swal.fire('Annulé', 'Vous pouvez revenir plus tard pour compléter le questionnaire.', 'info');
       }
     });
+  }
+
+  // Méthode pour sauvegarder dans Firebase
+  async saveToFirebase(email: string, data: any) {
+
+    try {
+      const docId = await this.firebaseService.saveResponse(email, data);
+      console.log('Sauvegarde réussie, ID:', docId);
+      return true;
+    } catch (error) {
+      console.error('Erreur de sauvegarde:', error);
+      return false;
+    }
   }
 
   calculateScore() {
