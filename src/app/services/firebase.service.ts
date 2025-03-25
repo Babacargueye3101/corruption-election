@@ -73,4 +73,49 @@ export class FirebaseService {
       throw new Error(`Échec de la récupération: ${e.message}`);
     }
   }
+
+  async getResponsesWithHighMoney(minMoney: number) {
+    try {
+      const q = query(
+        collection(this.firestore, 'responses'),
+        where('moneyForVote', '>', minMoney)
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => doc.data());
+    } catch (e: any) {
+      console.error("Erreur lors de la récupération:", e);
+      throw new Error(`Échec de la récupération: ${e.message}`);
+    }
+  }
+
+  async getResponsesWithLowMoney(maxMoney: number) {
+    try {
+      const q = query(
+        collection(this.firestore, 'responses'),
+        where('moneyForVote', '<=', maxMoney)
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => doc.data());
+    } catch (e: any) {
+      console.error("Erreur lors de la récupération:", e);
+      throw new Error(`Échec de la récupération: ${e.message}`);
+    }
+  }
+
+  async getVotePricesByLocation() {
+    try {
+      const querySnapshot = await getDocs(collection(this.firestore, 'responses'));
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          region: data['section1']?.region || 'Non spécifié',
+          commune: data['section1']?.commune || 'Non spécifié',
+          amount: data['section4']?.moneyForVote ? parseInt(data['section4'].moneyForVote) : 0
+        };
+      }).filter(item => item.amount > 0); // Ne garder que ceux avec un montant positif
+    } catch (e: any) {
+      console.error("Erreur lors de la récupération:", e);
+      throw new Error(`Échec de la récupération: ${e.message}`);
+    }
+  }
 }

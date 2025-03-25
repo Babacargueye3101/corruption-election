@@ -4,15 +4,24 @@ import { FirebaseService } from '../../../services/firebase.service';
 
 
 
-interface SurveyData {
-  section1: {
-    region: string;
-    commune: string;
-    age: string;
-    gender: string;
-  };
-  totalScore: number; // Déplacé au niveau racine
-  [key: string]: any;
+interface VotePriceData {
+  region: string;
+  commune: string;
+  amount: number;
+}
+
+interface RegionStats {
+  totalAmount: number;
+  average: number;
+  maxAmount: number;
+  communeStats: { [commune: string]: CommuneStats };
+}
+
+interface CommuneStats {
+  totalAmount: number;
+  average: number;
+  maxAmount: number;
+  count: number;
 }
 
 @Component({
@@ -24,26 +33,16 @@ interface SurveyData {
 export class StatistiqueComponent {
 
   isLoading = true;
-  totalHighScore = 0;
-  totalLowScore = 0;
-  allHighScores: number[] = [];
-  allLowScores: number[] = [];
-
-  highScoreStatsByRegion: { [region: string]: { count: number; communes: { [commune: string]: number } } } = {};
-  lowScoreStatsByRegion: { [region: string]: { count: number; communes: { [commune: string]: number } } } = {};
+  regionStats: { [region: string]: RegionStats } = {};
+  regions: string[] = [];
 
   constructor(private firebaseService: FirebaseService){}
 
 
   async ngOnInit() {
     try {
-      const [highScoreData, lowScoreData] = await Promise.all([
-        this.firebaseService.getResponsesWithHighScore(45),
-        this.firebaseService.getResponsesWithLowScore(45)
-      ]);
-
-      this.processHighScoreData(highScoreData as SurveyData[]);
-      this.processLowScoreData(lowScoreData as SurveyData[]);
+      const data = await this.firebaseService.getVotePricesByLocation();
+      this.processData(data);
     } catch (error) {
       console.error('Error loading statistics:', error);
     } finally {
@@ -51,78 +50,80 @@ export class StatistiqueComponent {
     }
   }
 
-  private processHighScoreData(data: SurveyData[]) {
-    this.totalHighScore = data.length;
-    this.allHighScores = data.map(item => item.totalScore);
+  private processData(data: VotePriceData[]) {
+    // Initialiser la structure des données
+    this.regionStats = {};
 
-    this.highScoreStatsByRegion = data.reduce((acc, item) => {
-      const region = item.section1.region;
-      const commune = item.section1.commune;
-
-      if (!acc[region]) {
-        acc[region] = { count: 0, communes: {} };
+    data.forEach(item => {
+      // Initialiser la région si elle n'existe pas
+      if (!this.regionStats[item.region]) {
+        this.regionStats[item.region] = {
+          totalAmount: 0,
+          average: 0,
+          maxAmount: 0,
+          communeStats: {}
+        };
       }
 
-      acc[region].count++;
-
-      if (!acc[region].communes[commune]) {
-        acc[region].communes[commune] = 0;
-      }
-      acc[region].communes[commune]++;
-
-      return acc;
-    }, {} as { [region: string]: { count: number; communes: { [commune: string]: number } } });
-  }
-
-  private processLowScoreData(data: SurveyData[]) {
-    this.totalLowScore = data.length;
-    this.allLowScores = data.map(item => item.totalScore);
-
-    this.lowScoreStatsByRegion = data.reduce((acc, item) => {
-      const region = item.section1.region;
-      const commune = item.section1.commune;
-
-      if (!acc[region]) {
-        acc[region] = { count: 0, communes: {} };
+      // Initialiser la commune si elle n'existe pas
+      if (!this.regionStats[item.region].communeStats[item.commune]) {
+        this.regionStats[item.region].communeStats[item.commune] = {
+          totalAmount: 0,
+          average: 0,
+          maxAmount: 0,
+          count: 0
+        };
       }
 
-      acc[region].count++;
+      // Mettre à jour les statistiques
+      const region = this.regionStats[item.region];
+      const commune = region.communeStats[item.commune];
 
-      if (!acc[region].communes[commune]) {
-        acc[region].communes[commune] = 0;
+      // Mise à jour des totaux
+      region.totalAmount += item.amount;
+      commune.totalAmount += item.amount;
+      commune.count += 1;
+
+      // Mise à jour des max
+      if (item.amount > region.maxAmount) {
+        region.maxAmount = item.amount;
       }
-      acc[region].communes[commune]++;
+      if (item.amount > commune.maxAmount) {
+        commune.maxAmount = item.amount;
+      }
+    });
 
-      return acc;
-    }, {} as { [region: string]: { count: number; communes: { [commune: string]: number } } });
+    // Calculer les moyennes
+    for (const regionName in this.regionStats) {
+      const region = this.regionStats[regionName];
+      const communeCount = Object.keys(region.communeStats).length;
+
+      region.average = communeCount > 0 ? region.totalAmount / communeCount : 0;
+
+      for (const communeName in region.communeStats) {
+        const commune = region.communeStats[communeName];
+        commune.average = commune.count > 0 ? commune.totalAmount / commune.count : 0;
+      }
+    }
+
+    this.regions = Object.keys(this.regionStats).sort();
   }
 
-  get highScoreAverage(): number {
-    if (this.allHighScores.length === 0) return 0;
-    const sum = this.allHighScores.reduce((a, b) => a + b, 0);
-    return Math.round(sum / this.allHighScores.length);
+  getCommunes(region: string): string[] {
+    return Object.keys(this.regionStats[region]?.communeStats || {}).sort();
   }
 
-  get lowScoreAverage(): number {
-    if (this.allLowScores.length === 0) return 0;
-    const sum = this.allLowScores.reduce((a, b) => a + b, 0);
-    return Math.round(sum / this.allLowScores.length);
+  getSortedRegionsByAmount(): string[] {
+    return this.regions.sort((a, b) =>
+      this.regionStats[b].totalAmount - this.regionStats[a].totalAmount
+    );
   }
 
-  get highScoreRegions() {
-    return Object.keys(this.highScoreStatsByRegion);
-  }
-
-  get lowScoreRegions() {
-    return Object.keys(this.lowScoreStatsByRegion);
-  }
-
-  getHighScoreCommunes(region: string): string[] {
-    return Object.keys(this.highScoreStatsByRegion[region]?.communes || {});
-  }
-
-  getLowScoreCommunes(region: string): string[] {
-    return Object.keys(this.lowScoreStatsByRegion[region]?.communes || {});
+  getSortedCommunes(region: string): string[] {
+    return this.getCommunes(region).sort((a, b) =>
+      this.regionStats[region].communeStats[b].totalAmount -
+      this.regionStats[region].communeStats[a].totalAmount
+    );
   }
 
 }
