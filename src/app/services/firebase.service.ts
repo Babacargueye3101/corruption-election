@@ -58,4 +58,19 @@ export class FirebaseService {
       throw new Error(`Échec de la récupération: ${e.message}`);
     }
   }
+
+  async getResponsesWithLowScore(maxScore: number = 45) {
+    try {
+      const q = query(
+        collection(this.firestore, 'responses'),
+        where('totalScore', '<=', maxScore)
+      );
+
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => doc.data());
+    } catch (e: any) {
+      console.error("Erreur lors de la récupération:", e);
+      throw new Error(`Échec de la récupération: ${e.message}`);
+    }
+  }
 }

@@ -24,18 +24,26 @@ interface SurveyData {
 export class StatistiqueComponent {
 
   isLoading = true;
-  total =0;
-  allScores: number[] = [];
+  totalHighScore = 0;
+  totalLowScore = 0;
+  allHighScores: number[] = [];
+  allLowScores: number[] = [];
 
-  statsByRegion: { [region: string]: { count: number; communes: { [commune: string]: number } } } = {};
+  highScoreStatsByRegion: { [region: string]: { count: number; communes: { [commune: string]: number } } } = {};
+  lowScoreStatsByRegion: { [region: string]: { count: number; communes: { [commune: string]: number } } } = {};
 
   constructor(private firebaseService: FirebaseService){}
 
 
   async ngOnInit() {
     try {
-      const data = await this.firebaseService.getResponsesWithHighScore();
-      this.processData(data as SurveyData[]);
+      const [highScoreData, lowScoreData] = await Promise.all([
+        this.firebaseService.getResponsesWithHighScore(45),
+        this.firebaseService.getResponsesWithLowScore(45)
+      ]);
+
+      this.processHighScoreData(highScoreData as SurveyData[]);
+      this.processLowScoreData(lowScoreData as SurveyData[]);
     } catch (error) {
       console.error('Error loading statistics:', error);
     } finally {
@@ -43,12 +51,11 @@ export class StatistiqueComponent {
     }
   }
 
+  private processHighScoreData(data: SurveyData[]) {
+    this.totalHighScore = data.length;
+    this.allHighScores = data.map(item => item.totalScore);
 
-  private processData(data: SurveyData[]) {
-    this.total = data.length;
-    this.allScores = data.map(item => item.totalScore);
-
-    this.statsByRegion = data.reduce((acc, item) => {
+    this.highScoreStatsByRegion = data.reduce((acc, item) => {
       const region = item.section1.region;
       const commune = item.section1.commune;
 
@@ -67,18 +74,55 @@ export class StatistiqueComponent {
     }, {} as { [region: string]: { count: number; communes: { [commune: string]: number } } });
   }
 
-  get averageScore(): number {
-    if (this.allScores.length === 0) return 0;
-    const sum = this.allScores.reduce((a, b) => a + b, 0);
-    return Math.round(sum / this.allScores.length);
+  private processLowScoreData(data: SurveyData[]) {
+    this.totalLowScore = data.length;
+    this.allLowScores = data.map(item => item.totalScore);
+
+    this.lowScoreStatsByRegion = data.reduce((acc, item) => {
+      const region = item.section1.region;
+      const commune = item.section1.commune;
+
+      if (!acc[region]) {
+        acc[region] = { count: 0, communes: {} };
+      }
+
+      acc[region].count++;
+
+      if (!acc[region].communes[commune]) {
+        acc[region].communes[commune] = 0;
+      }
+      acc[region].communes[commune]++;
+
+      return acc;
+    }, {} as { [region: string]: { count: number; communes: { [commune: string]: number } } });
   }
 
-  get regions() {
-    return Object.keys(this.statsByRegion);
+  get highScoreAverage(): number {
+    if (this.allHighScores.length === 0) return 0;
+    const sum = this.allHighScores.reduce((a, b) => a + b, 0);
+    return Math.round(sum / this.allHighScores.length);
   }
 
-  getCommunes(region: string): string[] {
-    return Object.keys(this.statsByRegion[region]?.communes || {});
+  get lowScoreAverage(): number {
+    if (this.allLowScores.length === 0) return 0;
+    const sum = this.allLowScores.reduce((a, b) => a + b, 0);
+    return Math.round(sum / this.allLowScores.length);
+  }
+
+  get highScoreRegions() {
+    return Object.keys(this.highScoreStatsByRegion);
+  }
+
+  get lowScoreRegions() {
+    return Object.keys(this.lowScoreStatsByRegion);
+  }
+
+  getHighScoreCommunes(region: string): string[] {
+    return Object.keys(this.highScoreStatsByRegion[region]?.communes || {});
+  }
+
+  getLowScoreCommunes(region: string): string[] {
+    return Object.keys(this.lowScoreStatsByRegion[region]?.communes || {});
   }
 
 }

@@ -1,52 +1,160 @@
 {
     "regions": [
       {
-        "nom": "Basse-Terre",
+        "nom": "Guadeloupe",
         "communes": [
           "Basse-Terre",
-          "Gourbeyre",
-          "Saint-Claude",
-          "Terre-de-Bas",
-          "Terre-de-Haut",
-          "Trois-Rivières",
-          "Vieux-Fort",
-          "Vieux-Habitants"
-        ]
-      },
-      {
-        "nom": "Grande-Terre",
-        "communes": [
-          "Anse-Bertrand",
-          "Le Gosier",
-          "Les Abymes",
-          "Morne-à-l'Eau",
-          "Petit-Canal",
           "Pointe-à-Pitre",
-          "Port-Louis",
+          "Les Abymes",
+          "Le Gosier",
+          "Sainte-Anne",
           "Saint-François",
-          "Sainte-Anne"
+          "Le Moule",
+          "Petit-Bourg",
+          "Capesterre-Belle-Eau",
+          "Morne-à-l'Eau"
         ]
       },
       {
-        "nom": "Marie-Galante",
+        "nom": "Martinique",
         "communes": [
-          "Capesterre-de-Marie-Galante",
-          "Grand-Bourg",
-          "Saint-Louis"
+          "Fort-de-France",
+          "Le Lamentin",
+          "Schoelcher",
+          "Ducos",
+          "Sainte-Marie",
+          "Le François",
+          "Le Robert",
+          "Trinité",
+          "Saint-Pierre",
+          "Les Anses-d'Arlet"
         ]
       },
       {
-        "nom": "La Désirade",
+        "nom": "Guyane",
         "communes": [
-          "La Désirade"
+          "Cayenne",
+          "Saint-Laurent-du-Maroni",
+          "Kourou",
+          "Matoury",
+          "Rémire-Montjoly",
+          "Mana",
+          "Maripasoula",
+          "Macouria",
+          "Grand-Santi",
+          "Apatou"
         ]
       },
       {
-        "nom": "Les Saintes",
+        "nom": "La Réunion",
+        "communes": [
+          "Saint-Denis",
+          "Saint-Paul",
+          "Saint-Pierre",
+          "Le Tampon",
+          "Saint-André",
+          "Saint-Louis",
+          "Saint-Benoît",
+          "Le Port",
+          "Saint-Joseph",
+          "La Possession"
+        ]
+      },
+      {
+        "nom": "Mayotte",
+        "communes": [
+          "Mamoudzou",
+          "Dzaoudzi",
+          "Koungou",
+          "Dembéni",
+          "Sada",
+          "Chiconi",
+          "Bandraboua",
+          "Acoua",
+          "Bouéni",
+          "Mtsamboro"
+        ]
+      },
+      {
+        "nom": "Saint-Pierre-et-Miquelon",
+        "communes": [
+          "Saint-Pierre",
+          "Miquelon-Langlade"
+        ]
+      },
+      {
+        "nom": "Saint-Barthélemy",
         "communes": [
           "Terre-de-Bas",
           "Terre-de-Haut"
         ]
+      },
+      {
+        "nom": "Saint-Martin",
+        "communes": [
+          "Marigot",
+          "Grand-Case",
+          "Quartier d'Orléans",
+          "Cul-de-Sac"
+        ]
+      },
+      {
+        "nom": "Terres australes et antarctiques françaises",
+        "communes": [
+          "Archipel de Kerguelen",
+          "Îles Crozet",
+          "Îles Saint-Paul et Amsterdam",
+          "Terre Adélie",
+          "Îles Éparses"
+        ]
+      },
+      {
+        "nom": "Wallis-et-Futuna",
+        "communes": [
+          "Mata-Utu",
+          "Hahake",
+          "Hihifo",
+          "Alo",
+          "Sigave"
+        ]
+      },
+      {
+        "nom": "Polynésie française",
+        "communes": [
+          "Papeete",
+          "Faaa",
+          "Punaauia",
+          "Mahina",
+          "Papara",
+          "Bora-Bora",
+          "Moorea",
+          "Rangiroa",
+          "Tahaa",
+          "Huahine"
+        ]
+      },
+      {
+        "nom": "Nouvelle-Calédonie",
+        "communes": [
+          "Nouméa",
+          "Dumbéa",
+          "Mont-Dore",
+          "Païta",
+          "Bourail",
+          "Koumac",
+          "Poindimié",
+          "Lifou",
+          "Maré",
+          "Ouvéa"
+        ]
+      },
+      {
+        "nom": "Île de La Passion-Clipperton",
+        "communes": []
+      },
+      {
+        "nom": "Île des Faisans",
+        "communes": []
       }
     ]
   }
