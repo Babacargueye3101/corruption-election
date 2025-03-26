@@ -9,5 +9,6 @@ import { RouterModule } from '@angular/router';
   styleUrl: './apropos.component.scss'
 })
 export class AproposComponent {
+  newDate= new Date();
 
 }

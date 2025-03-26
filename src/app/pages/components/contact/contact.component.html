@@ -4,7 +4,7 @@
 
       <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-6">
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700">Nom complet</label>
+          <label for="name" class="block text-sm font-medium text-gray-700">Nom & Prénom</label>
           <input type="text" id="name" formControlName="name"
                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
           <div *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched"
@@ -40,14 +40,5 @@
           </button>
         </div>
       </form>
-
-      <div class="mt-8 border-t border-gray-200 pt-6">
-        <h2 class="text-lg font-medium text-gray-900">Autres moyens de contact</h2>
-        <div class="mt-4">
-          <p class="text-gray-600">Email : contact&#64;bourse-vote.fr</p>
-          <p class="text-gray-600 mt-2">Téléphone : +33 1 23 45 67 89</p>
-          <p class="text-gray-600 mt-2">Adresse : 123 Rue de la Démocratie, 75000 Paris</p>
-        </div>
-      </div>
     </div>
   </div>

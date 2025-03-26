@@ -112,12 +112,12 @@ export class QuestionnaireComponent implements OnInit{
     Swal.fire({
       title: 'Confirmation',
       html: `
-        <p>Êtes-vous sûr de bien répondre avec sincérité aux différentes questions ?</p>
+        <p>Êtes-vous sûr d'avoir bien  répondu aux différentes questions ?</p>
         <input type="email" id="swal-email" class="swal2-input" placeholder="Votre email">
       `,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Télécharger mon certificat',
+      confirmButtonText: 'OUI',
       cancelButtonText: 'Annuler',
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
