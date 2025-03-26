@@ -24,16 +24,16 @@ export class QuestionnaireComponent implements OnInit {
 
   // Options pour les sélections multiples
   corruptionOptions = [
-    { value: 'voteBuying', label: 'Achat de votes (2 points)', points: 2 },
-    { value: 'resultFalsification', label: 'Falsification des résultats (2 points)', points: 2 },
-    { value: 'voterIntimidation', label: 'Intimidation des électeurs (2 points)', points: 2 },
-    { value: 'abuseOfPublicResources', label: 'Utilisation abusive des ressources publiques (2 points)', points: 2 },
-    { value: 'renovationOfVotersHouses', label: 'Rénovation de la maison des électeurs (2 points)', points: 2 },
-    { value: 'fuelExpenses', label: 'Prise en charge de frais de carburant (2 points)', points: 2 },
-    { value: 'jobPromise', label: 'Promesse d\'emploi (2 points)', points: 2 },
-    { value: 'subsidyToAssociations', label: 'Subvention versée à certaines associations (2 points)', points: 2 },
-    { value: 'contractWithCollectivity', label: 'Obtention d\'un contrat avec la collectivité (2 points)', points: 2 },
-    { value: 'otherCorruption', label: 'Autre (1 point)', points: 1 }
+    { value: 'voteBuying', label: 'Achat de votes', points: 2 },
+    { value: 'resultFalsification', label: 'Falsification des résultats', points: 2 },
+    { value: 'voterIntimidation', label: 'Intimidation des électeurs', points: 2 },
+    { value: 'abuseOfPublicResources', label: 'Utilisation abusive des ressources publiques', points: 2 },
+    { value: 'renovationOfVotersHouses', label: 'Rénovation de la maison des électeurs', points: 2 },
+    { value: 'fuelExpenses', label: 'Prise en charge de frais de carburant', points: 2 },
+    { value: 'jobPromise', label: 'Promesse d\'emploi', points: 2 },
+    { value: 'subsidyToAssociations', label: 'Subvention versée à certaines associations', points: 2 },
+    { value: 'contractWithCollectivity', label: 'Obtention d\'un contrat avec la collectivité', points: 2 },
+    { value: 'otherCorruption', label: 'Autre', points: 1 }
   ];
 
   alternativeOptions = [
@@ -432,6 +432,11 @@ export class QuestionnaireComponent implements OnInit {
     } else if (sellVote === 'Je ne sais pas') {
       score += 1;
     }
+
+    // Ajout des points pour les personnes corruptrices (2 points par réponse)
+    this.corruptPersonsArray.value.forEach((val: string) => {
+      score += 2;
+    });
 
     // Section 5
     this.alternativeOptionsArray.value.forEach((val: string) => {

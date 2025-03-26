@@ -99,7 +99,7 @@
               </div>
               <div class="ml-3 text-sm">
                 <label [for]="'corruptionType-' + option.value" class="font-medium text-gray-700">
-                  {{ option.label }}
+                  {{ option.label }} ({{ option.points }} points)
                 </label>
               </div>
             </div>
@@ -273,7 +273,7 @@
 
         <!-- Corrupt Persons (multi-select) -->
         <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Qui a tenté de vous corrompre ? (Plusieurs réponses possibles)</label>
+          <label class="block text-lg font-medium text-gray-700">Qui a tenté de vous corrompre ? (Plusieurs réponses possibles - 2 points par réponse)</label>
           <div class="mt-2 space-y-2">
             <div class="flex items-start">
               <div class="flex items-center h-5">
@@ -283,7 +283,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-mayor" class="font-medium text-gray-700">Le maire sortant</label>
+                <label for="corrupt-mayor" class="font-medium text-gray-700">Le maire sortant (2 points)</label>
               </div>
             </div>
 
@@ -295,7 +295,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-mayor-contact" class="font-medium text-gray-700">Une connaissance du maire</label>
+                <label for="corrupt-mayor-contact" class="font-medium text-gray-700">Une connaissance du maire (2 points)</label>
               </div>
             </div>
 
@@ -307,7 +307,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-family" class="font-medium text-gray-700">Un membre de votre famille</label>
+                <label for="corrupt-family" class="font-medium text-gray-700">Un membre de votre famille (2 points)</label>
               </div>
             </div>
 
@@ -319,7 +319,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-candidate" class="font-medium text-gray-700">Un élu ou un candidat tête de liste</label>
+                <label for="corrupt-candidate" class="font-medium text-gray-700">Un élu ou un candidat tête de liste (2 points)</label>
               </div>
             </div>
 
@@ -331,7 +331,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-friend" class="font-medium text-gray-700">Un ami</label>
+                <label for="corrupt-friend" class="font-medium text-gray-700">Un ami (2 points)</label>
               </div>
             </div>
 
@@ -343,7 +343,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-other" class="font-medium text-gray-700">Autre (précisez)</label>
+                <label for="corrupt-other" class="font-medium text-gray-700">Autre (précisez) (2 points)</label>
               </div>
             </div>
 
