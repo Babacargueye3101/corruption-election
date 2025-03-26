@@ -128,7 +128,18 @@ export class QuestionnaireComponent implements OnInit {
 
     if (this.getCurrentSectionGroup().valid) {
       if (this.currentSection < 7) {
-        this.currentSection++;
+        // Logique spéciale pour la section 3
+        if (this.currentSection === 3) {
+          const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
+          // Si réponse est "Non" ou "Ne pas répondre", sauter à la section 6
+          if (corruptionExperience === 'Non' || corruptionExperience === 'Ne pas répondre') {
+            this.currentSection = 6;
+          } else {
+            this.currentSection++;
+          }
+        } else {
+          this.currentSection++;
+        }
       }
     } else {
       Swal.fire({
@@ -142,6 +153,14 @@ export class QuestionnaireComponent implements OnInit {
 
   previousSection() {
     if (this.currentSection > 1) {
+      // Si on est à la section 6 et qu'on vient de la section 3, retourner à la section 3
+      if (this.currentSection === 6) {
+        const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
+        if (corruptionExperience === 'Non' || corruptionExperience === 'Ne pas répondre') {
+          this.currentSection = 3;
+          return;
+        }
+      }
       this.currentSection--;
     }
   }
