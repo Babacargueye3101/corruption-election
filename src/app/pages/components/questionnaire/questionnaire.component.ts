@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { jsPDF } from 'jspdf';
 import Swal from 'sweetalert2';
 import { FirebaseService } from '../../../services/firebase.service';
@@ -22,6 +22,19 @@ export class QuestionnaireComponent implements OnInit {
   regions: any[] = [];
   communes: string[] = [];
 
+  corruptionOptions = [
+    { value: 'voteBuying', label: 'Achat de votes (2 points)' },
+    { value: 'resultFalsification', label: 'Falsification des résultats (2 points)' },
+    { value: 'voterIntimidation', label: 'Intimidation des électeurs (2 points)' },
+    { value: 'abuseOfPublicResources', label: 'Utilisation abusive des ressources publiques (2 points)' },
+    { value: 'renovationOfVotersHouses', label: 'Rénovation de la maison des électeurs (2 points)' },
+    { value: 'fuelExpenses', label: 'Prise en charge de frais de carburant (2 points)' },
+    { value: 'jobPromise', label: 'Promesse d\'emploi (2 points)' },
+    { value: 'subsidyToAssociations', label: 'Subvention versée à certaines associations (2 points)' },
+    { value: 'contractWithCollectivity', label: 'Obtention d\'un contrat avec la collectivité (2 points)' },
+    { value: 'otherCorruption', label: 'Autre (1 point)' }
+  ];
+
   constructor(private fb: FormBuilder, private http: HttpClient, private firebaseService: FirebaseService) {
     this.questionnaireForm = this.fb.group({
       section1: this.fb.group({
@@ -31,7 +44,7 @@ export class QuestionnaireComponent implements OnInit {
         commune: ['', Validators.required]
       }),
       section2: this.fb.group({
-        corruptionType: ['', Validators.required],
+        corruptionTypes: this.fb.array([], Validators.required),
         otherCorruptionDescription: [''],
         electoralCorruptionProblem: ['', Validators.required],
         knowledgeAboutLaws: ['', Validators.required]
@@ -74,6 +87,23 @@ export class QuestionnaireComponent implements OnInit {
         needHelpForCandidature: ['']
       })
     });
+  }
+
+  get corruptionTypesArray(): FormArray {
+    return this.questionnaireForm.get('section2.corruptionTypes') as FormArray;
+  }
+
+  toggleCorruptionType(value: string): void {
+    const index = this.corruptionTypesArray.value.indexOf(value);
+    if (index === -1) {
+      this.corruptionTypesArray.push(this.fb.control(value));
+    } else {
+      this.corruptionTypesArray.removeAt(index);
+    }
+  }
+
+  isCorruptionTypeSelected(value: string): boolean {
+    return this.corruptionTypesArray.value.includes(value);
   }
 
   ngOnInit(): void {
@@ -122,6 +152,8 @@ export class QuestionnaireComponent implements OnInit {
 
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
+      } else if (control instanceof FormArray) {
+        control.markAsTouched();
       }
     });
   }
@@ -136,8 +168,10 @@ export class QuestionnaireComponent implements OnInit {
 
     if (this.questionnaireForm.valid) {
       this.calculateScore();
-      const formData = this.questionnaireForm.value;
-      formData.totalScore = this.totalScore;
+      const formData = {
+        ...this.questionnaireForm.value,
+        totalScore: this.totalScore
+      };
 
       Swal.fire({
         title: 'Confirmation',
@@ -199,14 +233,12 @@ export class QuestionnaireComponent implements OnInit {
     let score = 0;
 
     // Section 2
-    const corruptionType = this.questionnaireForm.get('section2.corruptionType')?.value;
-    if (corruptionType === 'voteBuying' || corruptionType === 'resultFalsification' || corruptionType === 'voterIntimidation' ||
-        corruptionType === 'abuseOfPublicResources' || corruptionType === 'renovationOfVotersHouses' ||
-        corruptionType === 'fuelExpenses' || corruptionType === 'jobPromise' || corruptionType === 'subsidyToAssociations' ||
-        corruptionType === 'contractWithCollectivity') {
-      score += 2;
-    } else if (corruptionType === 'otherCorruption') {
-      score += 1;
+    const corruptionTypes = this.questionnaireForm.get('section2.corruptionTypes')?.value;
+    if (corruptionTypes && corruptionTypes.length > 0) {
+      score += Math.min(corruptionTypes.length * 2, 8);
+      if (corruptionTypes.includes('otherCorruption')) {
+        score += 1;
+      }
     }
 
     const electoralCorruptionProblem = this.questionnaireForm.get('section2.electoralCorruptionProblem')?.value;

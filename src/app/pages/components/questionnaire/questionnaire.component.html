@@ -84,30 +84,34 @@
         <h3 class="text-2xl font-semibold mb-4">Section 2 : Connaissances sur la corruption électorale</h3>
 
         <div formGroupName="section2" class="space-y-6">
-            <!-- Corruption Type -->
+            <!-- Corruption Types (multi-select) -->
             <div class="form-group">
-                <label class="block text-lg font-medium text-gray-700">Selon vous, qu'est-ce que la corruption électorale ?</label>
-                <select formControlName="corruptionType"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    [ngClass]="{'border-red-500': questionnaireForm.get('section2.corruptionType')?.invalid && (questionnaireForm.get('section2.corruptionType')?.touched || formSubmitted)}">
-                    <option value="">Sélectionnez une réponse</option>
-                    <option value="voteBuying">Achat de votes (2 points)</option>
-                    <option value="resultFalsification">Falsification des résultats (2 points)</option>
-                    <option value="voterIntimidation">Intimidation des électeurs (2 points)</option>
-                    <option value="abuseOfPublicResources">Utilisation abusive des ressources publiques (2 points)</option>
-                    <option value="renovationOfVotersHouses">Rénovation de la maison des électeurs (2 points)</option>
-                    <option value="fuelExpenses">Prise en charge de frais de carburant (2 points)</option>
-                    <option value="jobPromise">Promesse d'emploi (2 points)</option>
-                    <option value="subsidyToAssociations">Subvention versée à certaines associations (2 points)</option>
-                    <option value="contractWithCollectivity">Obtention d'un contrat avec la collectivité (2 points)</option>
-                    <option value="otherCorruption">Autre (1 point)</option>
-                </select>
-                <div *ngIf="questionnaireForm.get('section2.corruptionType')?.invalid && (questionnaireForm.get('section2.corruptionType')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-                    Ce champ est obligatoire
+                <label class="block text-lg font-medium text-gray-700">Selon vous, qu'est-ce que la corruption électorale ? (Sélectionnez toutes les réponses qui s'appliquent)</label>
+                <div class="mt-2 space-y-2">
+                    <div *ngFor="let option of corruptionOptions" class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input
+                                type="checkbox"
+                                [id]="'corruptionType-' + option.value"
+                                [value]="option.value"
+                                (change)="toggleCorruptionType(option.value)"
+                                [checked]="isCorruptionTypeSelected(option.value)"
+                                class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label [for]="'corruptionType-' + option.value" class="font-medium text-gray-700">
+                                {{ option.label }}
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <div *ngIf="questionnaireForm.get('section2.corruptionType')?.value === 'otherCorruption'" class="mt-2">
-                    <input type="text" formControlName="otherCorruptionDescription" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <div *ngIf="corruptionTypesArray.invalid && (corruptionTypesArray.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+                    Veuillez sélectionner au moins une option
+                </div>
+                <div *ngIf="isCorruptionTypeSelected('otherCorruption')" class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700">Précisez :</label>
+                    <input type="text" formControlName="otherCorruptionDescription" placeholder="Décrivez votre réponse"
+                        class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
 
