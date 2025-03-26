@@ -41,8 +41,8 @@ export class StatistiqueComponent {
 
   async ngOnInit() {
     try {
-      const data = await this.firebaseService.getVotePricesByLocation();
-      this.processData(data);
+      // const data = await this.firebaseService.getStatistics("",);
+      // this.processData(data);
     } catch (error) {
       console.error('Error loading statistics:', error);
     } finally {

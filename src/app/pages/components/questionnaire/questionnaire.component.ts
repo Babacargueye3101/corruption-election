@@ -313,7 +313,7 @@ export class QuestionnaireComponent implements OnInit {
     return this.questionnaireForm.get(`section${this.currentSection}`) as FormGroup;
   }
 
-  onSubmit() {
+  async onSubmit() {
     this.markFormGroupTouched(this.questionnaireForm);
     this.formSubmitted = true;
 
@@ -321,7 +321,8 @@ export class QuestionnaireComponent implements OnInit {
       this.calculateScore();
       const formData = {
         ...this.questionnaireForm.value,
-        totalScore: this.totalScore
+        totalScore: this.totalScore,
+        timestamp: new Date().toISOString()
       };
 
       Swal.fire({
@@ -329,6 +330,7 @@ export class QuestionnaireComponent implements OnInit {
         html: `
           <p>Êtes-vous sûr d'avoir bien répondu aux différentes questions ?</p>
           <input type="email" id="swal-email" class="swal2-input" placeholder="Votre email">
+          <input type="text" id="swal-name" class="swal2-input" placeholder="Votre nom">
         `,
         icon: 'question',
         showCancelButton: true,
@@ -338,6 +340,8 @@ export class QuestionnaireComponent implements OnInit {
         cancelButtonColor: '#d33',
         preConfirm: () => {
           const email = (document.getElementById('swal-email') as HTMLInputElement).value;
+          const name = (document.getElementById('swal-name') as HTMLInputElement).value;
+
           if (!email) {
             Swal.showValidationMessage('Veuillez entrer votre email');
             return false;
@@ -346,15 +350,71 @@ export class QuestionnaireComponent implements OnInit {
             Swal.showValidationMessage('Veuillez entrer un email valide');
             return false;
           }
-          return email;
+          if (!name) {
+            Swal.showValidationMessage('Veuillez entrer votre nom');
+            return false;
+          }
+          return { email, name };
         }
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed && result.value) {
-          const email = result.value;
-          const name = 'Jimmy David';
+          const { email, name } = result.value;
+          const region = this.questionnaireForm.get('section1.region')?.value;
+          const commune = this.questionnaireForm.get('section1.commune')?.value;
+          const moneyGiven = this.questionnaireForm.get('section4.moneyGivenAmount')?.value;
 
-          this.saveToFirebase(email, formData);
-          this.generateCertificate(name, this.totalScore);
+          try {
+            // Sauvegarde des données
+            const docId = await this.firebaseService.saveResponse(email, formData);
+
+            if (docId) {
+              // // Génération du certificat
+              // this.generateCertificate(name, this.totalScore);
+
+              // // Génération des statistiques
+              // await this.generateStatistics(region, commune, moneyGiven);
+
+              // this.generateSummaryPdf(name);
+
+              Swal.fire({
+                title: 'Merci !',
+                text: 'Votre questionnaire a été soumis avec succès. Les documents ont été générés.',
+                icon: 'success',
+                showCancelButton: false,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                html: `
+                  <button id="btn-certificate" class="swal2-confirm swal2-styled">Générer le Certificat</button>
+                  <button id="btn-statistics" class="swal2-confirm swal2-styled" style="background-color: #28a745;">Générer les Statistiques</button>
+                  <button id="btn-summary" class="swal2-confirm swal2-styled" style="background-color: #17a2b8;">Générer le Résumé PDF</button>
+                `
+              });
+
+              // Ajouter des écouteurs d'événements après l'affichage du Swal
+              setTimeout(() => {
+                document.getElementById("btn-certificate")?.addEventListener("click", () => {
+                  this.generateCertificate(name, this.totalScore);
+                });
+
+                document.getElementById("btn-statistics")?.addEventListener("click", async () => {
+                  await this.generateStatistics(region, commune, moneyGiven);
+                });
+
+                document.getElementById("btn-summary")?.addEventListener("click", () => {
+                  this.generateSummaryPdf(name);
+                });
+              }, 100);
+            } else {
+              throw new Error('Erreur lors de la sauvegarde');
+            }
+          } catch (error) {
+            console.error('Erreur:', error);
+            Swal.fire(
+              'Erreur',
+              'Une erreur est survenue lors de la soumission. Veuillez réessayer.',
+              'error'
+            );
+          }
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           Swal.fire('Annulé', 'Vous pouvez revenir plus tard pour compléter le questionnaire.', 'info');
         }
@@ -367,6 +427,146 @@ export class QuestionnaireComponent implements OnInit {
         confirmButtonText: 'OK'
       });
     }
+  }
+
+  async generateStatistics(region: string, commune: string, userAmount: string) {
+    try {
+      const stats = await this.firebaseService.getStatistics(region, commune);
+
+      const doc = new jsPDF();
+
+      // Titre
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Statistiques pour ${commune}, ${region}`, 15, 20);
+
+      // Section Prix du vote
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Prix du vote moyen', 15, 40);
+
+      doc.setFont('helvetica', 'normal');
+      doc.text(`- Votre commune (${commune}): ${stats.commune.averageVotePrice} €`, 20, 50);
+      doc.text(`- Votre région (${region}): ${stats.region.averageVotePrice} €`, 20, 60);
+
+      if (userAmount) {
+        doc.text(`- Votre réponse: ${userAmount} €`, 20, 70);
+
+        if (stats.commune.averageVotePrice !== 'N/A') {
+          const diff = parseFloat(userAmount) - parseFloat(stats.commune.averageVotePrice);
+          doc.text(`- Différence avec la moyenne communale: ${diff.toFixed(2)} €`, 20, 80);
+        }
+      }
+
+      // Section Participation
+      doc.setFont('helvetica', 'bold');
+      doc.text('Participation', 15, 100);
+
+      doc.setFont('helvetica', 'normal');
+      doc.text(`- Participants dans votre commune: ${stats.commune.participantsCount}`, 20, 110);
+      doc.text(`- Participants dans votre région: ${stats.region.participantsCount}`, 20, 120);
+
+      // Section Scores
+      doc.setFont('helvetica', 'bold');
+      doc.text('Scores moyens', 15, 140);
+
+      doc.setFont('helvetica', 'normal');
+      doc.text(`- Score moyen dans votre commune: ${stats.commune.averageScore}/97`, 20, 150);
+      doc.text(`- Score moyen dans votre région: ${stats.region.averageScore}/97`, 20, 160);
+      doc.text(`- Votre score: ${this.totalScore}/97`, 20, 170);
+
+      // Conseils
+      doc.setFont('helvetica', 'bold');
+      doc.text('Conseils', 15, 190);
+
+      doc.setFont('helvetica', 'normal');
+      doc.text('Plus vous êtes informé sur la corruption électorale,', 20, 200);
+      doc.text('plus vous pouvez contribuer à des élections libres et transparentes.', 20, 210);
+
+      // Sauvegarde du PDF
+      doc.save(`statistiques_${commune.replace(/ /g, '_')}.pdf`);
+
+    } catch (error) {
+      console.error('Erreur lors de la génération des statistiques:', error);
+      Swal.fire(
+        'Erreur',
+        'Impossible de générer les statistiques pour le moment.',
+        'error'
+      );
+    }
+  }
+
+  generateCertificate(name: string, score: number) {
+    const doc = new jsPDF('landscape');
+
+    // Style du certificat
+    doc.setDrawColor(0);
+    doc.setLineWidth(1);
+    doc.rect(10, 10, 280, 190);
+
+    // Logo
+    const img = new Image();
+    img.src = 'assets/vote.png';
+    img.onload = () => {
+      doc.addImage(img, 'PNG', 20, 20, 30, 30);
+
+      // Informations région/commune
+      const region = this.questionnaireForm.get('section1.region')?.value;
+      const commune = this.questionnaireForm.get('section1.commune')?.value;
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Région : ${region}`, 260, 25, { align: 'right' });
+      doc.text(`Commune : ${commune}`, 260, 35, { align: 'right' });
+
+      // Titre
+      doc.setFontSize(24);
+      doc.setFont('helvetica', 'bold');
+      doc.text(score >= 45 ? 'Certificat de Réussite' : 'Certificat de Participation', 105, 60, { align: 'center' });
+
+      // Sous-titre
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Questionnaire sur la sensibilisation à la corruption électorale', 105, 75, { align: 'center' });
+
+      // Numéro de certificat
+      doc.setFontSize(12);
+      const certificateNumber = `#CORR-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)}`;
+      doc.text(`Numéro de certificat : ${certificateNumber}`, 20, 100);
+
+      // Message selon le score
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      if (score >= 45) {
+        doc.text('Félicitations !', 20, 120);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Vous avez démontré une excellente compréhension des enjeux liés à la corruption électorale.', 20, 130);
+        doc.text('Votre engagement est essentiel pour préserver la démocratie et l\'intégrité des élections.', 20, 140);
+      } else if (score >= 30) {
+        doc.text('Bon travail !', 20, 120);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Vous avez une bonne compréhension des enjeux, mais il reste des aspects à approfondir.', 20, 130);
+        doc.text('Nous vous encourageons à continuer à vous informer sur le sujet.', 20, 140);
+      } else {
+        doc.text('Merci pour votre participation !', 20, 120);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Votre score indique que vous pourriez bénéficier de plus d\'informations sur la corruption électorale.', 20, 130);
+        doc.text('Nous vous encourageons à consulter nos ressources éducatives.', 20, 140);
+      }
+
+      // Informations participant
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Nom du participant : ${name}`, 20, 170);
+      doc.text(`Score obtenu : ${score} / 97`, 20, 180);
+      doc.text(`Date de délivrance : ${new Date().toLocaleDateString('fr-FR')}`, 20, 190);
+
+      // Sauvegarde du PDF
+      doc.save(`certificat_${name.replace(/ /g, '_')}.pdf`);
+    };
   }
 
   async saveToFirebase(email: string, data: any) {
@@ -524,61 +724,307 @@ export class QuestionnaireComponent implements OnInit {
     this.totalScore = score;
   }
 
-  generateCertificate(name: string, score: number) {
-    const doc = new jsPDF('landscape');
 
-    doc.setDrawColor(0);
-    doc.setLineWidth(1);
-    doc.rect(10, 10, 280, 190);
 
-    const img = new Image();
-    img.src = 'assets/vote.png';
-    img.onload = () => {
-      doc.addImage(img, 'PNG', 20, 20, 30, 30);
+  generateSummaryPdf(name: string) {
+    const doc = new jsPDF();
 
-      const region = this.questionnaireForm.get('section1.region')?.value;
-      const commune = this.questionnaireForm.get('section1.commune')?.value;
+    // Configuration de base
+    const margin = 15;
+    let yPosition = 20;
+    const lineHeight = 7;
+    const pageHeight = doc.internal.pageSize.height - margin;
 
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Région : ${region}`, 260, 25, { align: 'right' });
-      doc.text(`Commune : ${commune}`, 260, 35, { align: 'right' });
+    // Style du titre
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Récapitulatif de vos réponses', margin, yPosition);
+    yPosition += lineHeight * 2;
 
-      doc.setFontSize(24);
-      doc.setFont('helvetica', 'bold');
-      doc.text(score >= 45 ? 'Certificat de Réussite' : 'Certificat d\'Échec', 105, 60, { align: 'center' });
+    // Informations personnelles
+    doc.setFontSize(14);
+    doc.text('Informations personnelles', margin, yPosition);
+    yPosition += lineHeight;
 
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'normal');
-      doc.text('Questionnaire sur la sensibilisation à la corruption électorale', 105, 75, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    const section1 = this.questionnaireForm.get('section1')?.value;
+    doc.text(`- Âge: ${section1.age || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+    doc.text(`- Genre: ${section1.gender || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+    doc.text(`- Région: ${section1.region || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+    doc.text(`- Commune: ${section1.commune || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight * 2;
 
-      doc.setFontSize(12);
-      const certificateNumber = `#CORR-2023-${Math.floor(Math.random() * 10000)}`;
-      doc.text(`Numéro de certificat : ${certificateNumber}`, 20, 100);
+    // Vérification de la position pour saut de page
+    if (yPosition > pageHeight - 50) {
+      doc.addPage();
+      yPosition = margin;
+    }
 
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      if (score >= 45) {
-        doc.text('Félicitations !', 20, 120);
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.text('Vous avez démontré une compréhension approfondie des enjeux liés à la corruption électorale.', 20, 130);
-        doc.text('Votre engagement est essentiel pour préserver la transparence et l\'intégrité dans les processus démocratiques.', 20, 140);
-      } else {
-        doc.text('Nous vous remercions pour votre participation.', 20, 120);
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.text('Votre score indique que vous avez besoin de plus d\'informations et de sensibilisation sur la corruption électorale.', 20, 130);
-        doc.text('Nous vous encourageons à vous renseigner davantage pour contribuer à une démocratie plus juste et équitable.', 20, 140);
+    // Section 2 - Connaissances
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Section 2: Connaissances sur la corruption', margin, yPosition);
+    yPosition += lineHeight;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    const section2 = this.questionnaireForm.get('section2')?.value;
+
+    // Types de corruption
+    const corruptionTypes = this.corruptionTypesArray.value.map((val : any )=> {
+      const option = this.corruptionOptions.find(o => o.value === val);
+      return option ? option.label : val;
+    });
+
+    doc.text('- Types de corruption identifiés:', margin + 5, yPosition);
+    yPosition += lineHeight;
+
+    corruptionTypes.forEach((type :any)=> {
+      if (yPosition > pageHeight - 20) {
+        doc.addPage();
+        yPosition = margin;
       }
+      doc.text(`  • ${type}`, margin + 10, yPosition);
+      yPosition += lineHeight;
+    });
 
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Nom du participant : ${name}`, 20, 170);
-      doc.text(`Score obtenu : ${score} / 97`, 20, 180);
-      doc.text(`Date de délivrance : ${new Date().toLocaleDateString()}`, 20, 190);
+    if (section2.otherCorruptionDescription) {
+      doc.text(`  • Autre: ${section2.otherCorruptionDescription}`, margin + 10, yPosition);
+      yPosition += lineHeight;
+    }
 
-      doc.save(`certificat_${name.replace(/ /g, '_')}.pdf`);
-    };
+    doc.text(`- Problème de corruption: ${section2.electoralCorruptionProblem || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+    doc.text(`- Connaissance des lois: ${section2.knowledgeAboutLaws || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight * 2;
+
+    // Vérification de la position pour saut de page
+    if (yPosition > pageHeight - 50) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    // Section 3 - Expériences
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Section 3: Expériences personnelles', margin, yPosition);
+    yPosition += lineHeight;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    const section3 = this.questionnaireForm.get('section3')?.value;
+
+    doc.text(`- Expérience de corruption: ${section3.corruptionExperience || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+
+    if (section3.corruptionDescription) {
+      const descriptionLines = doc.splitTextToSize(section3.corruptionDescription, 180);
+      doc.text('- Description:', margin + 5, yPosition);
+      yPosition += lineHeight;
+
+      descriptionLines.forEach((line: string) => {
+        if (yPosition > pageHeight - 20) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(`  ${line}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      });
+    }
+
+    doc.text(`- Incitation à voter: ${section3.voteIncentive || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+    doc.text(`- Pression pour voter: ${section3.votingPressure || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight * 2;
+
+    // Vérification de la position pour saut de page
+    if (yPosition > pageHeight - 50) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    // Section 4 - Questions spécifiques
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Section 4: Questions spécifiques', margin, yPosition);
+    yPosition += lineHeight;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    const section4 = this.questionnaireForm.get('section4')?.value;
+
+    if (section4.moneyGivenAmount) {
+      doc.text(`- Montant reçu/proposé: ${section4.moneyGivenAmount}`, margin + 5, yPosition);
+      yPosition += lineHeight;
+    }
+
+    doc.text(`- Vente de vote: ${section4.sellVote || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+
+    if (section4.moneyForVote) {
+      doc.text(`- Montant demandé pour vote: ${section4.moneyForVote}`, margin + 5, yPosition);
+      yPosition += lineHeight;
+    }
+
+    // Personnes corruptrices
+    if (this.corruptPersonsArray.value.length > 0) {
+      doc.text('- Personnes ayant tenté de vous corrompre:', margin + 5, yPosition);
+      yPosition += lineHeight;
+
+      this.corruptPersonsArray.value.forEach((person: string) => {
+        if (yPosition > pageHeight - 20) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(`  • ${person}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      });
+
+      if (section4.otherCorruptPerson) {
+        doc.text(`  • Autre: ${section4.otherCorruptPerson}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      }
+    }
+    yPosition += lineHeight;
+
+    // Vérification de la position pour saut de page
+    if (yPosition > pageHeight - 50) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    // Section 5 - Alternatives
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Section 5: Alternatives à la corruption', margin, yPosition);
+    yPosition += lineHeight;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    const section5 = this.questionnaireForm.get('section5')?.value;
+
+    if (this.alternativeOptionsArray.value.length > 0) {
+      doc.text('- Alternatives choisies:', margin + 5, yPosition);
+      yPosition += lineHeight;
+
+      this.alternativeOptionsArray.value.forEach((option: string) => {
+        const opt = this.alternativeOptions.find(o => o.value === option);
+        if (yPosition > pageHeight - 20) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(`  • ${opt?.label || option}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      });
+
+      if (section5.alternativeOptionsDescription) {
+        doc.text(`  • Autre: ${section5.alternativeOptionsDescription}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      }
+    }
+
+    doc.text(`- Besoin d'aide: ${section5.needHelp || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+    doc.text(`- Refus de corruption: ${section5.willingToRefuseCorruption || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight * 2;
+
+    // Vérification de la position pour saut de page
+    if (yPosition > pageHeight - 50) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    // Section 6 - Sensibilisation
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Section 6: Sensibilisation', margin, yPosition);
+    yPosition += lineHeight;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    const section6 = this.questionnaireForm.get('section6')?.value;
+
+    doc.text(`- Intention de voter: ${section6.intentionVoter || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+
+    if (this.nonVoteReasonsArray.value.length > 0) {
+      doc.text('- Raisons de non-vote:', margin + 5, yPosition);
+      yPosition += lineHeight;
+
+      this.nonVoteReasonsArray.value.forEach((reason: string) => {
+        const opt = this.nonVoteReasons.find(o => o.value === reason);
+        if (yPosition > pageHeight - 20) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(`  • ${opt?.label || reason}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      });
+    }
+
+    doc.text(`- Impact de la corruption: ${section6.impactCorruption || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+
+    if (this.encourageVoteOptionsArray.value.length > 0) {
+      doc.text('- Actions pour encourager le vote libre:', margin + 5, yPosition);
+      yPosition += lineHeight;
+
+      this.encourageVoteOptionsArray.value.forEach((option: string) => {
+        const opt = this.encourageVoteOptions.find(o => o.value === option);
+        if (yPosition > pageHeight - 20) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(`  • ${opt?.label || option}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      });
+    }
+    yPosition += lineHeight;
+
+    // Vérification de la position pour saut de page
+    if (yPosition > pageHeight - 50) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    // Section 7 - Évaluation
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Section 7: Évaluation du questionnaire', margin, yPosition);
+    yPosition += lineHeight;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    const section7 = this.questionnaireForm.get('section7')?.value;
+
+    doc.text(`- Questionnaire utile: ${section7.questionnaireHelpful || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+    doc.text(`- Intention de vote libre: ${section7.intentionVoteLibre || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+    doc.text(`- Type de candidature: ${section7.candidatureType || 'Non spécifié'}`, margin + 5, yPosition);
+    yPosition += lineHeight;
+
+    if (section7.needHelpForCandidature) {
+      doc.text(`- Besoin d'aide pour candidature: ${section7.needHelpForCandidature}`, margin + 5, yPosition);
+      yPosition += lineHeight;
+    }
+
+    // Score total
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Score total: ${this.totalScore}/97`, margin, yPosition + 10);
+
+    // Pied de page
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text('Généré le ' + new Date().toLocaleDateString('fr-FR'), margin, doc.internal.pageSize.height - 10);
+
+    // Sauvegarde du PDF
+    doc.save(`recapitulatif_${name.replace(/ /g, '_')}.pdf`);
   }
+
 }
