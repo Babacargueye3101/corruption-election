@@ -398,100 +398,103 @@
                 </div>
             </div>
 
-            <!-- Raisons Non Voter -->
-            <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.value === 'Non' || questionnaireForm.get('section6.intentionVoter')?.value === 'Je ne sais pas'"
-                class="form-group">
-                <label class="block text-lg font-medium text-gray-700">Si vous ne votez pas, quelles en sont les raisons principales ?</label>
-                <select formControlName="raisonsNonVoter"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Sélectionnez une réponse</option>
-                    <option value="Manque de confiance dans les politiciens">Manque de confiance dans les politiciens</option>
-                    <option value="Manque d'informations sur les enjeux électoraux">Manque d'informations sur les enjeux électoraux</option>
-                    <option value="Sentiment que votre vote ne compte pas">Sentiment que votre vote ne compte pas</option>
-                    <option value="Corruption électorale">Corruption électorale</option>
-                    <option value="Manque d'intérêt pour la politique">Manque d'intérêt pour la politique</option>
-                    <option value="Manque de représentativité des candidats">Manque de représentativité des candidats</option>
-                    <option value="Inutilité du vote">Inutilité du vote</option>
-                    <option value="Obstacles pratiques (déplacement, absence, etc.)">Obstacles pratiques (déplacement, absence, etc.)</option>
-                    <option value="Autre">Autre (précisez)</option>
-                </select>
-                <div *ngIf="questionnaireForm.get('section6.raisonsNonVoter')?.value === 'Autre'" class="mt-2">
-                    <input type="text" formControlName="autreRaisonNonVoter" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            <!-- Afficher les autres questions seulement si intentionVoter n'est pas "Oui" -->
+            <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.value !== 'Oui'">
+                <!-- Raisons Non Voter -->
+                <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.value === 'Non' || questionnaireForm.get('section6.intentionVoter')?.value === 'Je ne sais pas'"
+                    class="form-group">
+                    <label class="block text-lg font-medium text-gray-700">Si vous ne votez pas, quelles en sont les raisons principales ?</label>
+                    <select formControlName="raisonsNonVoter"
+                        class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Sélectionnez une réponse</option>
+                        <option value="Manque de confiance dans les politiciens">Manque de confiance dans les politiciens</option>
+                        <option value="Manque d'informations sur les enjeux électoraux">Manque d'informations sur les enjeux électoraux</option>
+                        <option value="Sentiment que votre vote ne compte pas">Sentiment que votre vote ne compte pas</option>
+                        <option value="Corruption électorale">Corruption électorale</option>
+                        <option value="Manque d'intérêt pour la politique">Manque d'intérêt pour la politique</option>
+                        <option value="Manque de représentativité des candidats">Manque de représentativité des candidats</option>
+                        <option value="Inutilité du vote">Inutilité du vote</option>
+                        <option value="Obstacles pratiques (déplacement, absence, etc.)">Obstacles pratiques (déplacement, absence, etc.)</option>
+                        <option value="Autre">Autre (précisez)</option>
+                    </select>
+                    <div *ngIf="questionnaireForm.get('section6.raisonsNonVoter')?.value === 'Autre'" class="mt-2">
+                        <input type="text" formControlName="autreRaisonNonVoter" placeholder="Précisez"
+                            class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    </div>
                 </div>
-            </div>
 
-            <!-- Aide Obstacles Pratiques -->
-            <div *ngIf="questionnaireForm.get('section6.raisonsNonVoter')?.value === 'Obstacles pratiques (déplacement, absence, etc.)'"
-                class="form-group">
-                <label class="block text-lg font-medium text-gray-700">Si vous avez choisi Obstacles pratiques, pensez-vous avoir besoin d'aide pour y remédier ?</label>
-                <select formControlName="aideObstaclesPratiques"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Sélectionnez une réponse</option>
-                    <option value="Oui">Oui (5 points)</option>
-                    <option value="Non">Non (0 point)</option>
-                    <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
-                </select>
-            </div>
-
-            <!-- Impact Corruption -->
-            <div class="form-group">
-                <label class="block text-lg font-medium text-gray-700">Saviez-vous que la corruption électorale peut fausser les résultats des élections et avoir un impact direct sur votre avenir ?</label>
-                <select formControlName="impactCorruption"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    [ngClass]="{'border-red-500': questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)}">
-                    <option value="">Sélectionnez une réponse</option>
-                    <option value="Oui">Oui (5 points)</option>
-                    <option value="Non">Non (0 point)</option>
-                    <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
-                </select>
-                <div *ngIf="questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-                    Ce champ est obligatoire
+                <!-- Aide Obstacles Pratiques -->
+                <div *ngIf="questionnaireForm.get('section6.raisonsNonVoter')?.value === 'Obstacles pratiques (déplacement, absence, etc.)'"
+                    class="form-group">
+                    <label class="block text-lg font-medium text-gray-700">Si vous avez choisi Obstacles pratiques, pensez-vous avoir besoin d'aide pour y remédier ?</label>
+                    <select formControlName="aideObstaclesPratiques"
+                        class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Sélectionnez une réponse</option>
+                        <option value="Oui">Oui (5 points)</option>
+                        <option value="Non">Non (0 point)</option>
+                        <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+                    </select>
                 </div>
-            </div>
 
-            <!-- Impacts Corruption Details -->
-            <div *ngIf="questionnaireForm.get('section6.impactCorruption')?.value === 'Non'" class="form-group">
-                <label class="block text-lg font-medium text-gray-700">Selon vous, quels impacts pourraient avoir des conséquences dans votre vie ?</label>
-                <select formControlName="impactsCorruptionDetails"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Sélectionnez une réponse</option>
-                    <option value="Détérioration des services publics (hôpitaux sous-équipés, pénuries de médicaments)">Détérioration des services publics (hôpitaux sous-équipés, pénuries de médicaments)</option>
-                    <option value="Détérioration des services publics (écoles délabrées, manque de matériel pédagogique)">Détérioration des services publics (écoles délabrées, manque de matériel pédagogique)</option>
-                    <option value="Détérioration des services publics (travaux de mauvaise qualité, risques pour la sécurité)">Détérioration des services publics (travaux de mauvaise qualité, risques pour la sécurité)</option>
-                    <option value="Inégalités sociales et économiques (favoritisme envers les riches)">Inégalités sociales et économiques (favoritisme envers les riches)</option>
-                    <option value="Inégalités sociales et économiques (détournement des programmes sociaux)">Inégalités sociales et économiques (détournement des programmes sociaux)</option>
-                    <option value="Insécurité et injustice (décisions de justice influencées)">Insécurité et injustice (décisions de justice influencées)</option>
-                    <option value="Insécurité et injustice (forces de l'ordre illégales)">Insécurité et injustice (forces de l'ordre illégales)</option>
-                    <option value="Perte de confiance dans les institutions (abstention électorale)">Perte de confiance dans les institutions (abstention électorale)</option>
-                    <option value="Perte de confiance dans les institutions (résignation)">Perte de confiance dans les institutions (résignation)</option>
-                    <option value="Impact économique (vie chère, monopoles)">Impact économique (vie chère, monopoles)</option>
-                    <option value="Impact économique (découragement des investissements)">Impact économique (découragement des investissements)</option>
-                    <option value="Impact sur l'environnement (exploitation illégale des ressources)">Impact sur l'environnement (exploitation illégale des ressources)</option>
-                    <option value="Impact sur l'environnement (pollution de l'air, de l'eau)">Impact sur l'environnement (pollution de l'air, de l'eau)</option>
-                    <option value="Autre">Autre (précisez)</option>
-                </select>
-                <div *ngIf="questionnaireForm.get('section6.impactsCorruptionDetails')?.value === 'Autre'" class="mt-2">
-                    <input type="text" formControlName="autreImpactCorruption" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <!-- Impact Corruption -->
+                <div class="form-group">
+                    <label class="block text-lg font-medium text-gray-700">Saviez-vous que la corruption électorale peut fausser les résultats des élections et avoir un impact direct sur votre avenir ?</label>
+                    <select formControlName="impactCorruption"
+                        class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        [ngClass]="{'border-red-500': questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)}">
+                        <option value="">Sélectionnez une réponse</option>
+                        <option value="Oui">Oui (5 points)</option>
+                        <option value="Non">Non (0 point)</option>
+                        <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+                    </select>
+                    <div *ngIf="questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+                        Ce champ est obligatoire
+                    </div>
                 </div>
-            </div>
 
-            <!-- Encourager Vote Libre -->
-            <div class="form-group">
-                <label class="block text-lg font-medium text-gray-700">Que pourriez-vous faire pour encourager un vote libre et indépendant ?</label>
-                <select formControlName="encouragerVoteLibre"
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Sélectionnez une réponse</option>
-                    <option value="Sensibiliser votre entourage">Sensibiliser votre entourage (2 points)</option>
-                    <option value="Participer à des initiatives de surveillance électorale">Participer à des initiatives de surveillance électorale (2 points)</option>
-                    <option value="Voter en toute conscience, sans pression">Voter en toute conscience, sans pression (2 points)</option>
-                    <option value="Autre">Autre (précisez)</option>
-                    <option value="Rien">Rien (0 point)</option>
-                </select>
-                <div *ngIf="questionnaireForm.get('section6.encouragerVoteLibre')?.value === 'Autre'" class="mt-2">
-                    <input type="text" formControlName="autreEncouragerVoteLibre" placeholder="Précisez"
-                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <!-- Impacts Corruption Details -->
+                <div *ngIf="questionnaireForm.get('section6.impactCorruption')?.value === 'Non'" class="form-group">
+                    <label class="block text-lg font-medium text-gray-700">Selon vous, quels impacts pourraient avoir des conséquences dans votre vie ?</label>
+                    <select formControlName="impactsCorruptionDetails"
+                        class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Sélectionnez une réponse</option>
+                        <option value="Détérioration des services publics (hôpitaux sous-équipés, pénuries de médicaments)">Détérioration des services publics (hôpitaux sous-équipés, pénuries de médicaments)</option>
+                        <option value="Détérioration des services publics (écoles délabrées, manque de matériel pédagogique)">Détérioration des services publics (écoles délabrées, manque de matériel pédagogique)</option>
+                        <option value="Détérioration des services publics (travaux de mauvaise qualité, risques pour la sécurité)">Détérioration des services publics (travaux de mauvaise qualité, risques pour la sécurité)</option>
+                        <option value="Inégalités sociales et économiques (favoritisme envers les riches)">Inégalités sociales et économiques (favoritisme envers les riches)</option>
+                        <option value="Inégalités sociales et économiques (détournement des programmes sociaux)">Inégalités sociales et économiques (détournement des programmes sociaux)</option>
+                        <option value="Insécurité et injustice (décisions de justice influencées)">Insécurité et injustice (décisions de justice influencées)</option>
+                        <option value="Insécurité et injustice (forces de l'ordre illégales)">Insécurité et injustice (forces de l'ordre illégales)</option>
+                        <option value="Perte de confiance dans les institutions (abstention électorale)">Perte de confiance dans les institutions (abstention électorale)</option>
+                        <option value="Perte de confiance dans les institutions (résignation)">Perte de confiance dans les institutions (résignation)</option>
+                        <option value="Impact économique (vie chère, monopoles)">Impact économique (vie chère, monopoles)</option>
+                        <option value="Impact économique (découragement des investissements)">Impact économique (découragement des investissements)</option>
+                        <option value="Impact sur l'environnement (exploitation illégale des ressources)">Impact sur l'environnement (exploitation illégale des ressources)</option>
+                        <option value="Impact sur l'environnement (pollution de l'air, de l'eau)">Impact sur l'environnement (pollution de l'air, de l'eau)</option>
+                        <option value="Autre">Autre (précisez)</option>
+                    </select>
+                    <div *ngIf="questionnaireForm.get('section6.impactsCorruptionDetails')?.value === 'Autre'" class="mt-2">
+                        <input type="text" formControlName="autreImpactCorruption" placeholder="Précisez"
+                            class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Encourager Vote Libre -->
+                <div class="form-group">
+                    <label class="block text-lg font-medium text-gray-700">Que pourriez-vous faire pour encourager un vote libre et indépendant ?</label>
+                    <select formControlName="encouragerVoteLibre"
+                        class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Sélectionnez une réponse</option>
+                        <option value="Sensibiliser votre entourage">Sensibiliser votre entourage (2 points)</option>
+                        <option value="Participer à des initiatives de surveillance électorale">Participer à des initiatives de surveillance électorale (2 points)</option>
+                        <option value="Voter en toute conscience, sans pression">Voter en toute conscience, sans pression (2 points)</option>
+                        <option value="Autre">Autre (précisez)</option>
+                        <option value="Rien">Rien (0 point)</option>
+                    </select>
+                    <div *ngIf="questionnaireForm.get('section6.encouragerVoteLibre')?.value === 'Autre'" class="mt-2">
+                        <input type="text" formControlName="autreEncouragerVoteLibre" placeholder="Précisez"
+                            class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    </div>
                 </div>
             </div>
         </div>

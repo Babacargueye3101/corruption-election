@@ -128,16 +128,30 @@ export class QuestionnaireComponent implements OnInit {
 
     if (this.getCurrentSectionGroup().valid) {
       if (this.currentSection < 7) {
-        // Logique spéciale pour la section 3
+        // Logique pour la section 3
         if (this.currentSection === 3) {
           const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
-          // Si réponse est "Non" ou "Ne pas répondre", sauter à la section 6
           if (corruptionExperience === 'Non' || corruptionExperience === 'Ne pas répondre') {
             this.currentSection = 6;
           } else {
             this.currentSection++;
           }
-        } else {
+        }
+        // Logique spéciale pour la section 6
+        else if (this.currentSection === 6) {
+          const intentionVoter = this.questionnaireForm.get('section6.intentionVoter')?.value;
+
+          // Si réponse est "Oui", passer directement à la section 7
+          if (intentionVoter === 'Oui') {
+            this.currentSection = 7;
+          }
+          // Sinon, continuer avec les autres questions de la section 6
+          else {
+            this.currentSection++;
+          }
+        }
+        // Pour toutes les autres sections
+        else {
           this.currentSection++;
         }
       }
@@ -153,8 +167,16 @@ export class QuestionnaireComponent implements OnInit {
 
   previousSection() {
     if (this.currentSection > 1) {
-      // Si on est à la section 6 et qu'on vient de la section 3, retourner à la section 3
-      if (this.currentSection === 6) {
+      // Si on est à la section 7 et qu'on vient de la section 6 avec un "Oui" à intentionVoter
+      if (this.currentSection === 7) {
+        const intentionVoter = this.questionnaireForm.get('section6.intentionVoter')?.value;
+        if (intentionVoter === 'Oui') {
+          this.currentSection = 6;
+          return;
+        }
+      }
+      // Si on est à la section 6 et qu'on vient de la section 3
+      else if (this.currentSection === 6) {
         const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
         if (corruptionExperience === 'Non' || corruptionExperience === 'Ne pas répondre') {
           this.currentSection = 3;
