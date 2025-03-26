@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { jsPDF } from 'jspdf';
 import Swal from 'sweetalert2';
 import { FirebaseService } from '../../../services/firebase.service';
@@ -22,17 +22,44 @@ export class QuestionnaireComponent implements OnInit {
   regions: any[] = [];
   communes: string[] = [];
 
+  // Options pour les sélections multiples
   corruptionOptions = [
-    { value: 'voteBuying', label: 'Achat de votes (2 points)' },
-    { value: 'resultFalsification', label: 'Falsification des résultats (2 points)' },
-    { value: 'voterIntimidation', label: 'Intimidation des électeurs (2 points)' },
-    { value: 'abuseOfPublicResources', label: 'Utilisation abusive des ressources publiques (2 points)' },
-    { value: 'renovationOfVotersHouses', label: 'Rénovation de la maison des électeurs (2 points)' },
-    { value: 'fuelExpenses', label: 'Prise en charge de frais de carburant (2 points)' },
-    { value: 'jobPromise', label: 'Promesse d\'emploi (2 points)' },
-    { value: 'subsidyToAssociations', label: 'Subvention versée à certaines associations (2 points)' },
-    { value: 'contractWithCollectivity', label: 'Obtention d\'un contrat avec la collectivité (2 points)' },
-    { value: 'otherCorruption', label: 'Autre (1 point)' }
+    { value: 'voteBuying', label: 'Achat de votes (2 points)', points: 2 },
+    { value: 'resultFalsification', label: 'Falsification des résultats (2 points)', points: 2 },
+    { value: 'voterIntimidation', label: 'Intimidation des électeurs (2 points)', points: 2 },
+    { value: 'abuseOfPublicResources', label: 'Utilisation abusive des ressources publiques (2 points)', points: 2 },
+    { value: 'renovationOfVotersHouses', label: 'Rénovation de la maison des électeurs (2 points)', points: 2 },
+    { value: 'fuelExpenses', label: 'Prise en charge de frais de carburant (2 points)', points: 2 },
+    { value: 'jobPromise', label: 'Promesse d\'emploi (2 points)', points: 2 },
+    { value: 'subsidyToAssociations', label: 'Subvention versée à certaines associations (2 points)', points: 2 },
+    { value: 'contractWithCollectivity', label: 'Obtention d\'un contrat avec la collectivité (2 points)', points: 2 },
+    { value: 'otherCorruption', label: 'Autre (1 point)', points: 1 }
+  ];
+
+  alternativeOptions = [
+    { value: 'job', label: 'Chercher un emploi ou une formation professionnelle', points: 2 },
+    { value: 'social', label: 'Participer à des programmes d\'aide sociale', points: 2 },
+    { value: 'report', label: 'Refuser les offres et signaler la corruption', points: 2 },
+    { value: 'other', label: 'Autre', points: 1 }
+  ];
+
+  nonVoteReasons = [
+    { value: 'no_trust', label: 'Manque de confiance dans les politiciens', points: 2 },
+    { value: 'no_info', label: 'Manque d\'informations sur les enjeux électoraux', points: 2 },
+    { value: 'no_impact', label: 'Sentiment que votre vote ne compte pas', points: 2 },
+    { value: 'corruption', label: 'Corruption électorale', points: 2 },
+    { value: 'no_interest', label: 'Manque d\'intérêt pour la politique', points: 2 },
+    { value: 'no_representation', label: 'Manque de représentativité des candidats', points: 2 },
+    { value: 'useless', label: 'Inutilité du vote', points: 2 },
+    { value: 'practical_obstacles', label: 'Obstacles pratiques (déplacement, absence, etc.)', points: 2 },
+    { value: 'other', label: 'Autre', points: 1 }
+  ];
+
+  encourageVoteOptions = [
+    { value: 'awareness', label: 'Sensibiliser votre entourage', points: 2 },
+    { value: 'monitoring', label: 'Participer à des initiatives de surveillance électorale', points: 2 },
+    { value: 'vote_free', label: 'Voter en toute conscience, sans pression', points: 2 },
+    { value: 'other', label: 'Autre', points: 1 }
   ];
 
   constructor(private fb: FormBuilder, private http: HttpClient, private firebaseService: FirebaseService) {
@@ -60,24 +87,23 @@ export class QuestionnaireComponent implements OnInit {
         voteValueEstimate: [''],
         sellVote: ['', Validators.required],
         moneyForVote: [''],
-        corruptPerson: [''],
+        corruptPersons: this.fb.array([], this.validateCorruptPersons()),
         otherCorruptPerson: ['']
       }),
       section5: this.fb.group({
-        alternativeOptions: ['', Validators.required],
+        alternativeOptions: this.fb.array([]),
         alternativeOptionsDescription: [''],
         needHelp: ['', Validators.required],
         willingToRefuseCorruption: ['', Validators.required]
       }),
       section6: this.fb.group({
         intentionVoter: ['', Validators.required],
-        raisonsNonVoter: [''],
-        autreRaisonNonVoter: [''],
+        nonVoteReasons: this.fb.array([]),
         aideObstaclesPratiques: [''],
         impactCorruption: ['', Validators.required],
         impactsCorruptionDetails: [''],
         autreImpactCorruption: [''],
-        encouragerVoteLibre: [''],
+        encourageVoteOptions: this.fb.array([]),
         autreEncouragerVoteLibre: ['']
       }),
       section7: this.fb.group({
@@ -89,10 +115,28 @@ export class QuestionnaireComponent implements OnInit {
     });
   }
 
+  // Méthodes pour gérer les FormArray
   get corruptionTypesArray(): FormArray {
     return this.questionnaireForm.get('section2.corruptionTypes') as FormArray;
   }
 
+  get corruptPersonsArray(): FormArray {
+    return this.questionnaireForm.get('section4.corruptPersons') as FormArray;
+  }
+
+  get alternativeOptionsArray(): FormArray {
+    return this.questionnaireForm.get('section5.alternativeOptions') as FormArray;
+  }
+
+  get nonVoteReasonsArray(): FormArray {
+    return this.questionnaireForm.get('section6.nonVoteReasons') as FormArray;
+  }
+
+  get encourageVoteOptionsArray(): FormArray {
+    return this.questionnaireForm.get('section6.encourageVoteOptions') as FormArray;
+  }
+
+  // Méthodes pour toggle les sélections
   toggleCorruptionType(value: string): void {
     const index = this.corruptionTypesArray.value.indexOf(value);
     if (index === -1) {
@@ -102,8 +146,78 @@ export class QuestionnaireComponent implements OnInit {
     }
   }
 
+  toggleCorruptPerson(value: string): void {
+    const index = this.corruptPersonsArray.value.indexOf(value);
+    if (index === -1) {
+      this.corruptPersonsArray.push(this.fb.control(value));
+    } else {
+      this.corruptPersonsArray.removeAt(index);
+    }
+
+    if (value === 'Autre' && !this.isCorruptPersonSelected('Autre')) {
+      this.questionnaireForm.get('section4.otherCorruptPerson')?.reset();
+    }
+  }
+
+  toggleAlternativeOption(value: string): void {
+    const index = this.alternativeOptionsArray.value.indexOf(value);
+    if (index === -1) {
+      this.alternativeOptionsArray.push(this.fb.control(value));
+    } else {
+      this.alternativeOptionsArray.removeAt(index);
+    }
+  }
+
+  toggleNonVoteReason(value: string): void {
+    const index = this.nonVoteReasonsArray.value.indexOf(value);
+    if (index === -1) {
+      this.nonVoteReasonsArray.push(this.fb.control(value));
+    } else {
+      this.nonVoteReasonsArray.removeAt(index);
+    }
+  }
+
+  toggleEncourageVoteOption(value: string): void {
+    const index = this.encourageVoteOptionsArray.value.indexOf(value);
+    if (index === -1) {
+      this.encourageVoteOptionsArray.push(this.fb.control(value));
+    } else {
+      this.encourageVoteOptionsArray.removeAt(index);
+    }
+  }
+
+  // Méthodes pour vérifier les sélections
   isCorruptionTypeSelected(value: string): boolean {
     return this.corruptionTypesArray.value.includes(value);
+  }
+
+  isCorruptPersonSelected(value: string): boolean {
+    return this.corruptPersonsArray.value.includes(value);
+  }
+
+  isAlternativeOptionSelected(value: string): boolean {
+    return this.alternativeOptionsArray.value.includes(value);
+  }
+
+  isNonVoteReasonSelected(value: string): boolean {
+    return this.nonVoteReasonsArray.value.includes(value);
+  }
+
+  isEncourageVoteOptionSelected(value: string): boolean {
+    return this.encourageVoteOptionsArray.value.includes(value);
+  }
+
+  // Validation personnalisée
+  validateCorruptPersons(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const sellVote = this.questionnaireForm?.get('section4.sellVote')?.value;
+      const corruptPersons = control as FormArray;
+
+      if (sellVote === 'Oui' && corruptPersons.length === 0) {
+        return { required: true };
+      }
+      return null;
+    };
   }
 
   ngOnInit(): void {
@@ -128,7 +242,7 @@ export class QuestionnaireComponent implements OnInit {
 
     if (this.getCurrentSectionGroup().valid) {
       if (this.currentSection < 7) {
-        // Logique pour la section 3
+        // Logique spéciale pour la section 3
         if (this.currentSection === 3) {
           const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
           if (corruptionExperience === 'Non' || corruptionExperience === 'Ne pas répondre') {
@@ -140,13 +254,9 @@ export class QuestionnaireComponent implements OnInit {
         // Logique spéciale pour la section 6
         else if (this.currentSection === 6) {
           const intentionVoter = this.questionnaireForm.get('section6.intentionVoter')?.value;
-
-          // Si réponse est "Oui", passer directement à la section 7
           if (intentionVoter === 'Oui') {
             this.currentSection = 7;
-          }
-          // Sinon, continuer avec les autres questions de la section 6
-          else {
+          } else {
             this.currentSection++;
           }
         }
@@ -274,13 +384,10 @@ export class QuestionnaireComponent implements OnInit {
     let score = 0;
 
     // Section 2
-    const corruptionTypes = this.questionnaireForm.get('section2.corruptionTypes')?.value;
-    if (corruptionTypes && corruptionTypes.length > 0) {
-      score += Math.min(corruptionTypes.length * 2, 8);
-      if (corruptionTypes.includes('otherCorruption')) {
-        score += 1;
-      }
-    }
+    this.corruptionTypesArray.value.forEach((val: string) => {
+      const option = this.corruptionOptions.find(o => o.value === val);
+      if (option) score += option.points;
+    });
 
     const electoralCorruptionProblem = this.questionnaireForm.get('section2.electoralCorruptionProblem')?.value;
     if (electoralCorruptionProblem === 'Oui') {
@@ -327,12 +434,10 @@ export class QuestionnaireComponent implements OnInit {
     }
 
     // Section 5
-    const alternativeOptions = this.questionnaireForm.get('section5.alternativeOptions')?.value;
-    if (alternativeOptions === 'Chercher un emploi ou une formation professionnelle' ||
-        alternativeOptions === 'Participer à des programmes d\'aide sociale' ||
-        alternativeOptions === 'Refuser les offres et signaler la corruption') {
-      score += 2;
-    }
+    this.alternativeOptionsArray.value.forEach((val: string) => {
+      const option = this.alternativeOptions.find(o => o.value === val);
+      if (option) score += option.points;
+    });
 
     const needHelp = this.questionnaireForm.get('section5.needHelp')?.value;
     if (needHelp === 'Oui') {
@@ -356,6 +461,11 @@ export class QuestionnaireComponent implements OnInit {
       score += 1;
     }
 
+    this.nonVoteReasonsArray.value.forEach((val: string) => {
+      const option = this.nonVoteReasons.find(o => o.value === val);
+      if (option) score += option.points;
+    });
+
     const aideObstaclesPratiques = this.questionnaireForm.get('section6.aideObstaclesPratiques')?.value;
     if (aideObstaclesPratiques === 'Oui') {
       score += 5;
@@ -370,12 +480,10 @@ export class QuestionnaireComponent implements OnInit {
       score += 1;
     }
 
-    const encouragerVoteLibre = this.questionnaireForm.get('section6.encouragerVoteLibre')?.value;
-    if (encouragerVoteLibre === 'Sensibiliser votre entourage' ||
-        encouragerVoteLibre === 'Participer à des initiatives de surveillance électorale' ||
-        encouragerVoteLibre === 'Voter en toute conscience, sans pression') {
-      score += 2;
-    }
+    this.encourageVoteOptionsArray.value.forEach((val: string) => {
+      const option = this.encourageVoteOptions.find(o => o.value === val);
+      if (option) score += option.points;
+    });
 
     // Section 7
     const questionnaireHelpful = this.questionnaireForm.get('section7.questionnaireHelpful')?.value;
