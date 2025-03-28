@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc, serverTimestamp, query, where, getDocs, getCountFromServer } from '@angular/fire/firestore';
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, orderBy } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -151,6 +151,31 @@ export class FirebaseService {
     } catch (e: any) {
       console.error("Erreur Firebase:", e);
       throw new Error(`Échec de l'enregistrement du message: ${e.message}`);
+    }
+  }
+
+  async getContactMessages() {
+    try {
+      const q = query(
+        collection(this.firestore, 'contactMessages'),
+        orderBy('createdAt', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: data['name'],
+          email: data['email'],
+          message: data['message'],
+          createdAt: data['createdAt']?.toDate() || new Date(),
+          status: data['status'] || 'new'
+        };
+      });
+    } catch (e) {
+      console.error("Erreur lors de la récupération des messages:", e);
+      throw new Error('Failed to fetch messages');
     }
   }
 }

@@ -1,0 +1,75 @@
+<div class="min-h-screen bg-gray-50 p-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Messages reçus</h1>
+
+        <div class="flex space-x-2">
+            <button mat-stroked-button [class.bg-indigo-600]="filterStatus === 'all'"
+                    (click)="changeFilter('all')" class="text-sm">
+              Tous ({{messages?.length || 0}})
+            </button>
+            <button mat-stroked-button [class.bg-blue-600]="filterStatus === 'new'"
+                    (click)="changeFilter('new')" class="text-sm">
+              Nouveaux ({{getNewMessagesCount()}})
+            </button>
+            <button mat-stroked-button [class.bg-green-600]="filterStatus === 'read'"
+                    (click)="changeFilter('read')" class="text-sm">
+              Lus ({{getReadMessagesCount()}})
+            </button>
+            <button mat-stroked-button [class.bg-gray-600]="filterStatus === 'archived'"
+                    (click)="changeFilter('archived')" class="text-sm">
+              Archivés ({{getArchivedMessagesCount()}})
+            </button>
+          </div>
+      </div>
+
+      <!-- Loading state -->
+      <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!isLoading && filteredMessages.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
+        <mat-icon class="text-gray-400 text-5xl mb-4">email</mat-icon>
+        <h3 class="text-lg font-medium text-gray-600">Aucun message trouvé</h3>
+        <p class="text-gray-500 mt-2">Aucun message ne correspond à votre filtre</p>
+      </div>
+
+      <!-- Messages grid -->
+      <div *ngIf="!isLoading && filteredMessages.length > 0" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <mat-card *ngFor="let msg of filteredMessages" class="hover:shadow-lg transition-shadow">
+          <mat-card-header>
+            <div mat-card-avatar class="bg-indigo-100 text-indigo-600 rounded-full w-10 h-10 flex items-center justify-center">
+              {{msg.name.charAt(0)}}
+            </div>
+            <mat-card-title class="text-lg">{{msg.name}}</mat-card-title>
+            <mat-card-subtitle class="flex items-center mt-1">
+              <span class="text-sm text-gray-500">{{msg.email}}</span>
+              <span class="ml-2 text-xs px-2 py-1 rounded-full {{getStatusColor(msg.status)}}">
+                {{msg.status === 'new' ? 'Nouveau' : msg.status === 'read' ? 'Lu' : 'Archivé'}}
+              </span>
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content class="mt-4">
+            <p class="text-gray-700 line-clamp-3">{{msg.message}}</p>
+            <div class="mt-4 text-xs text-gray-400">
+              Reçu le {{msg.createdAt | date:'medium'}}
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions class="flex justify-end space-x-2">
+            <button mat-icon-button matTooltip="Marquer comme lu">
+              <mat-icon>mark_email_read</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Archiver">
+              <mat-icon>archive</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Répondre">
+              <mat-icon>reply</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
