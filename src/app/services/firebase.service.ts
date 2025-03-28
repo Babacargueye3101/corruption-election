@@ -136,4 +136,21 @@ export class FirebaseService {
       };
     }
   }
+
+  // Ajoutez cette nouvelle méthode pour sauvegarder les messages de contact
+  async saveContactMessage(contactData: any): Promise<string> {
+    try {
+      const docRef = await addDoc(collection(this.firestore, 'contactMessages'), {
+        name: contactData.name,
+        email: contactData.email,
+        message: contactData.message,
+        createdAt: serverTimestamp(),
+        status: 'new'
+      });
+      return docRef.id;
+    } catch (e: any) {
+      console.error("Erreur Firebase:", e);
+      throw new Error(`Échec de l'enregistrement du message: ${e.message}`);
+    }
+  }
 }
