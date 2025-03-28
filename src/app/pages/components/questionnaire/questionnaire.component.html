@@ -72,7 +72,7 @@
       <div class="flex justify-between mt-8">
         <button type="button" (click)="nextSection()"
           class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Suivant
+          Suivant →
         </button>
       </div>
     </div>
@@ -99,7 +99,7 @@
               </div>
               <div class="ml-3 text-sm">
                 <label [for]="'corruptionType-' + option.value" class="font-medium text-gray-700">
-                  {{ option.label }} ({{ option.points }} points)
+                  {{ option.label }}
                 </label>
               </div>
             </div>
@@ -121,9 +121,9 @@
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section2.electoralCorruptionProblem')?.invalid && (questionnaireForm.get('section2.electoralCorruptionProblem')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (3 points)</option>
-            <option value="Non">Non (0 point)</option>
-            <option value="Ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non</option>
+            <option value="Ne sais pas">Je ne sais pas </option>
           </select>
           <div *ngIf="questionnaireForm.get('section2.electoralCorruptionProblem')?.invalid && (questionnaireForm.get('section2.electoralCorruptionProblem')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -137,9 +137,9 @@
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section2.knowledgeAboutLaws')?.invalid && (questionnaireForm.get('section2.knowledgeAboutLaws')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Très informé">Très informé(e) (5 points)</option>
-            <option value="Un peu informé">Un peu informé(e) (3 points)</option>
-            <option value="Pas informé">Pas du tout informé(e) (0 point)</option>
+            <option value="Très informé">Très informé(e) </option>
+            <option value="Un peu informé">Un peu informé(e) </option>
+            <option value="Pas informé">Pas du tout informé(e) </option>
           </select>
           <div *ngIf="questionnaireForm.get('section2.knowledgeAboutLaws')?.invalid && (questionnaireForm.get('section2.knowledgeAboutLaws')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -150,11 +150,11 @@
       <div class="flex justify-between mt-8">
         <button type="button" (click)="previousSection()"
           class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Précédent
+          ← Précédent
         </button>
         <button type="button" (click)="nextSection()"
           class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Suivant
+          Suivant →
         </button>
       </div>
     </div>
@@ -172,9 +172,9 @@
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section3.corruptionExperience')?.invalid && (questionnaireForm.get('section3.corruptionExperience')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une option</option>
-            <option value="Oui">Oui (0 point)</option>
-            <option value="Non">Non (5 points)</option>
-            <option value="Ne pas répondre">Je préfère ne pas répondre (2 points)</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+            <option value="Ne pas répondre">Je préfère ne pas répondre</option>
           </select>
           <div *ngIf="questionnaireForm.get('section3.corruptionExperience')?.invalid && (questionnaireForm.get('section3.corruptionExperience')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -195,9 +195,9 @@
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section3.voteIncentive')?.invalid && (questionnaireForm.get('section3.voteIncentive')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une option</option>
-            <option value="Oui">Oui (0 point)</option>
-            <option value="Non">Non (5 points)</option>
-            <option value="Ne pas répondre">Je préfère ne pas répondre (2 points)</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+            <option value="Ne pas répondre">Je préfère ne pas répondre </option>
           </select>
           <div *ngIf="questionnaireForm.get('section3.voteIncentive')?.invalid && (questionnaireForm.get('section3.voteIncentive')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -211,9 +211,9 @@
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section3.votingPressure')?.invalid && (questionnaireForm.get('section3.votingPressure')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une option</option>
-            <option value="Oui">Oui (0 point)</option>
-            <option value="Non">Non (5 points)</option>
-            <option value="Ne pas répondre">Je préfère ne pas répondre (2 points)</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+            <option value="Ne pas répondre">Je préfère ne pas répondre</option>
           </select>
           <div *ngIf="questionnaireForm.get('section3.votingPressure')?.invalid && (questionnaireForm.get('section3.votingPressure')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -224,11 +224,11 @@
       <div class="flex justify-between mt-8">
         <button type="button" (click)="previousSection()"
           class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Précédent
+          ← Précédent
         </button>
         <button type="button" (click)="nextSection()"
           class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Suivant
+           Suivant →
         </button>
       </div>
     </div>
@@ -254,9 +254,9 @@
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section4.sellVote')?.invalid && (questionnaireForm.get('section4.sellVote')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une option</option>
-            <option value="Oui">Oui (0 point)</option>
-            <option value="Non">Non (5 points)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
           <div *ngIf="questionnaireForm.get('section4.sellVote')?.invalid && (questionnaireForm.get('section4.sellVote')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -273,7 +273,7 @@
 
         <!-- Corrupt Persons (multi-select) -->
         <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Qui a tenté de vous corrompre ? (Plusieurs réponses possibles - 2 points par réponse)</label>
+          <label class="block text-lg font-medium text-gray-700">Qui a tenté de vous corrompre ? (Plusieurs réponses possibles -  par réponse)</label>
           <div class="mt-2 space-y-2">
             <div class="flex items-start">
               <div class="flex items-center h-5">
@@ -283,7 +283,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-mayor" class="font-medium text-gray-700">Le maire sortant (2 points)</label>
+                <label for="corrupt-mayor" class="font-medium text-gray-700">Le maire sortant </label>
               </div>
             </div>
 
@@ -295,7 +295,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-mayor-contact" class="font-medium text-gray-700">Une connaissance du maire (2 points)</label>
+                <label for="corrupt-mayor-contact" class="font-medium text-gray-700">Une connaissance du maire </label>
               </div>
             </div>
 
@@ -307,7 +307,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-family" class="font-medium text-gray-700">Un membre de votre famille (2 points)</label>
+                <label for="corrupt-family" class="font-medium text-gray-700">Un membre de votre famille </label>
               </div>
             </div>
 
@@ -319,7 +319,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-candidate" class="font-medium text-gray-700">Un élu ou un candidat tête de liste (2 points)</label>
+                <label for="corrupt-candidate" class="font-medium text-gray-700">Un élu ou un candidat tête de liste </label>
               </div>
             </div>
 
@@ -331,7 +331,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-friend" class="font-medium text-gray-700">Un ami (2 points)</label>
+                <label for="corrupt-friend" class="font-medium text-gray-700">Un ami </label>
               </div>
             </div>
 
@@ -343,7 +343,7 @@
                        class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
               </div>
               <div class="ml-3 text-sm">
-                <label for="corrupt-other" class="font-medium text-gray-700">Autre (précisez) (2 points)</label>
+                <label for="corrupt-other" class="font-medium text-gray-700">Autre (précisez) </label>
               </div>
             </div>
 
@@ -358,11 +358,11 @@
       <div class="flex justify-between mt-8">
         <button type="button" (click)="previousSection()"
           class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Précédent
+          ← Précédent
         </button>
         <button type="button" (click)="nextSection()"
           class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Suivant
+          Suivant →
         </button>
       </div>
     </div>
@@ -387,7 +387,7 @@
               </div>
               <div class="ml-3 text-sm">
                 <label [for]="'alt-'+option.value" class="font-medium text-gray-700">
-                  {{option.label}} ({{option.points}} points)
+                  {{option.label}}
                 </label>
               </div>
             </div>
@@ -408,9 +408,9 @@
             class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section5.needHelp')?.invalid && (questionnaireForm.get('section5.needHelp')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (5 points)</option>
-            <option value="Non">Non (0 points)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non </option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
           <div *ngIf="questionnaireForm.get('section5.needHelp')?.invalid && (questionnaireForm.get('section5.needHelp')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -424,9 +424,9 @@
             class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section5.willingToRefuseCorruption')?.invalid && (questionnaireForm.get('section5.willingToRefuseCorruption')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (5 points)</option>
-            <option value="Non">Non (0 points)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non </option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
           <div *ngIf="questionnaireForm.get('section5.willingToRefuseCorruption')?.invalid && (questionnaireForm.get('section5.willingToRefuseCorruption')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -437,11 +437,11 @@
       <div class="flex justify-between mt-6">
         <button type="button" (click)="previousSection()"
           class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
-          Précédent
+          ← Précédent
         </button>
         <button type="button" (click)="nextSection()"
           class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-          Suivant
+          Suivant →
         </button>
       </div>
     </div>
@@ -459,9 +459,9 @@
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section6.intentionVoter')?.invalid && (questionnaireForm.get('section6.intentionVoter')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (5 points)</option>
-            <option value="Non">Non (0 point)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non</option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
           <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.invalid && (questionnaireForm.get('section6.intentionVoter')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -470,7 +470,7 @@
 
         <!-- Non-Vote Reasons (multi-select) - Conditionnel -->
         <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.value !== 'Oui'" class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Si vous ne votez pas, quelles en sont les raisons principales ? (Sélectionnez toutes les réponses applicables - 2 points par réponse)</label>
+          <label class="block text-lg font-medium text-gray-700">Si vous ne votez pas, quelles en sont les raisons principales ? </label>
           <div class="mt-2 space-y-2">
             <div *ngFor="let option of nonVoteReasons" class="flex items-start">
               <div class="flex items-center h-5">
@@ -482,7 +482,7 @@
               </div>
               <div class="ml-3 text-sm">
                 <label [for]="'reason-'+option.value" class="font-medium text-gray-700">
-                  {{option.label}} ({{option.points}} points)
+                  {{option.label}}
                 </label>
               </div>
             </div>
@@ -496,9 +496,9 @@
           <select formControlName="aideObstaclesPratiques"
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (5 points)</option>
-            <option value="Non">Non (0 point)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non</option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
         </div>
 
@@ -509,9 +509,9 @@
             class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (5 points)</option>
-            <option value="Non">Non (0 point)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non</option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
           <div *ngIf="questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -532,7 +532,7 @@
               </div>
               <div class="ml-3 text-sm">
                 <label [for]="'encourage-'+option.value" class="font-medium text-gray-700">
-                  {{option.label}} ({{option.points}} points)
+                  {{option.label}}
                 </label>
               </div>
             </div>
@@ -543,11 +543,11 @@
       <div class="flex justify-between mt-8">
         <button type="button" (click)="previousSection()"
           class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Précédent
+          ← Précédent
         </button>
         <button type="button" (click)="nextSection()"
           class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Suivant
+          Suivant →
         </button>
       </div>
     </div>
@@ -565,9 +565,9 @@
             class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section7.questionnaireHelpful')?.invalid && (questionnaireForm.get('section7.questionnaireHelpful')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (2 points)</option>
-            <option value="Non">Non (0 point)</option>
-            <option value="Un peu">Un peu (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non</option>
+            <option value="Un peu">Un peu</option>
           </select>
           <div *ngIf="questionnaireForm.get('section7.questionnaireHelpful')?.invalid && (questionnaireForm.get('section7.questionnaireHelpful')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -581,9 +581,9 @@
             class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section7.intentionVoteLibre')?.invalid && (questionnaireForm.get('section7.intentionVoteLibre')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (5 points)</option>
-            <option value="Non">Non (0 point)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non</option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
           <div *ngIf="questionnaireForm.get('section7.intentionVoteLibre')?.invalid && (questionnaireForm.get('section7.intentionVoteLibre')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -597,10 +597,10 @@
             class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             [ngClass]="{'border-red-500': questionnaireForm.get('section7.candidatureType')?.invalid && (questionnaireForm.get('section7.candidatureType')?.touched || formSubmitted)}">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Tête de liste">Tête de liste (5 points)</option>
-            <option value="Colistier ou colistière">Colistier ou colistière (3 points)</option>
-            <option value="Non">Non (0 point)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Tête de liste">Tête de liste </option>
+            <option value="Colistier ou colistière">Colistier ou colistière</option>
+            <option value="Non">Non</option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
           <div *ngIf="questionnaireForm.get('section7.candidatureType')?.invalid && (questionnaireForm.get('section7.candidatureType')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
@@ -614,9 +614,9 @@
           <select formControlName="needHelpForCandidature"
             class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui (5 points)</option>
-            <option value="Non">Non (0 point)</option>
-            <option value="Je ne sais pas">Je ne sais pas (1 point)</option>
+            <option value="Oui">Oui </option>
+            <option value="Non">Non</option>
+            <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
         </div>
       </div>
@@ -624,7 +624,7 @@
       <div class="flex justify-between mt-8">
         <button type="button" (click)="previousSection()"
           class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
-          Précédent
+          ← Précédent
         </button>
         <button type="submit"
           class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
