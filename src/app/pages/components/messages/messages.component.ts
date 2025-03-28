@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import Swal from 'sweetalert2';
 
 interface ContactMessage {
   id: string;
@@ -85,5 +86,38 @@ export class MessagesComponent implements OnInit {
 
   getArchivedMessagesCount(): number {
     return this.messages?.filter(m => m.status === 'archived')?.length || 0;
+  }
+
+  async markAsRead(messageId: string) {
+    try {
+      await this.firebaseService.markMessageAsRead(messageId);
+
+      // Mettre à jour le statut localement
+      const message = this.messages.find(m => m.id === messageId);
+      if (message) {
+        message.status = 'read';
+        this.applyFilter();
+      }
+
+      // Feedback utilisateur avec Swal
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Message marqué comme lu',
+        showConfirmButton: false,
+        timer: 2000,
+        toast: true,
+        background: '#f0fdf4',
+        iconColor: '#16a34a'
+      });
+    } catch (error) {
+      console.error('Erreur:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Échec du marquage comme lu',
+        confirmButtonColor: '#2563eb',
+      });
+    }
   }
 }

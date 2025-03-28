@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc, serverTimestamp, query, where, getDocs, getCountFromServer } from '@angular/fire/firestore';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, orderBy } from 'firebase/firestore';
+import { doc, getFirestore, orderBy, updateDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -176,6 +176,19 @@ export class FirebaseService {
     } catch (e) {
       console.error("Erreur lors de la récupération des messages:", e);
       throw new Error('Failed to fetch messages');
+    }
+  }
+
+  async markMessageAsRead(messageId: string): Promise<void> {
+    try {
+      const messageRef = doc(this.firestore, 'contactMessages', messageId);
+      await updateDoc(messageRef, {
+        status: 'read',
+        readAt: serverTimestamp()
+      });
+    } catch (e) {
+      console.error("Erreur lors du marquage comme lu:", e);
+      throw new Error('Failed to mark message as read');
     }
   }
 }

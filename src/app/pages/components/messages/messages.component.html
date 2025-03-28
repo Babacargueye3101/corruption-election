@@ -59,7 +59,7 @@
           </mat-card-content>
 
           <mat-card-actions class="flex justify-end space-x-2">
-            <button mat-icon-button matTooltip="Marquer comme lu">
+            <button mat-icon-button matTooltip="Marquer comme lu" (click)="markAsRead(msg.id)">
               <mat-icon>mark_email_read</mat-icon>
             </button>
             <button mat-icon-button matTooltip="Archiver">
