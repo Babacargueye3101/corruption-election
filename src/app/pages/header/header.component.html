@@ -3,9 +3,9 @@
       <div class="flex justify-between h-16 items-center">
         <!-- Logo -->
         <div class="flex-shrink-0">
-          <h1 class="text-2xl font-bold text-blue-600 mt-1">
+          <h1 class="text-sm font-normal text-blue-600">
             Mon Vote Mon Prix
-            <span class="block text-lg font-normal italic mt-1">A quel prix ?</span>
+            <span class="block text-xs font-light italic text-end">A quel prix ?</span>
           </h1>
         </div>
 
@@ -18,21 +18,21 @@
 
         <!-- Menu Desktop -->
         <div class="hidden sm:flex sm:space-x-8">
-          <a routerLink="/" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-normal">Accueil</a>
-          <a routerLink="/questionnaire" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">Questionnaire</a>
-          <a routerLink="/statistique" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">Statistique</a>
-          <a routerLink="/contact" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">Contact</a>
-          <a routerLink="/apropos" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">À propos</a>
+          <a routerLink="/" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-normal">Accueil</a>
+          <a routerLink="/questionnaire" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Questionnaire</a>
+          <a routerLink="/statistique" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Statistique</a>
+          <a routerLink="/contact" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Contact</a>
+          <a routerLink="/apropos" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">À propos</a>
         </div>
       </div>
 
       <!-- Menu Mobile (affiché dynamiquement) -->
       <div *ngIf="isMenuOpen" class="sm:hidden">
-        <a routerLink="/" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">Accueil</a>
-        <a routerLink="/questionnaire" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">Questionnaire</a>
-        <a routerLink="/statistique" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">Statistique</a>
-        <a routerLink="/contact" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">Contact</a>
-        <a routerLink="/apropos" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-lg font-medium">À propos</a>
+        <a routerLink="/" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Accueil</a>
+        <a routerLink="/questionnaire" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Questionnaire</a>
+        <a routerLink="/statistique" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Statistique</a>
+        <a routerLink="/contact" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Contact</a>
+        <a routerLink="/apropos" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">À propos</a>
       </div>
     </div>
   </nav>
