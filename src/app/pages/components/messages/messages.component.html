@@ -6,7 +6,7 @@
         <div class="flex space-x-2">
             <button mat-stroked-button [class.bg-indigo-600]="filterStatus === 'all'"
                     (click)="changeFilter('all')" class="text-sm">
-              Tous ({{messages?.length || 0}})
+              Tous ({{messages.length || 0}})
             </button>
             <button mat-stroked-button [class.bg-blue-600]="filterStatus === 'new'"
                     (click)="changeFilter('new')" class="text-sm">
@@ -65,9 +65,14 @@
             <button mat-icon-button matTooltip="Archiver">
               <mat-icon>archive</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Répondre">
+            <button mat-icon-button matTooltip="Répondre" (click)="replyToMessage(msg)">
               <mat-icon>reply</mat-icon>
             </button>
+
+            <span *ngIf="msg.replied" class="reply-badge">
+                <mat-icon>check_circle</mat-icon>
+                Répondu le {{msg.replyDate | date:'short'}}
+              </span>
           </mat-card-actions>
         </mat-card>
       </div>

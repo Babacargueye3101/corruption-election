@@ -8,6 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import Swal from 'sweetalert2';
+import {MatDialogModule} from '@angular/material/dialog';
+import { EmailjsService } from '../../../services/emailjs.service';
+
 
 interface ContactMessage {
   id: string;
@@ -16,6 +19,8 @@ interface ContactMessage {
   message: string;
   createdAt: Date;
   status: 'new' | 'read' | 'archived';
+  replied: string;
+  replyDate: Date;
 }
 
 @Component({
@@ -28,7 +33,8 @@ interface ContactMessage {
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDialogModule
   ],
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss']
@@ -39,7 +45,7 @@ export class MessagesComponent implements OnInit {
   filteredMessages: ContactMessage[] = [];
   filterStatus: 'all' | 'new' | 'read' | 'archived' = 'all';
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(private firebaseService: FirebaseService, private emailjsService: EmailjsService) {}
 
   async ngOnInit() {
     try {
@@ -120,4 +126,52 @@ export class MessagesComponent implements OnInit {
       });
     }
   }
+
+  async replyToMessage(message: any) {
+    const { value: text } = await Swal.fire({
+      title: `Réponse à ${message.name}`,
+      input: 'textarea',
+      inputLabel: 'Votre réponse',
+      inputPlaceholder: 'Tapez votre message ici...',
+      inputAttributes: {
+        'aria-label': 'Tapez votre message ici'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Envoyer',
+      cancelButtonText: 'Annuler',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Vous devez écrire un message !';
+        }
+        return null;
+      }
+    });
+
+    if (text) {
+      try {
+        await this.emailjsService.sendReply(
+          message.email,
+          message.name,
+          text
+        );
+
+        await this.firebaseService.markAsReplied(message.id, text);
+
+        // Marquer comme envoyé dans l'interface
+        message.replied = true;
+        message.replyDate = new Date();
+
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Réponse envoyée',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } catch (error) {
+        Swal.fire('Erreur', "L'envoi a échoué", 'error');
+      }
+    }
+  }
+
 }

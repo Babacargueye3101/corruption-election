@@ -191,4 +191,18 @@ export class FirebaseService {
       throw new Error('Failed to mark message as read');
     }
   }
+  async markAsReplied(messageId: string, replyContent: string): Promise<void> {
+    try {
+      const messageRef = doc(this.firestore, 'contactMessages', messageId);
+      await updateDoc(messageRef, {
+        status: 'replied',
+        replyContent: replyContent,
+        repliedAt: serverTimestamp(),
+        adminId: 'system'
+      });
+    } catch (e) {
+      console.error("Erreur lors du marquage comme répondu:", e);
+      throw new Error('Échec de la mise à jour du statut');
+    }
+  }
 }
