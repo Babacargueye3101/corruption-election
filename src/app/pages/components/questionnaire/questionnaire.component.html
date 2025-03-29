@@ -107,7 +107,7 @@
           <div *ngIf="corruptionTypesArray.invalid && (corruptionTypesArray.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Veuillez sélectionner au moins une option
           </div>
-          <div *ngIf="isCorruptionTypeSelected('otherCorruption')" class="mt-4">
+          <div *ngIf="questionnaireForm.get('section2.corruptionTypes')?.value.includes('otherCorruption')" class="mt-4">
             <label class="block text-sm font-medium text-gray-700">Précisez :</label>
             <input type="text" formControlName="otherCorruptionDescription" placeholder="Décrivez votre réponse"
               class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
@@ -608,7 +608,7 @@
         </div>
 
         <!-- Need Help For Candidature -->
-        <div *ngIf="questionnaireForm.get('section7.candidatureType')?.value === 'Tête de liste' || questionnaireForm.get('section7.candidatureType')?.value === 'Colistier ou colistière'"
+        <div *ngIf="questionnaireForm.get('section7.candidatureType')?.value === 'Tête de liste'"
           class="mb-6">
           <label class="block text-lg font-medium text-gray-700 mb-2">Pensez-vous avoir besoin d'aide pour former une liste ou un programme électoral ?</label>
           <select formControlName="needHelpForCandidature"

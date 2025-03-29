@@ -1,42 +1,244 @@
 {
-  "Guadeloupe": [
-    "Les Abymes", "Anse-Bertrand", "Baie-Mahault", "Baillif", "Basse-Terre",
-    "Bouillante", "Capesterre-Belle-Eau", "Capesterre-de-Marie-Galante", "Deshaies",
-    "Gourbeyre", "Goyave", "Grand-Bourg", "La Désirade", "Lamentin", "Le Gosier",
-    "Le Moule", "Les Saintes (Terre-de-Bas)", "Les Saintes (Terre-de-Haut)",
-    "Morne-à-l'Eau", "Petit-Bourg", "Petit-Canal", "Pointe-à-Pitre", "Pointe-Noire",
-    "Port-Louis", "Saint-Claude", "Saint-François", "Saint-Louis", "Sainte-Anne",
-    "Sainte-Rose", "Trois-Rivières", "Vieux-Fort", "Vieux-Habitants"
-  ],
-  "Martinique": [
-    "Fort-de-France", "L'Ajoupa-Bouillon", "Les Anses-d'Arlet", "Basse-Pointe",
-    "Bellefontaine", "Le Carbet", "Case-Pilote", "Le Diamant", "Ducos",
-    "Fonds-Saint-Denis", "Le François", "Grand'Rivière", "Gros-Morne",
-    "Le Lamentin", "Le Lorrain", "Macouba", "Le Marigot", "Le Marin",
-    "Le Morne-Rouge", "Le Morne-Vert", "Le Prêcheur", "Rivière-Pilote",
-    "Rivière-Salée", "Le Robert", "Saint-Esprit", "Saint-Joseph", "Saint-Pierre",
-    "Sainte-Anne", "Sainte-Luce", "Sainte-Marie", "Schœlcher", "La Trinité",
-    "Les Trois-Îlets", "Le Vauclin"
-  ],
-  "Guyane": [
-    "Apatou", "Awala-Yalimapo", "Camopi", "Cayenne", "Grand-Santi",
-    "Iracoubo", "Kourou", "Macouria", "Mana", "Maripasoula",
-    "Matoury", "Montsinéry-Tonnegrande", "Ouanary", "Papaïchton",
-    "Régina", "Rémire-Montjoly", "Roura", "Saint-Élie",
-    "Saint-Georges", "Saint-Laurent-du-Maroni", "Saül", "Sinnamary"
-  ],
-  "La Réunion": [
-    "Saint-Denis", "Saint-Paul", "Saint-Pierre", "Le Tampon",
-    "Saint-André", "Saint-Benoît", "Saint-Joseph", "Saint-Leu",
-    "Saint-Louis", "Saint-Philippe", "Saint-Rose", "Saint-Suzanne",
-    "Saint-Pierre", "La Possession", "Le Port", "Les Avirons",
-    "L'Étang-Salé", "Petite-Île", "Salazie", "Sainte-Marie",
-    "Sainte-Rose", "Sainte-Suzanne", "Cilaos", "Bras-Panon"
-  ],
-  "Mayotte": [
-    "Bandraboua", "Bandrélé", "Bouéni", "Chiconi", "Chirongui",
-    "Dembéni", "Dzaoudzi", "Kani-Kéli", "Koungou", "Labattoir",
-    "Mamoudzou", "Mtsamboro", "M'Tsangamouji", "Ouangani", "Pamandzi",
-    "Sada", "Tsingoni"
+  "regions": [
+    {
+      "nom": "Guadeloupe",
+      "nombre_de_communes": 32,
+      "communes": [
+        "Basse-Terre",
+        "Pointe-à-Pitre",
+        "Les Abymes",
+        "Le Gosier",
+        "Sainte-Anne",
+        "Saint-François",
+        "Le Moule",
+        "Petit-Bourg",
+        "Capesterre-Belle-Eau",
+        "Morne-à-l'Eau",
+        "Anse-Bertrand",
+        "Baie-Mahault",
+        "Bouillante",
+        "Capesterre-de-Marie-Galante",
+        "Deshaies",
+        "Grande-Terre",
+        "Gosier",
+        "Lamentin",
+        "Le Haut-du-Cap",
+        "Le Lamentin",
+        "Les Abymes",
+        "Les Saintes",
+        "Morne-à-l'Eau",
+        "Petit-Bourg",
+        "Saint-Louis",
+        "Saint-Claude",
+        "Sainte-Rose",
+        "Trois-Rivières",
+        "Vieux-Fort",
+        "Vieux-Habitants",
+        "Verger",
+        "Vieux-Habitants"
+      ]
+    },
+    {
+      "nom": "Martinique",
+      "nombre_de_communes": 34,
+      "communes": [
+        "Fort-de-France",
+        "Le Lamentin",
+        "Schoelcher",
+        "Ducos",
+        "Sainte-Marie",
+        "Le François",
+        "Le Robert",
+        "Trinité",
+        "Saint-Pierre",
+        "Les Anses-d'Arlet",
+        "Rivière-Salée",
+        "La Trinité",
+        "Le Marin",
+        "Le Diamant",
+        "Le Vauclin",
+        "Le Carbet",
+        "Les Trois-Îlets",
+        "Le Morne-Rouge",
+        "L'Ajoupa-Bouillon",
+        "Bellefontaine",
+        "Case-Pilote",
+        "Clement",
+        "Cayeux",
+        "La Plaine des Pitons"
+      ]
+    },
+    {
+      "nom": "Guyane",
+      "nombre_de_communes": 22,
+      "communes": [
+        "Cayenne",
+        "Saint-Laurent-du-Maroni",
+        "Kourou",
+        "Matoury",
+        "Rémire-Montjoly",
+        "Mana",
+        "Maripasoula",
+        "Macouria",
+        "Grand-Santi",
+        "Apatou",
+        "Saint-Georges",
+        "Saint-Élie",
+        "Iracoubo",
+        "Montsinéry-Tonnegrande",
+        "Sinnamary",
+        "Cayenne",
+        "Toules-Pointe",
+        "Papillon"
+      ]
+    },
+    {
+      "nom": "La Réunion",
+      "nombre_de_communes": 24,
+      "communes": [
+        "Saint-Denis",
+        "Saint-Paul",
+        "Saint-Pierre",
+        "Le Tampon",
+        "Saint-André",
+        "Saint-Louis",
+        "Saint-Benoît",
+        "Le Port",
+        "Saint-Joseph",
+        "La Possession",
+        "Saint-Benoît",
+        "Cilaos",
+        "L'Étang-Salé",
+        "Saint-Leu",
+        "Saint-Joseph",
+        "Le Port",
+        "Le Plaine des Cafres",
+        "Les Hauts",
+        "Rivière-Saint-Louis",
+        "Salazie",
+        "Les Avirons",
+        "Rivière-Des-Galets"
+      ]
+    },
+    {
+      "nom": "Mayotte",
+      "nombre_de_communes": 17,
+      "communes": [
+        "Mamoudzou",
+        "Dzaoudzi",
+        "Koungou",
+        "Dembéni",
+        "Sada",
+        "Chiconi",
+        "Bandraboua",
+        "Acoua",
+        "Bouéni",
+        "Mtsamboro",
+        "Tsingoni",
+        "Bambo",
+        "Chobé",
+        "Piste-Ylang",
+        "Picot",
+        "Bateau",
+        "M'Tsangamouji"
+      ]
+    },
+    {
+      "nom": "Saint-Pierre-et-Miquelon",
+      "nombre_de_communes": 2,
+      "communes": [
+        "Saint-Pierre",
+        "Miquelon-Langlade"
+      ]
+    },
+    {
+      "nom": "Saint-Barthélemy",
+      "nombre_de_communes": 2,
+      "communes": [
+        "Terre-de-Bas",
+        "Terre-de-Haut"
+      ]
+    },
+    {
+      "nom": "Saint-Martin",
+      "nombre_de_communes": 4,
+      "communes": [
+        "Marigot",
+        "Grand-Case",
+        "Quartier d'Orléans",
+        "Cul-de-Sac"
+      ]
+    },
+    {
+      "nom": "Terres australes et antarctiques françaises",
+      "nombre_de_communes": 5,
+      "communes": [
+        "Archipel de Kerguelen",
+        "Îles Crozet",
+        "Îles Saint-Paul et Amsterdam",
+        "Terre Adélie",
+        "Îles Éparses"
+      ]
+    },
+    {
+      "nom": "Wallis-et-Futuna",
+      "nombre_de_communes": 5,
+      "communes": [
+        "Mata-Utu",
+        "Hahake",
+        "Hihifo",
+        "Alo",
+        "Sigave"
+      ]
+    },
+    {
+      "nom": "Polynésie française",
+      "nombre_de_communes": 48,
+      "communes": [
+        "Papeete",
+        "Faaa",
+        "Punaauia",
+        "Mahina",
+        "Papara",
+        "Bora-Bora",
+        "Moorea",
+        "Rangiroa",
+        "Tahaa",
+        "Huahine",
+        "Raiatea",
+        "Tahiti",
+        "Huahine",
+        "Arue",
+        "Arahura",
+        "Papeari",
+        "Faa'a"
+      ]
+    },
+    {
+      "nom": "Nouvelle-Calédonie",
+      "nombre_de_communes": 33,
+      "communes": [
+        "Nouméa",
+        "Dumbéa",
+        "Mont-Dore",
+        "Païta",
+        "Bourail",
+        "Koumac",
+        "Poindimié",
+        "Lifou",
+        "Maré",
+        "Ouvéa"
+      ]
+    },
+    {
+      "nom": "Île de La Passion-Clipperton",
+      "nombre_de_communes": 0,
+      "communes": []
+    },
+    {
+      "nom": "Île des Faisans",
+      "nombre_de_communes": 0,
+      "communes": []
+    }
   ]
 }

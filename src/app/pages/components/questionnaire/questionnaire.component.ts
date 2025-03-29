@@ -33,7 +33,7 @@ export class QuestionnaireComponent implements OnInit {
     { value: 'jobPromise', label: 'Promesse d\'emploi', points: 2 },
     { value: 'subsidyToAssociations', label: 'Subvention versée à certaines associations', points: 2 },
     { value: 'contractWithCollectivity', label: 'Obtention d\'un contrat avec la collectivité', points: 2 },
-    { value: 'otherCorruption', label: 'Autre', points: 1 }
+    { value: 'otherCorruption', label: 'Autre' , points: 1 }
   ];
 
   alternativeOptions = [
@@ -85,7 +85,7 @@ export class QuestionnaireComponent implements OnInit {
       section4: this.fb.group({
         moneyGivenAmount: [''],
         voteValueEstimate: [''],
-        sellVote: ['', Validators.required],
+        sellVote: [''],
         moneyForVote: [''],
         corruptPersons: this.fb.array([], this.validateCorruptPersons()),
         otherCorruptPerson: ['']
@@ -93,8 +93,8 @@ export class QuestionnaireComponent implements OnInit {
       section5: this.fb.group({
         alternativeOptions: this.fb.array([]),
         alternativeOptionsDescription: [''],
-        needHelp: ['', Validators.required],
-        willingToRefuseCorruption: ['', Validators.required]
+        needHelp: [''],
+        willingToRefuseCorruption: ['']
       }),
       section6: this.fb.group({
         intentionVoter: ['', Validators.required],
@@ -387,7 +387,45 @@ export class QuestionnaireComponent implements OnInit {
                   <button id="btn-certificate" class="swal2-confirm swal2-styled">Générer le Certificat</button>
                   <button id="btn-statistics" class="swal2-confirm swal2-styled" style="background-color: #28a745;">Générer les Statistiques</button>
                   <button id="btn-summary" class="swal2-confirm swal2-styled" style="background-color: #17a2b8;">Générer le Résumé PDF</button>
+                  <button id="btn-share" class="swal2-confirm swal2-styled" style="background-color: #6c757d;">
+                    <i class="fas fa-share-alt"></i> Partager
+                  </button>
                 `
+              }).then(() => {
+                // Gestionnaire pour le bouton de partage
+                document.getElementById('btn-share')?.addEventListener('click', function() {
+                  // URL à partager (à adapter)
+                  const shareUrl = window.location.href;
+                  // Texte à partager
+                  const shareText = "Regardez ce questionnaire que j'ai complété !";
+
+                  // Si l'API Web Share est disponible (mobile principalement)
+                  if (navigator.share) {
+                    navigator.share({
+                      title: 'Mon Questionnaire',
+                      text: shareText,
+                      url: shareUrl
+                    }).catch(console.error);
+                  } else {
+                    // Fallback pour desktop - ouvrir une fenêtre avec les options de partage
+                    Swal.fire({
+                      title: 'Partager sur',
+                      html: `
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}" target="_blank" style="margin: 5px; color: #3b5998; font-size: 24px;">
+                          <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}" target="_blank" style="margin: 5px; color: #1da1f2; font-size: 24px;">
+                          <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareText)}" target="_blank" style="margin: 5px; color: #0077b5; font-size: 24px;">
+                          <i class="fab fa-linkedin"></i>
+                        </a>
+                      `,
+                      showConfirmButton: false,
+                      showCloseButton: true
+                    });
+                  }
+                });
               });
 
               // Ajouter des écouteurs d'événements après l'affichage du Swal
