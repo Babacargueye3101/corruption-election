@@ -238,40 +238,19 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   nextSection() {
-    this.markFormGroupTouched(this.getCurrentSectionGroup());
+    if (this.currentSection === 3) {
+      const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
+      const voteIncentive = this.questionnaireForm.get('section3.voteIncentive')?.value;
+      const votingPressure = this.questionnaireForm.get('section3.votingPressure')?.value;
 
-    if (this.getCurrentSectionGroup().valid) {
-      if (this.currentSection < 7) {
-        // Logique spéciale pour la section 3
-        if (this.currentSection === 3) {
-          const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
-          if (corruptionExperience === 'Non' || corruptionExperience === 'Ne pas répondre') {
-            this.currentSection = 6;
-          } else {
-            this.currentSection++;
-          }
-        }
-        // Logique spéciale pour la section 6
-        else if (this.currentSection === 6) {
-          const intentionVoter = this.questionnaireForm.get('section6.intentionVoter')?.value;
-          if (intentionVoter === 'Oui') {
-            this.currentSection = 7;
-          } else {
-            this.currentSection++;
-          }
-        }
-        // Pour toutes les autres sections
-        else {
-          this.currentSection++;
-        }
+      if (corruptionExperience === 'Oui' || voteIncentive === 'Oui' || votingPressure === 'Oui') {
+        this.currentSection++;
+      }
+      else {
+        this.currentSection = 6;
       }
     } else {
-      Swal.fire({
-        title: 'Champs obligatoires',
-        text: 'Veuillez remplir tous les champs obligatoires avant de continuer.',
-        icon: 'warning',
-        confirmButtonText: 'OK'
-      });
+      this.currentSection++;
     }
   }
 
