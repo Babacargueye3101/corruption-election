@@ -49,12 +49,20 @@ export class FirebaseService {
         where('section1.region', '==', region),
         where('section1.commune', '==', commune)
       );
+      console.log("COMMMMMMUNEEEEEEE");
+      console.log(communeQuery);
+      console.log("FFFFFFFFFFFFFFFFF");
 
       // Requête pour toute la région
       const regionQuery = query(
         collection(this.firestore, 'responses'),
         where('section1.region', '==', region)
       );
+
+      console.log("REEEEEEEEEEGION");
+      console.log(regionQuery);
+      console.log("GGGGGGGGGGGGGG");
+
 
       const [communeSnap, regionSnap] = await Promise.all([
         getDocs(communeQuery),
@@ -70,9 +78,9 @@ export class FirebaseService {
         const data = doc.data();
         communeTotalScore += data['totalScore'] || 0;
 
-        const moneyGiven = data['section4']?.moneyGivenAmount;
-        if (moneyGiven && !isNaN(parseFloat(moneyGiven))) {
-          communeVotePrices.push(parseFloat(moneyGiven));
+        const moneyForVote = data['section4']?.moneyForVote;
+        if (moneyForVote && !isNaN(parseFloat(moneyForVote))) {
+          communeVotePrices.push(parseFloat(moneyForVote));
         }
       });
 
@@ -85,9 +93,9 @@ export class FirebaseService {
         const data = doc.data();
         regionTotalScore += data['totalScore'] || 0;
 
-        const moneyGiven = data['section4']?.moneyGivenAmount;
-        if (moneyGiven && !isNaN(parseFloat(moneyGiven))) {
-          regionVotePrices.push(parseFloat(moneyGiven));
+        const moneyForVote = data['section4']?.moneyForVote;
+        if (moneyForVote && !isNaN(parseFloat(moneyForVote))) {
+          regionVotePrices.push(parseFloat(moneyForVote));
         }
       });
 

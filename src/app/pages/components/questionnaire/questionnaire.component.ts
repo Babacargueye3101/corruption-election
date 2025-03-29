@@ -369,8 +369,28 @@ export class QuestionnaireComponent implements OnInit {
                   <button id="btn-share" class="swal2-confirm swal2-styled" style="background-color: #6c757d;">
                     <i class="fas fa-share-alt"></i> Partager
                   </button>
+                  <button id="btn-price-average" class="swal2-confirm swal2-styled" style="background-color: #ffc107;">
+                    <i class="fas fa-hand-holding-usd"></i> Voir le prix moyen des votes
+                  </button>
                 `
               }).then(() => {
+
+              });
+
+              // Ajouter des écouteurs d'événements après l'affichage du Swal
+              setTimeout(() => {
+                document.getElementById("btn-certificate")?.addEventListener("click", () => {
+                  this.generateCertificate(name, this.totalScore);
+                });
+
+                document.getElementById("btn-statistics")?.addEventListener("click", async () => {
+                  await this.generateStatistics(region, commune, moneyGiven);
+                });
+
+                document.getElementById("btn-summary")?.addEventListener("click", () => {
+                  this.generateSummaryPdf(name);
+                });
+
                 // Gestionnaire pour le bouton de partage
                 document.getElementById('btn-share')?.addEventListener('click', function() {
                   // URL à partager (à adapter)
@@ -405,20 +425,42 @@ export class QuestionnaireComponent implements OnInit {
                     });
                   }
                 });
-              });
 
-              // Ajouter des écouteurs d'événements après l'affichage du Swal
-              setTimeout(() => {
-                document.getElementById("btn-certificate")?.addEventListener("click", () => {
-                  this.generateCertificate(name, this.totalScore);
-                });
+                document.getElementById('btn-price-average')?.addEventListener('click', async () => {
+                  const region = this.questionnaireForm.get('section1.region')?.value;
+                  const commune = this.questionnaireForm.get('section1.commune')?.value;
 
-                document.getElementById("btn-statistics")?.addEventListener("click", async () => {
-                  await this.generateStatistics(region, commune, moneyGiven);
-                });
+                  try {
+                    const stats = await this.firebaseService.getStatistics(region, commune);
+                    const averagePrice = stats.commune?.averageVotePrice
+                      ? parseFloat(stats.commune.averageVotePrice).toLocaleString('fr-FR', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })
+                      : 'Non disponible';
 
-                document.getElementById("btn-summary")?.addEventListener("click", () => {
-                  this.generateSummaryPdf(name);
+                    Swal.fire({
+                      title: `Prix moyen des votes à ${commune}`,
+                      html: `
+                        <div style="text-align: center; padding: 1rem;">
+                          <p style="font-size: 1.5rem; font-weight: bold; color: #1e40af;">
+                            ${averagePrice} €
+                          </p>
+                          <p style="color: #6b7280; margin-top: 1rem;">
+                            <i class="fas fa-info-circle"></i> Basé sur ${stats.commune?.participantsCount || 0} participants
+                          </p>
+                        </div>
+                      `,
+                      icon: 'info',
+                      confirmButtonText: 'Fermer'
+                    });
+                  } catch (error) {
+                    Swal.fire(
+                      'Erreur',
+                      `Impossible d'afficher la moyenne pour ${commune}`,
+                      'error'
+                    );
+                  }
                 });
               }, 100);
             } else {
