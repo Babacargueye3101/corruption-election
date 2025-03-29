@@ -268,7 +268,7 @@
           <label class="block text-lg font-medium text-gray-700">Pour quel montant ?</label>
           <input type="text" formControlName="moneyForVote"
             class="p-2 border border-gray-300 rounded-md w-full"
-            placeholder="Montant demandé pour votre vote">
+            placeholder="€">
         </div>
 
         <!-- Corrupt Persons (multi-select) -->
@@ -488,6 +488,13 @@
             </div>
           </div>
         </div>
+        <!-- Après la liste des raisons de non-vote -->
+        <div *ngIf="isNonVoteReasonSelected('Autre')" class="mt-4">
+          <label class="block text-sm font-medium text-gray-700">Précisez :</label>
+          <input type="text" formControlName="impactsCorruptionDetails"
+                placeholder="Décrivez votre raison"
+                class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+        </div>
 
         <!-- Aide Obstacles Pratiques -->
         <div *ngIf="questionnaireForm.get('section6.nonVoteReasons')?.value?.includes('Obstacles pratiques (déplacement, absence, etc.)')"
@@ -537,6 +544,12 @@
               </div>
             </div>
           </div>
+        </div>
+        <div *ngIf="isEncourageVoteOptionSelected('Autre')" class="mt-4">
+          <label class="block text-sm font-medium text-gray-700">Précisez :</label>
+          <input type="text" formControlName="autreEncouragerVoteLibre"
+                 placeholder="Décrivez votre proposition"
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
         </div>
       </div>
 

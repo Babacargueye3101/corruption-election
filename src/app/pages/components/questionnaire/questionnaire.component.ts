@@ -52,14 +52,14 @@ export class QuestionnaireComponent implements OnInit {
     { value: 'no_representation', label: 'Manque de représentativité des candidats', points: 2 },
     { value: 'useless', label: 'Inutilité du vote', points: 2 },
     { value: 'practical_obstacles', label: 'Obstacles pratiques (déplacement, absence, etc.)', points: 2 },
-    { value: 'other', label: 'Autre', points: 1 }
+    { value: 'Autre', label: 'Autre', points: 1 }
   ];
 
   encourageVoteOptions = [
     { value: 'awareness', label: 'Sensibiliser votre entourage', points: 2 },
     { value: 'monitoring', label: 'Participer à des initiatives de surveillance électorale', points: 2 },
     { value: 'vote_free', label: 'Voter en toute conscience, sans pression', points: 2 },
-    { value: 'other', label: 'Autre', points: 1 }
+    { value: 'Autre', label: 'Autre', points: 1 }
   ];
 
   constructor(private fb: FormBuilder, private http: HttpClient, private firebaseService: FirebaseService) {
@@ -594,6 +594,9 @@ export class QuestionnaireComponent implements OnInit {
         doc.text('Votre score indique que vous pourriez bénéficier de plus d\'informations sur la corruption électorale.', 20, 130);
         doc.text('Nous vous encourageons à consulter nos ressources éducatives.', 20, 140);
       }
+
+      // Ajout de la phrase demandée
+      doc.text('N\'hésitez pas à prendre contact avec nous pour participer à des actions de sensibilisation ou pour plus d\'informations.', 20, 155);
 
       // Informations participant
       doc.setFontSize(14);
