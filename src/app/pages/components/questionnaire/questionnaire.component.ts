@@ -317,7 +317,7 @@ export class QuestionnaireComponent implements OnInit {
         cancelButtonText: 'Annuler',
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        preConfirm: () => {
+        preConfirm: async () => {
           const email = (document.getElementById('swal-email') as HTMLInputElement).value;
           const name = (document.getElementById('swal-name') as HTMLInputElement).value;
 
@@ -331,6 +331,12 @@ export class QuestionnaireComponent implements OnInit {
           }
           if (!name) {
             Swal.showValidationMessage('Veuillez entrer votre nom');
+            return false;
+          }
+          // Vérifier si l'email a déjà été utilisé
+          const emailExists = await this.firebaseService.checkIfEmailExists(email);
+          if (emailExists) {
+            Swal.showValidationMessage('Cet email a déjà voté. Vous ne pouvez pas voter à nouveau.');
             return false;
           }
           return { email, name };

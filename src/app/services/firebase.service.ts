@@ -41,6 +41,14 @@ export class FirebaseService {
     }
   }
 
+  async checkIfEmailExists(email: string): Promise<boolean> {
+    const responsesRef = collection(this.firestore, 'responses');
+    const q = query(responsesRef, where('email', '==', email));
+    const querySnapshot = await getDocs(q);
+
+    return !querySnapshot.empty;
+  }
+
   async getStatistics(region: string, commune: string) {
     try {
       // Requête pour la commune spécifique
