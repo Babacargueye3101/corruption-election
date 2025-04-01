@@ -321,34 +321,58 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   nextSection() {
+    // Valider la section courante avant de continuer
     if (!this.validateCurrentSection()) {
       return;
     }
 
-    // Logique existante de changement de section
+    // Cas particulier de la section 3
     if (this.currentSection === 3) {
       const section3 = this.getCurrentSectionGroup().value;
-      if ((section3.corruptionExperience === 'Non' || section3.corruptionExperience === 'Ne pas répondre') &&
-          (section3.voteIncentive === 'Non' || section3.voteIncentive === 'Je préfère ne pas répondre') &&
-          (section3.votingPressure === 'Non' || section3.votingPressure === 'Je préfère ne pas répondre')) {
-        this.currentSection = 6; // Sauter aux sections 4 et 5
+
+      const allNegativeOrNoAnswer =
+        (section3.corruptionExperience === 'Non' || section3.corruptionExperience === 'Ne pas répondre') &&
+        (section3.voteIncentive === 'Non' || section3.voteIncentive === 'Je préfère ne pas répondre') &&
+        (section3.votingPressure === 'Non' || section3.votingPressure === 'Je préfère ne pas répondre');
+
+      if (allNegativeOrNoAnswer) {
+        this.currentSection = 6; // Saut direct à la section 6
       } else {
-        this.currentSection++;
+        this.currentSection++; // Aller normalement à la section 4
       }
-    } else {
+    }
+    // Navigation standard pour les autres sections
+    else {
       this.currentSection++;
     }
   }
 
   previousSection() {
+    // Cas particulier quand on revient de la section 6
     if (this.currentSection === 6) {
       const section3 = this.questionnaireForm.get('section3')?.value;
-      if (section3?.corruptionExperience === 'Non' || section3?.corruptionExperience === 'Ne pas répondre') {
-        this.currentSection = 3;
+      const cameFromSkippedSections =
+        (section3?.corruptionExperience === 'Non' || section3?.corruptionExperience === 'Ne pas répondre') &&
+        (section3?.voteIncentive === 'Non' || section3?.voteIncentive === 'Je préfère ne pas répondre') &&
+        (section3?.votingPressure === 'Non' || section3?.votingPressure === 'Je préfère ne pas répondre');
+
+      if (cameFromSkippedSections) {
+        this.currentSection = 3; // Retour spécial à la section 3
         return;
       }
     }
+
+    // Navigation arrière standard
     this.currentSection--;
+  }
+
+  private shouldSkipSections4And5(): boolean {
+    const section3 = this.questionnaireForm.get('section3')?.value;
+    return (
+      (section3?.corruptionExperience === 'Non' || section3?.corruptionExperience === 'Ne pas répondre') &&
+      (section3?.voteIncentive === 'Non' || section3?.voteIncentive === 'Je préfère ne pas répondre') &&
+      (section3?.votingPressure === 'Non' || section3?.votingPressure === 'Je préfère ne pas répondre')
+    );
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
@@ -778,161 +802,151 @@ export class QuestionnaireComponent implements OnInit {
 
   calculateScore() {
     let score = 0;
+    const formValues = this.questionnaireForm.value;
+    const shouldSkipSections4And5 = this.shouldSkipSections4And5();
 
-    // Section 2
-    this.corruptionTypesArray.value.forEach((val: string) => {
-      const option = this.corruptionOptions.find(o => o.value === val);
-      if (option) score += option.points;
-    });
-
-    const electoralCorruptionProblem = this.questionnaireForm.get('section2.electoralCorruptionProblem')?.value;
-    if (electoralCorruptionProblem === 'Oui') {
-      score += 3;
-    } else if (electoralCorruptionProblem === 'Ne sais pas') {
-      score += 1;
+    // Section 1: Informations démographiques (pas de points)
+    // Juste une validation, pas de calcul de score
+    if (!this.questionnaireForm.get('section1')?.valid) {
+        console.warn("Section 1 non valide");
     }
 
-    const knowledgeAboutLaws = this.questionnaireForm.get('section2.knowledgeAboutLaws')?.value;
-    if (knowledgeAboutLaws === 'Très informé') {
-      score += 5;
-    } else if (knowledgeAboutLaws === 'Un peu informé') {
-      score += 3;
+    // Section 2: Connaissances sur la corruption
+    if (this.questionnaireForm.get('section2')?.valid) {
+        // Types de corruption (multi-sélection)
+        formValues.section2.corruptionTypes?.forEach((val: string) => {
+            const option = this.corruptionOptions.find(o => o.value === val);
+            if (option) score += option.points;
+        });
+
+        // Problème de corruption électorale
+        switch (formValues.section2.electoralCorruptionProblem) {
+            case 'Oui': score += 3; break;
+            case 'Ne sais pas': score += 1; break;
+        }
+
+        // Connaissance des lois
+        switch (formValues.section2.knowledgeAboutLaws) {
+            case 'Très informé': score += 5; break;
+            case 'Un peu informé': score += 3; break;
+        }
     }
 
-    // Section 3
-    const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
-    if (corruptionExperience === 'Non') {
-      score += 5;
-    } else if (corruptionExperience === 'Ne pas répondre') {
-      score += 2;
+    // Section 3: Expériences personnelles
+    if (this.questionnaireForm.get('section3')?.valid) {
+        // Expérience de corruption
+        switch (formValues.section3.corruptionExperience) {
+            case 'Non': score += 5; break;
+            case 'Ne pas répondre': score += 2; break;
+        }
+
+        // Incitation à voter
+        switch (formValues.section3.voteIncentive) {
+            case 'Non': score += 5; break;
+            case 'Je préfère ne pas répondre': score += 2; break;
+        }
+
+        // Pression pour voter
+        switch (formValues.section3.votingPressure) {
+            case 'Non': score += 5; break;
+            case 'Je préfère ne pas répondre': score += 2; break;
+        }
     }
 
-    const voteIncentive = this.questionnaireForm.get('section3.voteIncentive')?.value;
-    if (voteIncentive === 'Non') {
-      score += 5;
-    } else if (voteIncentive === 'Je préfère ne pas répondre') {
-      score += 2;
+    // Section 4: Questions spécifiques (uniquement si non sautée)
+    if (!shouldSkipSections4And5 && this.questionnaireForm.get('section4')?.valid) {
+        // Vente de vote
+        switch (formValues.section4.sellVote) {
+            case 'Non': score += 5; break;
+            case 'Je ne sais pas': score += 1; break;
+            case 'Oui': score -= 20; break; // Pénalité importante
+        }
+
+        // Personnes corruptrices (2 points par réponse)
+        if (formValues.section4.corruptPersons) {
+            score += formValues.section4.corruptPersons.length * 2;
+        }
     }
 
-    const votingPressure = this.questionnaireForm.get('section3.votingPressure')?.value;
-    if (votingPressure === 'Non') {
-      score += 5;
-    } else if (votingPressure === 'Je préfère ne pas répondre') {
-      score += 2;
+    // Section 5: Alternatives à la corruption (uniquement si non sautée)
+    if (!shouldSkipSections4And5 && this.questionnaireForm.get('section5')?.valid) {
+        // Alternatives choisies
+        formValues.section5.alternativeOptions?.forEach((val: string) => {
+            const option = this.alternativeOptions.find(o => o.value === val);
+            if (option) score += option.points;
+        });
+
+        // Besoin d'aide
+        switch (formValues.section5.needHelp) {
+            case 'Oui': score += 5; break;
+            case 'Je ne sais pas': score += 1; break;
+        }
+
+        // Refus de corruption
+        switch (formValues.section5.willingToRefuseCorruption) {
+            case 'Oui': score += 5; break;
+            case 'Je ne sais pas': score += 1; break;
+        }
     }
 
-    // Section 4 (uniquement si affichée)
-    if (this.currentSection > 4 || this.questionnaireForm.get('section4.sellVote')?.value) {
-      const sellVote = this.questionnaireForm.get('section4.sellVote')?.value;
-      if (sellVote === 'Non') {
-        score += 5;
-      } else if (sellVote === 'Je ne sais pas') {
-        score += 1;
-      } else if (sellVote === 'Oui') {
-        score -= 20; // Retirer 20 points comme demandé
-      }
+    // Section 6: Sensibilisation des abstentionnistes
+    if (this.questionnaireForm.get('section6')?.valid) {
+        // Intention de voter
+        switch (formValues.section6.intentionVoter) {
+            case 'Oui': score += 5; break;
+            case 'Je ne sais pas': score += 1; break;
+        }
 
-      // Ajout des points pour les personnes corruptrices (2 points par réponse)
-      this.corruptPersonsArray.value.forEach((val: string) => {
-        score += 2;
-      });
+        // Raisons de non-vote
+        formValues.section6.nonVoteReasons?.forEach((val: string) => {
+            const option = this.nonVoteReasons.find(o => o.value === val);
+            if (option) score += option.points;
+        });
+
+        // Impact de la corruption
+        switch (formValues.section6.impactCorruption) {
+            case 'Oui': score += 5; break;
+            case 'Je ne sais pas': score += 1; break;
+        }
+
+        // Actions pour encourager le vote
+        formValues.section6.encourageVoteOptions?.forEach((val: string) => {
+            const option = this.encourageVoteOptions.find(o => o.value === val);
+            if (option) score += option.points;
+        });
+
+        // Impacts spécifiques (2 points par impact)
+        if (formValues.section6.impactOptions) {
+            score += formValues.section6.impactOptions.length * 2;
+        }
     }
 
-    // Section 5 (uniquement si affichée)
-    if (this.currentSection > 5 || this.questionnaireForm.get('section5.alternativeOptions')?.value.length > 0) {
-      this.alternativeOptionsArray.value.forEach((val: string) => {
-        const option = this.alternativeOptions.find(o => o.value === val);
-        if (option) score += option.points;
-      });
+    // Section 7: Évaluation du questionnaire
+    if (this.questionnaireForm.get('section7')?.valid) {
+        // Utilité du questionnaire
+        switch (formValues.section7.questionnaireHelpful) {
+            case 'Oui': score += 2; break;
+            case 'Un peu': score += 1; break;
+        }
 
-      const needHelp = this.questionnaireForm.get('section5.needHelp')?.value;
-      if (needHelp === 'Oui') {
-        score += 5;
-      } else if (needHelp === 'Je ne sais pas') {
-        score += 1;
-      }
+        // Intention de vote libre
+        switch (formValues.section7.intentionVoteLibre) {
+            case 'Oui': score += 5; break;
+            case 'Je ne sais pas': score += 1; break;
+        }
 
-      const willingToRefuseCorruption = this.questionnaireForm.get('section5.willingToRefuseCorruption')?.value;
-      if (willingToRefuseCorruption === 'Oui') {
-        score += 5;
-      } else if (willingToRefuseCorruption === 'Je ne sais pas') {
-        score += 1;
-      }
+        // Type de candidature
+        switch (formValues.section7.candidatureType) {
+            case 'Tête de liste': score += 5; break;
+            case 'Colistier ou colistière': score += 3; break;
+            case 'Je ne sais pas': score += 1; break;
+        }
     }
 
-    // Section 6
-    const intentionVoter = this.questionnaireForm.get('section6.intentionVoter')?.value;
-    if (intentionVoter === 'Oui') {
-      score += 5;
-    } else if (intentionVoter === 'Je ne sais pas') {
-      score += 1;
-    }
-
-    this.nonVoteReasonsArray.value.forEach((val: string) => {
-      const option = this.nonVoteReasons.find(o => o.value === val);
-      if (option) score += option.points;
-    });
-
-    const aideObstaclesPratiques = this.questionnaireForm.get('section6.aideObstaclesPratiques')?.value;
-    if (aideObstaclesPratiques === 'Oui') {
-      score += 5;
-    } else if (aideObstaclesPratiques === 'Je ne sais pas') {
-      score += 1;
-    }
-
-    const impactCorruption = this.questionnaireForm.get('section6.impactCorruption')?.value;
-    if (impactCorruption === 'Oui') {
-      score += 5;
-    } else if (impactCorruption === 'Je ne sais pas') {
-      score += 1;
-    }
-
-    this.encourageVoteOptionsArray.value.forEach((val: string) => {
-      const option = this.encourageVoteOptions.find(o => o.value === val);
-      if (option) score += option.points;
-    });
-
-    this.impactOptionsArray.value.forEach((val: string) => {
-      score += 2; // 2 points par impact identifié
-    });
-
-    if (this.questionnaireForm.get('section6.otherImpactDescription')?.value) {
-      score += 1; // 1 point supplémentaire si précision donnée
-    }
-
-    // Section 7
-    const questionnaireHelpful = this.questionnaireForm.get('section7.questionnaireHelpful')?.value;
-    if (questionnaireHelpful === 'Oui') {
-      score += 2;
-    } else if (questionnaireHelpful === 'Un peu') {
-      score += 1;
-    }
-
-    const intentionVoteLibre = this.questionnaireForm.get('section7.intentionVoteLibre')?.value;
-    if (intentionVoteLibre === 'Oui') {
-      score += 5;
-    } else if (intentionVoteLibre === 'Je ne sais pas') {
-      score += 1;
-    }
-
-    const candidatureType = this.questionnaireForm.get('section7.candidatureType')?.value;
-    if (candidatureType === 'Tête de liste') {
-      score += 5;
-    } else if (candidatureType === 'Colistier ou colistière') {
-      score += 3;
-    } else if (candidatureType === 'Je ne sais pas') {
-      score += 1;
-    }
-
-    const needHelpForCandidature = this.questionnaireForm.get('section7.needHelpForCandidature')?.value;
-    if (needHelpForCandidature === 'Oui') {
-      score += 5;
-    } else if (needHelpForCandidature === 'Je ne sais pas') {
-      score += 1;
-    }
-
-    this.totalScore = Math.max(0, score); // Assure que le score ne soit pas négatif
-  }
+    // Garantir un score minimum de 0
+    this.totalScore = Math.max(0, score);
+    return this.totalScore;
+}
 
   generateSummaryPdf(name: string) {
     const doc = new jsPDF();
