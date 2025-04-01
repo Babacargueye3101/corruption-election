@@ -1,538 +1,571 @@
 <form [formGroup]="questionnaireForm" (ngSubmit)="onSubmit()" class="space-y-8">
-    <!-- Section 1 : Informations démographiques -->
-    <div *ngIf="currentSection === 1" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
-      <h3 class="text-2xl font-semibold mb-4">Section 1 : Informations démographiques</h3>
+  <!-- Section 1 : Informations démographiques -->
+  <div *ngIf="currentSection === 1" class="section p-8 bg-white rounded-lg shadow-lg">
+    <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
+    <h3 class="text-2xl font-semibold mb-4">Section 1 : Informations démographiques</h3>
 
-      <div formGroupName="section1" class="space-y-6">
-        <!-- Âge -->
-        <div class="form-group">
-          <label for="age" class="block text-lg font-medium text-gray-700">Âge :</label>
-          <select id="age" formControlName="age"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section1.age')?.invalid && (questionnaireForm.get('section1.age')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez votre âge</option>
-            <option value="18-25">18-25 ans</option>
-            <option value="26-35">26-35 ans</option>
-            <option value="36-45">36-45 ans</option>
-            <option value="46-55">46-55 ans</option>
-            <option value="56+">56 ans et plus</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section1.age')?.invalid && (questionnaireForm.get('section1.age')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-
-        <!-- Genre -->
-        <div class="form-group">
-          <label for="gender" class="block text-lg font-medium text-gray-700">Genre :</label>
-          <select id="gender" formControlName="gender"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section1.gender')?.invalid && (questionnaireForm.get('section1.gender')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez votre genre</option>
-            <option value="Femme">Femme</option>
-            <option value="Homme">Homme</option>
-            <option value="Autre">Autre</option>
-            <option value="Ne pas répondre">Je préfère ne pas répondre</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section1.gender')?.invalid && (questionnaireForm.get('section1.gender')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-
-        <!-- Région -->
-        <div class="form-group">
-          <label for="region" class="block text-sm font-medium text-gray-700">Région :</label>
-          <select id="region" formControlName="region" (change)="onRegionChange($event)"
-            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section1.region')?.invalid && (questionnaireForm.get('section1.region')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez votre région</option>
-            <option *ngFor="let region of regions" [value]="region.nom">{{ region.nom }}</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section1.region')?.invalid && (questionnaireForm.get('section1.region')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-
-        <!-- Commune -->
-        <div class="form-group">
-          <label for="commune" class="block text-sm font-medium text-gray-700">Commune :</label>
-          <select id="commune" formControlName="commune"
-            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section1.commune')?.invalid && (questionnaireForm.get('section1.commune')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez votre commune</option>
-            <option *ngFor="let commune of communes" [value]="commune">{{ commune }}</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section1.commune')?.invalid && (questionnaireForm.get('section1.commune')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
+    <div formGroupName="section1" class="space-y-6">
+      <!-- Âge -->
+      <div class="form-group">
+        <label for="age" class="block text-lg font-medium text-gray-700">Âge :</label>
+        <select id="age" formControlName="age"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section1.age')?.invalid && (questionnaireForm.get('section1.age')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez votre âge</option>
+          <option value="18-25">18-25 ans</option>
+          <option value="26-35">26-35 ans</option>
+          <option value="36-45">36-45 ans</option>
+          <option value="46-55">46-55 ans</option>
+          <option value="56+">56 ans et plus</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section1.age')?.invalid && (questionnaireForm.get('section1.age')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
         </div>
       </div>
 
-      <div class="flex justify-between mt-8">
-        <button type="button" (click)="nextSection()"
-          class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Suivant →
-        </button>
+      <!-- Genre -->
+      <div class="form-group">
+        <label for="gender" class="block text-lg font-medium text-gray-700">Genre :</label>
+        <select id="gender" formControlName="gender"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section1.gender')?.invalid && (questionnaireForm.get('section1.gender')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez votre genre</option>
+          <option value="Femme">Femme</option>
+          <option value="Homme">Homme</option>
+          <option value="Autre">Autre</option>
+          <option value="Ne pas répondre">Je préfère ne pas répondre</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section1.gender')?.invalid && (questionnaireForm.get('section1.gender')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+
+      <!-- Région -->
+      <div class="form-group">
+        <label for="region" class="block text-sm font-medium text-gray-700">Région :</label>
+        <select id="region" formControlName="region" (change)="onRegionChange($event)"
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section1.region')?.invalid && (questionnaireForm.get('section1.region')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez votre région</option>
+          <option *ngFor="let region of regions" [value]="region.nom">{{ region.nom }}</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section1.region')?.invalid && (questionnaireForm.get('section1.region')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+
+      <!-- Commune -->
+      <div class="form-group">
+        <label for="commune" class="block text-sm font-medium text-gray-700">Commune :</label>
+        <select id="commune" formControlName="commune"
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section1.commune')?.invalid && (questionnaireForm.get('section1.commune')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez votre commune</option>
+          <option *ngFor="let commune of communes" [value]="commune">{{ commune }}</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section1.commune')?.invalid && (questionnaireForm.get('section1.commune')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
       </div>
     </div>
 
-    <!-- Section 2 : Connaissances sur la corruption électorale -->
-    <div *ngIf="currentSection === 2" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
-      <h3 class="text-2xl font-semibold mb-4">Section 2 : Connaissances sur la corruption électorale</h3>
-
-      <div formGroupName="section2" class="space-y-6">
-        <!-- Corruption Types (multi-select) -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Selon vous, qu'est-ce que la corruption électorale ? (Sélectionnez toutes les réponses qui s'appliquent)</label>
-          <div class="mt-2 space-y-2">
-            <div *ngFor="let option of corruptionOptions" class="flex items-start">
-              <div class="flex items-center h-5">
-                <input
-                  type="checkbox"
-                  [id]="'corruptionType-' + option.value"
-                  [value]="option.value"
-                  (change)="toggleCorruptionType(option.value)"
-                  [checked]="isCorruptionTypeSelected(option.value)"
-                  class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label [for]="'corruptionType-' + option.value" class="font-medium text-gray-700">
-                  {{ option.label }}
-                </label>
-              </div>
-            </div>
-          </div>
-          <div *ngIf="corruptionTypesArray.invalid && (corruptionTypesArray.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Veuillez sélectionner au moins une option
-          </div>
-          <div *ngIf="questionnaireForm.get('section2.corruptionTypes')?.value.includes('otherCorruption')" class="mt-4">
-            <label class="block text-sm font-medium text-gray-700">Précisez :</label>
-            <input type="text" formControlName="otherCorruptionDescription" placeholder="Décrivez votre réponse"
-              class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-          </div>
-        </div>
-
-        <!-- Electoral Corruption Problem -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Pensez-vous que la corruption électorale est un problème dans votre pays ?</label>
-          <select formControlName="electoralCorruptionProblem"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section2.electoralCorruptionProblem')?.invalid && (questionnaireForm.get('section2.electoralCorruptionProblem')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui </option>
-            <option value="Non">Non</option>
-            <option value="Ne sais pas">Je ne sais pas </option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section2.electoralCorruptionProblem')?.invalid && (questionnaireForm.get('section2.electoralCorruptionProblem')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-
-        <!-- Knowledge About Laws -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">À quel point êtes-vous informé(e) sur les lois et les mécanismes de lutte contre la corruption électorale ?</label>
-          <select formControlName="knowledgeAboutLaws"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section2.knowledgeAboutLaws')?.invalid && (questionnaireForm.get('section2.knowledgeAboutLaws')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une réponse</option>
-            <option value="Très informé">Très informé(e) </option>
-            <option value="Un peu informé">Un peu informé(e) </option>
-            <option value="Pas informé">Pas du tout informé(e) </option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section2.knowledgeAboutLaws')?.invalid && (questionnaireForm.get('section2.knowledgeAboutLaws')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-      </div>
-
-      <div class="flex justify-between mt-8">
-        <button type="button" (click)="previousSection()"
-          class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          ← Précédent
-        </button>
-        <button type="button" (click)="nextSection()"
-          class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Suivant →
-        </button>
-      </div>
+    <div class="flex justify-between mt-8">
+      <button type="button" (click)="nextSection()"
+        class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        Suivant →
+      </button>
     </div>
+  </div>
 
-    <!-- Section 3 : Expériences personnelles -->
-    <div *ngIf="currentSection === 3" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
-      <h3 class="text-2xl font-semibold mb-4">Section 3 : Expériences personnelles</h3>
+  <!-- Section 2 : Connaissances sur la corruption électorale -->
+  <div *ngIf="currentSection === 2" class="section p-8 bg-white rounded-lg shadow-lg">
+    <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
+    <h3 class="text-2xl font-semibold mb-4">Section 2 : Connaissances sur la corruption électorale</h3>
 
-      <div formGroupName="section3" class="space-y-6">
-        <!-- Corruption Experience -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Avez-vous déjà été témoin ou victime de corruption électorale ?</label>
-          <select formControlName="corruptionExperience"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section3.corruptionExperience')?.invalid && (questionnaireForm.get('section3.corruptionExperience')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une option</option>
-            <option value="Oui">Oui</option>
-            <option value="Non">Non</option>
-            <option value="Ne pas répondre">Je préfère ne pas répondre</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section3.corruptionExperience')?.invalid && (questionnaireForm.get('section3.corruptionExperience')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-
-        <!-- Corruption Description -->
-        <div *ngIf="questionnaireForm.get('section3.corruptionExperience')?.value === 'Oui'" class="form-group">
-          <label for="corruptionDescription" class="block text-lg font-medium text-gray-700">Si oui, pouvez-vous décrire brièvement la situation ? (Optionnel)</label>
-          <textarea id="corruptionDescription" formControlName="corruptionDescription" rows="4"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
-        </div>
-
-        <!-- Vote Incentive -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Avez-vous déjà été incité(e) à voter pour un candidat en échange d'argent, de biens ou de services ?</label>
-          <select formControlName="voteIncentive"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section3.voteIncentive')?.invalid && (questionnaireForm.get('section3.voteIncentive')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une option</option>
-            <option value="Oui">Oui</option>
-            <option value="Non">Non</option>
-            <option value="Ne pas répondre">Je préfère ne pas répondre </option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section3.voteIncentive')?.invalid && (questionnaireForm.get('section3.voteIncentive')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-
-        <!-- Voting Pressure -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Avez-vous déjà ressenti une pression pour voter d'une certaine manière (par exemple, intimidation, menaces) ?</label>
-          <select formControlName="votingPressure"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section3.votingPressure')?.invalid && (questionnaireForm.get('section3.votingPressure')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une option</option>
-            <option value="Oui">Oui</option>
-            <option value="Non">Non</option>
-            <option value="Ne pas répondre">Je préfère ne pas répondre</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section3.votingPressure')?.invalid && (questionnaireForm.get('section3.votingPressure')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-      </div>
-
-      <div class="flex justify-between mt-8">
-        <button type="button" (click)="previousSection()"
-          class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          ← Précédent
-        </button>
-        <button type="button" (click)="nextSection()"
-          class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-           Suivant →
-        </button>
-      </div>
-    </div>
-
-    <!-- Section 4 : Questions spécifiques -->
-    <div *ngIf="currentSection === 4" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
-      <h3 class="text-2xl font-semibold mb-4">Section 4 : Questions spécifiques</h3>
-
-      <div formGroupName="section4" class="space-y-6">
-        <!-- Money Given Amount -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Si de l'argent vous a été promis ou donné lors des élections passées :</label>
-          <input type="text" formControlName="moneyGivenAmount"
-            class="p-2 border border-gray-300 rounded-md w-full"
-            placeholder="Indiquer montant proposé ou donné">
-        </div>
-
-        <!-- Sell Vote -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Accepteriez-vous de vendre votre vote ?</label>
-          <select formControlName="sellVote"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section4.sellVote')?.invalid && (questionnaireForm.get('section4.sellVote')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une option</option>
-            <option value="Oui">Oui</option>
-            <option value="Non">Non</option>
-            <option value="Je ne sais pas">Je ne sais pas</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section4.sellVote')?.invalid && (questionnaireForm.get('section4.sellVote')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-
-        <!-- Money For Vote -->
-        <div *ngIf="questionnaireForm.get('section4.sellVote')?.value === 'Oui'" class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Pour quel montant ?</label>
-          <input type="text" formControlName="moneyForVote"
-            class="p-2 border border-gray-300 rounded-md w-full"
-            placeholder="€">
-        </div>
-
-        <!-- Corrupt Persons (multi-select) -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Qui a tenté de vous corrompre ? (Plusieurs réponses possibles -  par réponse)</label>
-          <div class="mt-2 space-y-2">
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" id="corrupt-mayor" value="Le maire sortant"
-                       (change)="toggleCorruptPerson('Le maire sortant')"
-                       [checked]="isCorruptPersonSelected('Le maire sortant')"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="corrupt-mayor" class="font-medium text-gray-700">Le maire sortant </label>
-              </div>
+    <div formGroupName="section2" class="space-y-6">
+      <!-- Corruption Types (multi-select) -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Selon vous, qu'est-ce que la corruption électorale ? (Sélectionnez toutes les réponses qui s'appliquent)</label>
+        <div class="mt-2 space-y-2">
+          <div *ngFor="let option of corruptionOptions" class="flex items-start">
+            <div class="flex items-center h-5">
+              <input
+                type="checkbox"
+                [id]="'corruptionType-' + option.value"
+                [value]="option.value"
+                (change)="toggleCorruptionType(option.value)"
+                [checked]="isCorruptionTypeSelected(option.value)"
+                class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
             </div>
-
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" id="corrupt-mayor-contact" value="Une connaissance du maire"
-                       (change)="toggleCorruptPerson('Une connaissance du maire')"
-                       [checked]="isCorruptPersonSelected('Une connaissance du maire')"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="corrupt-mayor-contact" class="font-medium text-gray-700">Une connaissance du maire </label>
-              </div>
-            </div>
-
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" id="corrupt-family" value="Un membre de votre famille"
-                       (change)="toggleCorruptPerson('Un membre de votre famille')"
-                       [checked]="isCorruptPersonSelected('Un membre de votre famille')"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="corrupt-family" class="font-medium text-gray-700">Un membre de votre famille </label>
-              </div>
-            </div>
-
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" id="corrupt-candidate" value="Un élu ou un candidat tête de liste"
-                       (change)="toggleCorruptPerson('Un élu ou un candidat tête de liste')"
-                       [checked]="isCorruptPersonSelected('Un élu ou un candidat tête de liste')"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="corrupt-candidate" class="font-medium text-gray-700">Un élu ou un candidat tête de liste </label>
-              </div>
-            </div>
-
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" id="corrupt-friend" value="Un ami"
-                       (change)="toggleCorruptPerson('Un ami')"
-                       [checked]="isCorruptPersonSelected('Un ami')"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="corrupt-friend" class="font-medium text-gray-700">Un ami </label>
-              </div>
-            </div>
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" id="corrupt-nothing" value="Personne"
-                       (change)="toggleCorruptPerson('Personne')"
-                       [checked]="isCorruptPersonSelected('Personne')"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="corrupt-nothing" class="font-medium text-gray-700">Personne </label>
-              </div>
-            </div>
-
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" id="corrupt-other" value="Autre"
-                       (change)="toggleCorruptPerson('Autre')"
-                       [checked]="isCorruptPersonSelected('Autre')"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="corrupt-other" class="font-medium text-gray-700">Autre (précisez) </label>
-              </div>
-            </div>
-
-            <div *ngIf="isCorruptPersonSelected('Autre')" class="ml-7 mt-2">
-              <input type="text" formControlName="otherCorruptPerson" placeholder="Précisez"
-                     class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            <div class="ml-3 text-sm">
+              <label [for]="'corruptionType-' + option.value" class="font-medium text-gray-700">
+                {{ option.label }}
+              </label>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="flex justify-between mt-8">
-        <button type="button" (click)="previousSection()"
-          class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          ← Précédent
-        </button>
-        <button type="button" (click)="nextSection()"
-          class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Suivant →
-        </button>
-      </div>
-    </div>
-
-    <!-- Section 5 : Alternatives à la corruption -->
-    <div *ngIf="currentSection === 5" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
-      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Section 5 : Alternatives à la corruption</h3>
-
-      <div formGroupName="section5" class="space-y-6">
-        <!-- Alternative Options (multi-select) -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Que pourriez-vous faire à la place pour répondre à vos besoins sans participer à la corruption ? (Sélectionnez toutes les réponses applicables)</label>
-          <div class="mt-2 space-y-2">
-            <div *ngFor="let option of alternativeOptions" class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" [id]="'alt-'+option.value"
-                       [value]="option.value"
-                       (change)="toggleAlternativeOption(option.value)"
-                       [checked]="isAlternativeOptionSelected(option.value)"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label [for]="'alt-'+option.value" class="font-medium text-gray-700">
-                  {{option.label}}
-                </label>
-              </div>
-            </div>
-          </div>
+        <div *ngIf="corruptionTypesArray.invalid && (corruptionTypesArray.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Veuillez sélectionner au moins une option
         </div>
-
-        <!-- Other Alternative Description -->
-        <div *ngIf="isAlternativeOptionSelected('other')" class="mt-4">
+        <div *ngIf="questionnaireForm.get('section2.corruptionTypes')?.value.includes('otherCorruption')" class="mt-4">
           <label class="block text-sm font-medium text-gray-700">Précisez :</label>
-          <input type="text" formControlName="alternativeOptionsDescription" placeholder="Décrivez votre réponse"
+          <input type="text" formControlName="otherCorruptionDescription" placeholder="Décrivez votre réponse"
             class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
         </div>
+      </div>
 
-        <!-- Need Help -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Pensez-vous avoir besoin d'aide pour atteindre l'objectif ci-dessus ?</label>
-          <select formControlName="needHelp"
-            class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section5.needHelp')?.invalid && (questionnaireForm.get('section5.needHelp')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui </option>
-            <option value="Non">Non </option>
-            <option value="Je ne sais pas">Je ne sais pas</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section5.needHelp')?.invalid && (questionnaireForm.get('section5.needHelp')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
-        </div>
-
-        <!-- Willing To Refuse Corruption -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Seriez-vous prêt(e) à refuser des offres de corruption à l'avenir si vous aviez accès à des alternatives ?</label>
-          <select formControlName="willingToRefuseCorruption"
-            class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section5.willingToRefuseCorruption')?.invalid && (questionnaireForm.get('section5.willingToRefuseCorruption')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui </option>
-            <option value="Non">Non </option>
-            <option value="Je ne sais pas">Je ne sais pas</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section5.willingToRefuseCorruption')?.invalid && (questionnaireForm.get('section5.willingToRefuseCorruption')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
-          </div>
+      <!-- Electoral Corruption Problem -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Pensez-vous que la corruption électorale est un problème dans votre pays ?</label>
+        <select formControlName="electoralCorruptionProblem"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section2.electoralCorruptionProblem')?.invalid && (questionnaireForm.get('section2.electoralCorruptionProblem')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une réponse</option>
+          <option value="Oui">Oui </option>
+          <option value="Non">Non</option>
+          <option value="Ne sais pas">Je ne sais pas </option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section2.electoralCorruptionProblem')?.invalid && (questionnaireForm.get('section2.electoralCorruptionProblem')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
         </div>
       </div>
 
-      <div class="flex justify-between mt-6">
-        <button type="button" (click)="previousSection()"
-          class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
-          ← Précédent
-        </button>
-        <button type="button" (click)="nextSection()"
-          class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-          Suivant →
-        </button>
+      <!-- Knowledge About Laws -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">À quel point êtes-vous informé(e) sur les lois et les mécanismes de lutte contre la corruption électorale ?</label>
+        <select formControlName="knowledgeAboutLaws"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section2.knowledgeAboutLaws')?.invalid && (questionnaireForm.get('section2.knowledgeAboutLaws')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une réponse</option>
+          <option value="Très informé">Très informé(e) </option>
+          <option value="Un peu informé">Un peu informé(e) </option>
+          <option value="Pas informé">Pas du tout informé(e) </option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section2.knowledgeAboutLaws')?.invalid && (questionnaireForm.get('section2.knowledgeAboutLaws')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
       </div>
     </div>
 
-    <!-- Section 6 : Sensibilisation des abstentionnistes -->
-    <div *ngIf="currentSection === 6" class="section p-8 bg-white rounded-lg shadow-lg">
-      <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
-      <h3 class="text-2xl font-semibold mb-4">Section 6 : Sensibilisation des abstentionnistes</h3>
+    <div class="flex justify-between mt-8">
+      <button type="button" (click)="previousSection()"
+        class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        ← Précédent
+      </button>
+      <button type="button" (click)="nextSection()"
+        class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        Suivant →
+      </button>
+    </div>
+  </div>
 
-      <div formGroupName="section6" class="space-y-6">
-        <!-- Intention Voter -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Avez-vous l'intention d'aller voter aux élections municipales ?</label>
-          <select formControlName="intentionVoter"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section6.intentionVoter')?.invalid && (questionnaireForm.get('section6.intentionVoter')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui </option>
-            <option value="Non">Non</option>
-            <option value="Je ne sais pas">Je ne sais pas</option>
-          </select>
-          <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.invalid && (questionnaireForm.get('section6.intentionVoter')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
-            Ce champ est obligatoire
+  <!-- Section 3 : Expériences personnelles -->
+  <div *ngIf="currentSection === 3" class="section p-8 bg-white rounded-lg shadow-lg">
+    <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
+    <h3 class="text-2xl font-semibold mb-4">Section 3 : Expériences personnelles</h3>
+
+    <div formGroupName="section3" class="space-y-6">
+      <!-- Corruption Experience -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Avez-vous déjà été témoin ou victime de corruption électorale ?</label>
+        <select formControlName="corruptionExperience"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section3.corruptionExperience')?.invalid && (questionnaireForm.get('section3.corruptionExperience')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une option</option>
+          <option value="Oui">Oui</option>
+          <option value="Non">Non</option>
+          <option value="Ne pas répondre">Je préfère ne pas répondre</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section3.corruptionExperience')?.invalid && (questionnaireForm.get('section3.corruptionExperience')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+
+      <!-- Corruption Description -->
+      <div *ngIf="questionnaireForm.get('section3.corruptionExperience')?.value === 'Oui'" class="form-group">
+        <label for="corruptionDescription" class="block text-lg font-medium text-gray-700">Si oui, pouvez-vous décrire brièvement la situation ? (Optionnel)</label>
+        <textarea id="corruptionDescription" formControlName="corruptionDescription" rows="4"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
+      </div>
+
+      <!-- Vote Incentive -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Avez-vous déjà été incité(e) à voter pour un candidat en échange d'argent, de biens ou de services ?</label>
+        <select formControlName="voteIncentive"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section3.voteIncentive')?.invalid && (questionnaireForm.get('section3.voteIncentive')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une option</option>
+          <option value="Oui">Oui</option>
+          <option value="Non">Non</option>
+          <option value="Ne pas répondre">Je préfère ne pas répondre </option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section3.voteIncentive')?.invalid && (questionnaireForm.get('section3.voteIncentive')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+
+      <!-- Voting Pressure -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Avez-vous déjà ressenti une pression pour voter d'une certaine manière (par exemple, intimidation, menaces) ?</label>
+        <select formControlName="votingPressure"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section3.votingPressure')?.invalid && (questionnaireForm.get('section3.votingPressure')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une option</option>
+          <option value="Oui">Oui</option>
+          <option value="Non">Non</option>
+          <option value="Ne pas répondre">Je préfère ne pas répondre</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section3.votingPressure')?.invalid && (questionnaireForm.get('section3.votingPressure')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-between mt-8">
+      <button type="button" (click)="previousSection()"
+        class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        ← Précédent
+      </button>
+      <button type="button" (click)="nextSection()"
+        class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+         Suivant →
+      </button>
+    </div>
+  </div>
+
+  <!-- Section 4 : Questions spécifiques -->
+  <div *ngIf="currentSection === 4" class="section p-8 bg-white rounded-lg shadow-lg">
+    <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
+    <h3 class="text-2xl font-semibold mb-4">Section 4 : Questions spécifiques</h3>
+
+    <div formGroupName="section4" class="space-y-6">
+      <!-- Money Given Amount -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Si de l'argent vous a été promis ou donné lors des élections passées :</label>
+        <input type="text" formControlName="moneyGivenAmount"
+          class="p-2 border border-gray-300 rounded-md w-full"
+          placeholder="Indiquer montant proposé ou donné">
+      </div>
+
+      <!-- Sell Vote -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Accepteriez-vous de vendre votre vote ?</label>
+        <select formControlName="sellVote"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section4.sellVote')?.invalid && (questionnaireForm.get('section4.sellVote')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une option</option>
+          <option value="Oui">Oui</option>
+          <option value="Non">Non</option>
+          <option value="Je ne sais pas">Je ne sais pas</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section4.sellVote')?.invalid && (questionnaireForm.get('section4.sellVote')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+
+      <!-- Money For Vote -->
+      <div *ngIf="questionnaireForm.get('section4.sellVote')?.value === 'Oui'" class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Pour quel montant ?</label>
+        <input type="text" formControlName="moneyForVote"
+          class="p-2 border border-gray-300 rounded-md w-full"
+          placeholder="€">
+      </div>
+
+      <!-- Corrupt Persons (multi-select) -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Qui a tenté de vous corrompre ? (Plusieurs réponses possibles - par réponse)</label>
+        <div class="mt-2 space-y-2">
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" id="corrupt-mayor" value="Le maire sortant"
+                     (change)="toggleCorruptPerson('Le maire sortant')"
+                     [checked]="isCorruptPersonSelected('Le maire sortant')"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="corrupt-mayor" class="font-medium text-gray-700">Le maire sortant </label>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" id="corrupt-mayor-contact" value="Une connaissance du maire"
+                     (change)="toggleCorruptPerson('Une connaissance du maire')"
+                     [checked]="isCorruptPersonSelected('Une connaissance du maire')"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="corrupt-mayor-contact" class="font-medium text-gray-700">Une connaissance du maire </label>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" id="corrupt-family" value="Un membre de votre famille"
+                     (change)="toggleCorruptPerson('Un membre de votre famille')"
+                     [checked]="isCorruptPersonSelected('Un membre de votre famille')"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="corrupt-family" class="font-medium text-gray-700">Un membre de votre famille </label>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" id="corrupt-candidate" value="Un élu ou un candidat tête de liste"
+                     (change)="toggleCorruptPerson('Un élu ou un candidat tête de liste')"
+                     [checked]="isCorruptPersonSelected('Un élu ou un candidat tête de liste')"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="corrupt-candidate" class="font-medium text-gray-700">Un élu ou un candidat tête de liste </label>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" id="corrupt-friend" value="Un ami"
+                     (change)="toggleCorruptPerson('Un ami')"
+                     [checked]="isCorruptPersonSelected('Un ami')"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="corrupt-friend" class="font-medium text-gray-700">Un ami </label>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" id="corrupt-nothing" value="Personne"
+                     (change)="toggleCorruptPerson('Personne')"
+                     [checked]="isCorruptPersonSelected('Personne')"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="corrupt-nothing" class="font-medium text-gray-700">Personne </label>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" id="corrupt-other" value="Autre"
+                     (change)="toggleCorruptPerson('Autre')"
+                     [checked]="isCorruptPersonSelected('Autre')"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="corrupt-other" class="font-medium text-gray-700">Autre (précisez) </label>
+            </div>
+          </div>
+
+          <div *ngIf="isCorruptPersonSelected('Autre')" class="ml-7 mt-2">
+            <input type="text" formControlName="otherCorruptPerson" placeholder="Précisez"
+                   class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Non-Vote Reasons (multi-select) - Conditionnel -->
-        <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.value !== 'Oui'" class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Si vous ne votez pas, quelles en sont les raisons principales ? </label>
-          <div class="mt-2 space-y-2">
-            <div *ngFor="let option of nonVoteReasons" class="flex items-start">
-              <div class="flex items-center h-5">
-                <input type="checkbox" [id]="'reason-'+option.value"
-                       [value]="option.value"
-                       (change)="toggleNonVoteReason(option.value)"
-                       [checked]="isNonVoteReasonSelected(option.value)"
-                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label [for]="'reason-'+option.value" class="font-medium text-gray-700">
-                  {{option.label}}
-                </label>
-              </div>
+    <div class="flex justify-between mt-8">
+      <button type="button" (click)="previousSection()"
+        class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        ← Précédent
+      </button>
+      <button type="button" (click)="nextSection()"
+        class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        Suivant →
+      </button>
+    </div>
+  </div>
+
+  <!-- Section 5 : Alternatives à la corruption -->
+  <div *ngIf="currentSection === 5" class="section p-8 bg-white rounded-lg shadow-lg">
+    <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
+    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Section 5 : Alternatives à la corruption</h3>
+
+    <div formGroupName="section5" class="space-y-6">
+      <!-- Alternative Options (multi-select) -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Que pourriez-vous faire à la place pour répondre à vos besoins sans participer à la corruption ? (Sélectionnez toutes les réponses applicables)</label>
+        <div class="mt-2 space-y-2">
+          <div *ngFor="let option of alternativeOptions" class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" [id]="'alt-'+option.value"
+                     [value]="option.value"
+                     (change)="toggleAlternativeOption(option.value)"
+                     [checked]="isAlternativeOptionSelected(option.value)"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label [for]="'alt-'+option.value" class="font-medium text-gray-700">
+                {{option.label}}
+              </label>
             </div>
           </div>
         </div>
-        <!-- Après la liste des raisons de non-vote -->
-        <div *ngIf="isNonVoteReasonSelected('Autre')" class="mt-4">
+      </div>
+
+      <!-- Other Alternative Description -->
+      <div *ngIf="isAlternativeOptionSelected('other')" class="mt-4">
+        <label class="block text-sm font-medium text-gray-700">Précisez :</label>
+        <input type="text" formControlName="alternativeOptionsDescription" placeholder="Décrivez votre réponse"
+          class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <!-- Need Help -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Pensez-vous avoir besoin d'aide pour atteindre l'objectif ci-dessus ?</label>
+        <select formControlName="needHelp"
+          class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section5.needHelp')?.invalid && (questionnaireForm.get('section5.needHelp')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une réponse</option>
+          <option value="Oui">Oui </option>
+          <option value="Non">Non </option>
+          <option value="Je ne sais pas">Je ne sais pas</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section5.needHelp')?.invalid && (questionnaireForm.get('section5.needHelp')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+
+      <!-- Willing To Refuse Corruption -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Seriez-vous prêt(e) à refuser des offres de corruption à l'avenir si vous aviez accès à des alternatives ?</label>
+        <select formControlName="willingToRefuseCorruption"
+          class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section5.willingToRefuseCorruption')?.invalid && (questionnaireForm.get('section5.willingToRefuseCorruption')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une réponse</option>
+          <option value="Oui">Oui </option>
+          <option value="Non">Non </option>
+          <option value="Je ne sais pas">Je ne sais pas</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section5.willingToRefuseCorruption')?.invalid && (questionnaireForm.get('section5.willingToRefuseCorruption')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-between mt-6">
+      <button type="button" (click)="previousSection()"
+        class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+        ← Précédent
+      </button>
+      <button type="button" (click)="nextSection()"
+        class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+        Suivant →
+      </button>
+    </div>
+  </div>
+
+  <!-- Section 6 : Sensibilisation des abstentionnistes -->
+  <div *ngIf="currentSection === 6" class="section p-8 bg-white rounded-lg shadow-lg">
+    <h1 class="text-2xl font-semibold mb-4 text-center">Consultation Populaire aux élections municipales de 2026 en Outre-Mer</h1>
+    <h3 class="text-2xl font-semibold mb-4">Section 6 : Sensibilisation des abstentionnistes</h3>
+
+    <div formGroupName="section6" class="space-y-6">
+      <!-- Intention Voter -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Avez-vous l'intention d'aller voter aux élections municipales ?</label>
+        <select formControlName="intentionVoter"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section6.intentionVoter')?.invalid && (questionnaireForm.get('section6.intentionVoter')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une réponse</option>
+          <option value="Oui">Oui </option>
+          <option value="Non">Non</option>
+          <option value="Je ne sais pas">Je ne sais pas</option>
+        </select>
+        <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.invalid && (questionnaireForm.get('section6.intentionVoter')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
+          Ce champ est obligatoire
+        </div>
+      </div>
+
+      <!-- Non-Vote Reasons (multi-select) - Conditionnel -->
+      <div *ngIf="questionnaireForm.get('section6.intentionVoter')?.value === 'Non' || questionnaireForm.get('section6.intentionVoter')?.value === 'Je ne sais pas'" class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Si vous ne votez pas, quelles en sont les raisons principales ? </label>
+        <div class="mt-2 space-y-2">
+          <div *ngFor="let option of nonVoteReasons" class="flex items-start">
+            <div class="flex items-center h-5">
+              <input type="checkbox" [id]="'reason-'+option.value"
+                     [value]="option.value"
+                     (change)="toggleNonVoteReason(option.value)"
+                     [checked]="isNonVoteReasonSelected(option.value)"
+                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+              <label [for]="'reason-'+option.value" class="font-medium text-gray-700">
+                {{option.label}}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isNonVoteReasonSelected('other_non_vote')" class="mt-4 ml-7">
           <label class="block text-sm font-medium text-gray-700">Précisez :</label>
-          <input type="text" formControlName="impactsCorruptionDetails"
-                placeholder="Décrivez votre raison"
-                class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          <input type="text" formControlName="otherNonVoteReason"
+                 placeholder="Décrivez votre raison"
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
         </div>
+      </div>
 
-        <!-- Aide Obstacles Pratiques -->
-        <div *ngIf="questionnaireForm.get('section6.nonVoteReasons')?.value?.includes('Obstacles pratiques (déplacement, absence, etc.)')"
-             class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Si vous avez choisi Obstacles pratiques, pensez-vous avoir besoin d'aide pour y remédier ?</label>
-          <select formControlName="aideObstaclesPratiques"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-            <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui </option>
-            <option value="Non">Non</option>
-            <option value="Je ne sais pas">Je ne sais pas</option>
-          </select>
-        </div>
+      <!-- Aide Obstacles Pratiques -->
+      <div *ngIf="isNonVoteReasonSelected('practical_obstacles')"
+           class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Si vous avez choisi Obstacles pratiques, pensez-vous avoir besoin d'aide pour y remédier ?</label>
+        <select formControlName="aideObstaclesPratiques"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          <option value="">Sélectionnez une réponse</option>
+          <option value="Oui">Oui </option>
+          <option value="Non">Non</option>
+          <option value="Je ne sais pas">Je ne sais pas</option>
+        </select>
+      </div>
 
-        <!-- Impact Corruption -->
-        <div class="form-group">
-          <label class="block text-lg font-medium text-gray-700">Saviez-vous que la corruption électorale peut fausser les résultats des élections et avoir un impact direct sur votre avenir ?</label>
-          <select formControlName="impactCorruption"
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [ngClass]="{'border-red-500': questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)}">
-            <option value="">Sélectionnez une réponse</option>
-            <option value="Oui">Oui </option>
-            <option value="Non">Non</option>
-            <option value="Je ne sais pas">Je ne sais pas</option>
+      <!-- Impact Corruption -->
+      <div class="form-group">
+        <label class="block text-lg font-medium text-gray-700">Saviez-vous que la corruption électorale peut fausser les résultats des élections et avoir un impact direct sur votre avenir ?</label>
+        <select formControlName="impactCorruption"
+          class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          [ngClass]="{'border-red-500': questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)}">
+          <option value="">Sélectionnez une réponse</option>
+          <option value="Oui">Oui </option>
+          <option value="Non">Non</option>
+          <option value="Je ne sais pas">Je ne sais pas</option>
           </select>
           <div *ngIf="questionnaireForm.get('section6.impactCorruption')?.invalid && (questionnaireForm.get('section6.impactCorruption')?.touched || formSubmitted)" class="text-red-500 text-sm mt-1">
             Ce champ est obligatoire
+          </div>
+        </div>
+
+        <!-- Dans la section 6 -->
+        <div *ngIf="questionnaireForm.get('section6.impactCorruption')?.value === 'Non' ||
+        questionnaireForm.get('section6.impactCorruption')?.value === 'Je ne sais pas'"
+        class="form-group">
+          <label class="block text-lg font-medium text-gray-700">
+          Selon vous quels impacts pourraient avoir des conséquences dans votre vie ? (Plusieurs réponses possibles)
+          </label>
+
+          <div class="mt-4 space-y-3">
+          <div *ngFor="let option of impactOptions" class="flex items-start">
+          <div class="flex items-center h-5">
+          <input type="checkbox"
+            [id]="'impact-'+option.value"
+            [value]="option.value"
+            (change)="toggleImpactOption(option.value)"
+            [checked]="isImpactOptionSelected(option.value)"
+            class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+          </div>
+          <div class="ml-3 text-sm">
+          <label [for]="'impact-'+option.value" class="font-medium text-gray-700">
+          {{option.label}}
+          </label>
+          </div>
+          </div>
+          </div>
+
+          <div *ngIf="isImpactOptionSelected('other_impact')" class="ml-7 mt-2">
+          <label class="block text-sm font-medium text-gray-700">Précisez :</label>
+          <input type="text" formControlName="otherImpactDescription"
+          placeholder="Décrivez votre réponse"
+          class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
 
@@ -555,12 +588,12 @@
               </div>
             </div>
           </div>
-        </div>
-        <div *ngIf="isEncourageVoteOptionSelected('Autre')" class="mt-4">
-          <label class="block text-sm font-medium text-gray-700">Précisez :</label>
-          <input type="text" formControlName="autreEncouragerVoteLibre"
-                 placeholder="Décrivez votre proposition"
-                 class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          <div *ngIf="isEncourageVoteOptionSelected('Autre')" class="mt-4">
+            <label class="block text-sm font-medium text-gray-700">Précisez :</label>
+            <input type="text" formControlName="autreEncouragerVoteLibre"
+                   placeholder="Décrivez votre proposition"
+                   class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          </div>
         </div>
       </div>
 

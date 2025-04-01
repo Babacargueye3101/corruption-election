@@ -18,6 +18,7 @@ export class QuestionnaireComponent implements OnInit {
   currentSection: number = 1;
   totalScore: number = 0;
   formSubmitted: boolean = false;
+  maxPossibleScore: number = 97;
 
   regions: any[] = [];
   communes: string[] = [];
@@ -60,7 +61,67 @@ export class QuestionnaireComponent implements OnInit {
     { value: 'awareness', label: 'Sensibiliser votre entourage', points: 2 },
     { value: 'monitoring', label: 'Participer à des initiatives de surveillance électorale', points: 2 },
     { value: 'vote_free', label: 'Voter en toute conscience, sans pression', points: 2 },
+    { value: 'dontknow', label: 'Je sais pas', points: 0 },
     { value: 'Autre', label: 'Autre', points: 1 }
+  ];
+
+  impactOptions = [
+    {
+      value: 'public_services_health',
+      label: 'Détérioration des services publics (hôpitaux sous-équipés, pénuries de médicaments)'
+    },
+    {
+      value: 'public_services_education',
+      label: 'Détérioration des services publics (écoles délabrées, manque de matériel pédagogique)'
+    },
+    {
+      value: 'public_services_infrastructure',
+      label: 'Détérioration des services publics (travaux publics de mauvaise qualité)'
+    },
+    {
+      value: 'inequalities',
+      label: 'Inégalités sociales et économiques (favoritisme envers les riches)'
+    },
+    {
+      value: 'social_programs',
+      label: 'Inégalités sociales et économiques (détournement des aides sociales)'
+    },
+    {
+      value: 'justice',
+      label: 'Insécurité et injustice (justice influencée par l\'argent)'
+    },
+    {
+      value: 'police',
+      label: 'Insécurité et injustice (forces de l\'ordre corrompues)'
+    },
+    {
+      value: 'trust_institutions',
+      label: 'Perte de confiance dans les institutions (abstention, protestation)'
+    },
+    {
+      value: 'brain_drain',
+      label: 'Perte de confiance dans les institutions (exode des jeunes)'
+    },
+    {
+      value: 'high_prices',
+      label: 'Impact économique (vie chère due aux monopoles)'
+    },
+    {
+      value: 'investment',
+      label: 'Impact économique (découragement des investissements)'
+    },
+    {
+      value: 'environment_mining',
+      label: 'Impact sur l\'environnement (exploitation minière illégale)'
+    },
+    {
+      value: 'environment_pollution',
+      label: 'Impact sur l\'environnement (pollution non contrôlée)'
+    },
+    {
+      value: 'other_impact',
+      label: 'Autre (précisez)'
+    }
   ];
 
   constructor(private fb: FormBuilder, private http: HttpClient, private firebaseService: FirebaseService) {
@@ -105,7 +166,9 @@ export class QuestionnaireComponent implements OnInit {
         impactsCorruptionDetails: [''],
         autreImpactCorruption: [''],
         encourageVoteOptions: this.fb.array([]),
-        autreEncouragerVoteLibre: ['']
+        autreEncouragerVoteLibre: [''],
+        impactOptions: this.fb.array([]),
+        otherImpactDescription: ['']
       }),
       section7: this.fb.group({
         questionnaireHelpful: ['', Validators.required],
@@ -208,6 +271,25 @@ export class QuestionnaireComponent implements OnInit {
     return this.encourageVoteOptionsArray.value.includes(value);
   }
 
+
+
+  get impactOptionsArray(): FormArray {
+    return this.questionnaireForm.get('section6.impactOptions') as FormArray;
+  }
+
+  toggleImpactOption(value: string): void {
+    const index = this.impactOptionsArray.value.indexOf(value);
+    if (index === -1) {
+      this.impactOptionsArray.push(this.fb.control(value));
+    } else {
+      this.impactOptionsArray.removeAt(index);
+    }
+  }
+
+  isImpactOptionSelected(value: string): boolean {
+    return this.impactOptionsArray.value.includes(value);
+  }
+
   // Validation personnalisée
   validateCorruptPersons(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -239,16 +321,19 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   nextSection() {
-    if (this.currentSection === 3) {
-      const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
-      const voteIncentive = this.questionnaireForm.get('section3.voteIncentive')?.value;
-      const votingPressure = this.questionnaireForm.get('section3.votingPressure')?.value;
+    if (!this.validateCurrentSection()) {
+      return;
+    }
 
-     if (corruptionExperience === 'Oui' || voteIncentive === 'Oui' || votingPressure === 'Oui') {
+    // Logique existante de changement de section
+    if (this.currentSection === 3) {
+      const section3 = this.getCurrentSectionGroup().value;
+      if ((section3.corruptionExperience === 'Non' || section3.corruptionExperience === 'Ne pas répondre') &&
+          (section3.voteIncentive === 'Non' || section3.voteIncentive === 'Je préfère ne pas répondre') &&
+          (section3.votingPressure === 'Non' || section3.votingPressure === 'Je préfère ne pas répondre')) {
+        this.currentSection = 6; // Sauter aux sections 4 et 5
+      } else {
         this.currentSection++;
-      }
-      else {
-        this.currentSection = 6;
       }
     } else {
       this.currentSection++;
@@ -256,25 +341,14 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   previousSection() {
-    if (this.currentSection > 1) {
-      // Si on est à la section 7 et qu'on vient de la section 6 avec un "Oui" à intentionVoter
-      if (this.currentSection === 7) {
-        const intentionVoter = this.questionnaireForm.get('section6.intentionVoter')?.value;
-        if (intentionVoter === 'Oui') {
-          this.currentSection = 6;
-          return;
-        }
+    if (this.currentSection === 6) {
+      const section3 = this.questionnaireForm.get('section3')?.value;
+      if (section3?.corruptionExperience === 'Non' || section3?.corruptionExperience === 'Ne pas répondre') {
+        this.currentSection = 3;
+        return;
       }
-      // Si on est à la section 6 et qu'on vient de la section 3
-      else if (this.currentSection === 6) {
-        const corruptionExperience = this.questionnaireForm.get('section3.corruptionExperience')?.value;
-        if (corruptionExperience === 'Non' || corruptionExperience === 'Ne pas répondre') {
-          this.currentSection = 3;
-          return;
-        }
-      }
-      this.currentSection--;
     }
+    this.currentSection--;
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
@@ -284,19 +358,59 @@ export class QuestionnaireComponent implements OnInit {
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       } else if (control instanceof FormArray) {
-        control.markAsTouched();
+        control.controls.forEach(c => c.markAsTouched());
       }
     });
   }
 
+  private goToFirstInvalidSection() {
+    for (let i = 1; i <= 7; i++) {
+      const section = this.questionnaireForm.get(`section${i}`) as FormGroup;
+      if (section.invalid) {
+        this.currentSection = i;
+        this.scrollToFirstInvalidControl();
+        break;
+      }
+    }
+  }
+
+
   private getCurrentSectionGroup(): FormGroup {
     return this.questionnaireForm.get(`section${this.currentSection}`) as FormGroup;
+  }
+
+  validateCurrentSection(): boolean {
+    const currentSection = this.getCurrentSectionGroup();
+
+    if (currentSection.invalid) {
+      this.markFormGroupTouched(currentSection);
+
+      // Optionnel : faire défiler jusqu'au premier champ invalide
+      this.scrollToFirstInvalidControl();
+      return false;
+    }
+    return true;
+  }
+
+  private scrollToFirstInvalidControl() {
+    const firstInvalidControl = document.querySelector('.ng-invalid');
+    if (firstInvalidControl) {
+      firstInvalidControl.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
   }
 
   async onSubmit() {
     this.markFormGroupTouched(this.questionnaireForm);
     this.formSubmitted = true;
 
+    if (this.questionnaireForm.invalid) {
+      // Retourner à la première section avec erreur
+      this.goToFirstInvalidSection();
+      return;
+    }
     if (this.questionnaireForm.valid) {
       this.calculateScore();
       const formData = {
@@ -347,7 +461,7 @@ export class QuestionnaireComponent implements OnInit {
           const { email, name } = result.value;
           const region = this.questionnaireForm.get('section1.region')?.value;
           const commune = this.questionnaireForm.get('section1.commune')?.value;
-          const moneyGiven = this.questionnaireForm.get('section4.moneyGivenAmount')?.value;
+          const moneyForVote = this.questionnaireForm.get('section4.moneyForVote')?.value;
 
           try {
             // Sauvegarde des données
@@ -376,6 +490,7 @@ export class QuestionnaireComponent implements OnInit {
                   <button id="btn-share" class="swal2-confirm swal2-styled" style="background-color: #6c757d;">
                     <i class="fas fa-share-alt"></i> Partager
                   </button>
+                  <button id="btn-close" class="swal2-close" style="position: absolute; top: 10px; right: 10px; font-size: 24px;">×</button>
                   <button id="btn-price-average" class="swal2-confirm swal2-styled" style="background-color: #ffc107;">
                     <i class="fas fa-hand-holding-usd"></i> Voir le prix moyen des votes
                   </button>
@@ -391,7 +506,7 @@ export class QuestionnaireComponent implements OnInit {
                 });
 
                 document.getElementById("btn-statistics")?.addEventListener("click", async () => {
-                  await this.generateStatistics(region, commune, moneyGiven);
+                  await this.generateStatistics(region, commune, moneyForVote);
                 });
 
                 document.getElementById("btn-summary")?.addEventListener("click", () => {
@@ -434,11 +549,18 @@ export class QuestionnaireComponent implements OnInit {
                 });
 
                 document.getElementById('btn-price-average')?.addEventListener('click', async () => {
-                  const region = this.questionnaireForm.get('section1.region')?.value;
-                  const commune = this.questionnaireForm.get('section1.commune')?.value;
+                  if (!moneyForVote) {
+                    Swal.fire({
+                      title: 'Information',
+                      text: 'Le prix moyen n\'est pas disponible car vous n\'avez pas indiqué de montant.',
+                      icon: 'info'
+                    });
+                    return;
+                  }
 
                   try {
                     const stats = await this.firebaseService.getStatistics(region, commune);
+                    const today = new Date().toLocaleDateString('fr-FR');
                     const averagePrice = stats.commune?.averageVotePrice
                       ? parseFloat(stats.commune.averageVotePrice).toLocaleString('fr-FR', {
                           minimumFractionDigits: 2,
@@ -447,7 +569,7 @@ export class QuestionnaireComponent implements OnInit {
                       : 'Non disponible';
 
                     Swal.fire({
-                      title: `Prix moyen des votes à ${commune}`,
+                      title: `Prix moyen des votes à ${commune} au ${today}`,
                       html: `
                         <div style="text-align: center; padding: 1rem;">
                           <p style="font-size: 1.5rem; font-weight: bold; color: #1e40af;">
@@ -468,6 +590,11 @@ export class QuestionnaireComponent implements OnInit {
                       'error'
                     );
                   }
+                });
+
+                document.getElementById('btn-close')?.addEventListener('click', () => {
+                  Swal.close();
+                  window.location.href = '/';
                 });
               }, 100);
             } else {
@@ -683,48 +810,54 @@ export class QuestionnaireComponent implements OnInit {
     const voteIncentive = this.questionnaireForm.get('section3.voteIncentive')?.value;
     if (voteIncentive === 'Non') {
       score += 5;
-    } else if (voteIncentive === 'Ne pas répondre') {
+    } else if (voteIncentive === 'Je préfère ne pas répondre') {
       score += 2;
     }
 
     const votingPressure = this.questionnaireForm.get('section3.votingPressure')?.value;
     if (votingPressure === 'Non') {
       score += 5;
-    } else if (votingPressure === 'Ne pas répondre') {
+    } else if (votingPressure === 'Je préfère ne pas répondre') {
       score += 2;
     }
 
-    // Section 4
-    const sellVote = this.questionnaireForm.get('section4.sellVote')?.value;
-    if (sellVote === 'Non') {
-      score += 5;
-    } else if (sellVote === 'Je ne sais pas') {
-      score += 1;
+    // Section 4 (uniquement si affichée)
+    if (this.currentSection > 4 || this.questionnaireForm.get('section4.sellVote')?.value) {
+      const sellVote = this.questionnaireForm.get('section4.sellVote')?.value;
+      if (sellVote === 'Non') {
+        score += 5;
+      } else if (sellVote === 'Je ne sais pas') {
+        score += 1;
+      } else if (sellVote === 'Oui') {
+        score -= 20; // Retirer 20 points comme demandé
+      }
+
+      // Ajout des points pour les personnes corruptrices (2 points par réponse)
+      this.corruptPersonsArray.value.forEach((val: string) => {
+        score += 2;
+      });
     }
 
-    // Ajout des points pour les personnes corruptrices (2 points par réponse)
-    this.corruptPersonsArray.value.forEach((val: string) => {
-      score += 2;
-    });
+    // Section 5 (uniquement si affichée)
+    if (this.currentSection > 5 || this.questionnaireForm.get('section5.alternativeOptions')?.value.length > 0) {
+      this.alternativeOptionsArray.value.forEach((val: string) => {
+        const option = this.alternativeOptions.find(o => o.value === val);
+        if (option) score += option.points;
+      });
 
-    // Section 5
-    this.alternativeOptionsArray.value.forEach((val: string) => {
-      const option = this.alternativeOptions.find(o => o.value === val);
-      if (option) score += option.points;
-    });
+      const needHelp = this.questionnaireForm.get('section5.needHelp')?.value;
+      if (needHelp === 'Oui') {
+        score += 5;
+      } else if (needHelp === 'Je ne sais pas') {
+        score += 1;
+      }
 
-    const needHelp = this.questionnaireForm.get('section5.needHelp')?.value;
-    if (needHelp === 'Oui') {
-      score += 5;
-    } else if (needHelp === 'Je ne sais pas') {
-      score += 1;
-    }
-
-    const willingToRefuseCorruption = this.questionnaireForm.get('section5.willingToRefuseCorruption')?.value;
-    if (willingToRefuseCorruption === 'Oui') {
-      score += 5;
-    } else if (willingToRefuseCorruption === 'Je ne sais pas') {
-      score += 1;
+      const willingToRefuseCorruption = this.questionnaireForm.get('section5.willingToRefuseCorruption')?.value;
+      if (willingToRefuseCorruption === 'Oui') {
+        score += 5;
+      } else if (willingToRefuseCorruption === 'Je ne sais pas') {
+        score += 1;
+      }
     }
 
     // Section 6
@@ -759,6 +892,14 @@ export class QuestionnaireComponent implements OnInit {
       if (option) score += option.points;
     });
 
+    this.impactOptionsArray.value.forEach((val: string) => {
+      score += 2; // 2 points par impact identifié
+    });
+
+    if (this.questionnaireForm.get('section6.otherImpactDescription')?.value) {
+      score += 1; // 1 point supplémentaire si précision donnée
+    }
+
     // Section 7
     const questionnaireHelpful = this.questionnaireForm.get('section7.questionnaireHelpful')?.value;
     if (questionnaireHelpful === 'Oui') {
@@ -790,10 +931,8 @@ export class QuestionnaireComponent implements OnInit {
       score += 1;
     }
 
-    this.totalScore = score;
+    this.totalScore = Math.max(0, score); // Assure que le score ne soit pas négatif
   }
-
-
 
   generateSummaryPdf(name: string) {
     const doc = new jsPDF();
@@ -844,7 +983,7 @@ export class QuestionnaireComponent implements OnInit {
     const section2 = this.questionnaireForm.get('section2')?.value;
 
     // Types de corruption
-    const corruptionTypes = this.corruptionTypesArray.value.map((val : any )=> {
+    const corruptionTypes = this.corruptionTypesArray.value.map((val: any) => {
       const option = this.corruptionOptions.find(o => o.value === val);
       return option ? option.label : val;
     });
@@ -852,7 +991,7 @@ export class QuestionnaireComponent implements OnInit {
     doc.text('- Types de corruption identifiés:', margin + 5, yPosition);
     yPosition += lineHeight;
 
-    corruptionTypes.forEach((type :any)=> {
+    corruptionTypes.forEach((type: any) => {
       if (yPosition > pageHeight - 20) {
         doc.addPage();
         yPosition = margin;
@@ -916,49 +1055,51 @@ export class QuestionnaireComponent implements OnInit {
       yPosition = margin;
     }
 
-    // Section 4 - Questions spécifiques
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Section 4: Questions spécifiques', margin, yPosition);
-    yPosition += lineHeight;
-
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-    const section4 = this.questionnaireForm.get('section4')?.value;
-
-    if (section4.moneyGivenAmount) {
-      doc.text(`- Montant reçu/proposé: ${section4.moneyGivenAmount}`, margin + 5, yPosition);
-      yPosition += lineHeight;
-    }
-
-    doc.text(`- Vente de vote: ${section4.sellVote || 'Non spécifié'}`, margin + 5, yPosition);
-    yPosition += lineHeight;
-
-    if (section4.moneyForVote) {
-      doc.text(`- Montant demandé pour vote: ${section4.moneyForVote}`, margin + 5, yPosition);
-      yPosition += lineHeight;
-    }
-
-    // Personnes corruptrices
-    if (this.corruptPersonsArray.value.length > 0) {
-      doc.text('- Personnes ayant tenté de vous corrompre:', margin + 5, yPosition);
+    // Section 4 - Questions spécifiques (uniquement si affichée)
+    if (this.questionnaireForm.get('section4.sellVote')?.value) {
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Section 4: Questions spécifiques', margin, yPosition);
       yPosition += lineHeight;
 
-      this.corruptPersonsArray.value.forEach((person: string) => {
-        if (yPosition > pageHeight - 20) {
-          doc.addPage();
-          yPosition = margin;
-        }
-        doc.text(`  • ${person}`, margin + 10, yPosition);
-        yPosition += lineHeight;
-      });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(12);
+      const section4 = this.questionnaireForm.get('section4')?.value;
 
-      if (section4.otherCorruptPerson) {
-        doc.text(`  • Autre: ${section4.otherCorruptPerson}`, margin + 10, yPosition);
+      if (section4.moneyGivenAmount) {
+        doc.text(`- Montant reçu/proposé: ${section4.moneyGivenAmount}`, margin + 5, yPosition);
         yPosition += lineHeight;
       }
+
+      doc.text(`- Vente de vote: ${section4.sellVote || 'Non spécifié'}`, margin + 5, yPosition);
+      yPosition += lineHeight;
+
+      if (section4.moneyForVote) {
+        doc.text(`- Montant demandé pour vote: ${section4.moneyForVote}`, margin + 5, yPosition);
+        yPosition += lineHeight;
+      }
+
+      // Personnes corruptrices
+      if (this.corruptPersonsArray.value.length > 0) {
+        doc.text('- Personnes ayant tenté de vous corrompre:', margin + 5, yPosition);
+        yPosition += lineHeight;
+
+        this.corruptPersonsArray.value.forEach((person: string) => {
+          if (yPosition > pageHeight - 20) {
+            doc.addPage();
+            yPosition = margin;
+          }
+          doc.text(`  • ${person}`, margin + 10, yPosition);
+          yPosition += lineHeight;
+        });
+
+        if (section4.otherCorruptPerson) {
+          doc.text(`  • Autre: ${section4.otherCorruptPerson}`, margin + 10, yPosition);
+          yPosition += lineHeight;
+        }
+      }
+      yPosition += lineHeight;
     }
-    yPosition += lineHeight;
 
     // Vérification de la position pour saut de page
     if (yPosition > pageHeight - 50) {
@@ -966,40 +1107,42 @@ export class QuestionnaireComponent implements OnInit {
       yPosition = margin;
     }
 
-    // Section 5 - Alternatives
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Section 5: Alternatives à la corruption', margin, yPosition);
-    yPosition += lineHeight;
-
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-    const section5 = this.questionnaireForm.get('section5')?.value;
-
-    if (this.alternativeOptionsArray.value.length > 0) {
-      doc.text('- Alternatives choisies:', margin + 5, yPosition);
+    // Section 5 - Alternatives (uniquement si affichée)
+    if (this.questionnaireForm.get('section5.alternativeOptions')?.value.length > 0) {
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Section 5: Alternatives à la corruption', margin, yPosition);
       yPosition += lineHeight;
 
-      this.alternativeOptionsArray.value.forEach((option: string) => {
-        const opt = this.alternativeOptions.find(o => o.value === option);
-        if (yPosition > pageHeight - 20) {
-          doc.addPage();
-          yPosition = margin;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(12);
+      const section5 = this.questionnaireForm.get('section5')?.value;
+
+      if (this.alternativeOptionsArray.value.length > 0) {
+        doc.text('- Alternatives choisies:', margin + 5, yPosition);
+        yPosition += lineHeight;
+
+        this.alternativeOptionsArray.value.forEach((option: string) => {
+          const opt = this.alternativeOptions.find(o => o.value === option);
+          if (yPosition > pageHeight - 20) {
+            doc.addPage();
+            yPosition = margin;
+          }
+          doc.text(`  • ${opt?.label || option}`, margin + 10, yPosition);
+          yPosition += lineHeight;
+        });
+
+        if (section5.alternativeOptionsDescription) {
+          doc.text(`  • Autre: ${section5.alternativeOptionsDescription}`, margin + 10, yPosition);
+          yPosition += lineHeight;
         }
-        doc.text(`  • ${opt?.label || option}`, margin + 10, yPosition);
-        yPosition += lineHeight;
-      });
-
-      if (section5.alternativeOptionsDescription) {
-        doc.text(`  • Autre: ${section5.alternativeOptionsDescription}`, margin + 10, yPosition);
-        yPosition += lineHeight;
       }
-    }
 
-    doc.text(`- Besoin d'aide: ${section5.needHelp || 'Non spécifié'}`, margin + 5, yPosition);
-    yPosition += lineHeight;
-    doc.text(`- Refus de corruption: ${section5.willingToRefuseCorruption || 'Non spécifié'}`, margin + 5, yPosition);
-    yPosition += lineHeight * 2;
+      doc.text(`- Besoin d'aide: ${section5.needHelp || 'Non spécifié'}`, margin + 5, yPosition);
+      yPosition += lineHeight;
+      doc.text(`- Refus de corruption: ${section5.willingToRefuseCorruption || 'Non spécifié'}`, margin + 5, yPosition);
+      yPosition += lineHeight * 2;
+    }
 
     // Vérification de la position pour saut de page
     if (yPosition > pageHeight - 50) {
@@ -1033,10 +1176,36 @@ export class QuestionnaireComponent implements OnInit {
         doc.text(`  • ${opt?.label || reason}`, margin + 10, yPosition);
         yPosition += lineHeight;
       });
+
+      if (section6.otherNonVoteReason) {
+        doc.text(`  • Autre: ${section6.otherNonVoteReason}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      }
     }
 
     doc.text(`- Impact de la corruption: ${section6.impactCorruption || 'Non spécifié'}`, margin + 5, yPosition);
     yPosition += lineHeight;
+
+    // Impacts de la corruption (si affichés)
+    if (this.impactOptionsArray.value.length > 0) {
+      doc.text('- Impacts identifiés:', margin + 5, yPosition);
+      yPosition += lineHeight;
+
+      this.impactOptionsArray.value.forEach((impact: string) => {
+        const opt = this.impactOptions.find(o => o.value === impact);
+        if (yPosition > pageHeight - 20) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(`  • ${opt?.label || impact}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      });
+
+      if (section6.otherImpactDescription) {
+        doc.text(`  • Autre: ${section6.otherImpactDescription}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      }
+    }
 
     if (this.encourageVoteOptionsArray.value.length > 0) {
       doc.text('- Actions pour encourager le vote libre:', margin + 5, yPosition);
@@ -1051,6 +1220,11 @@ export class QuestionnaireComponent implements OnInit {
         doc.text(`  • ${opt?.label || option}`, margin + 10, yPosition);
         yPosition += lineHeight;
       });
+
+      if (section6.autreEncouragerVoteLibre) {
+        doc.text(`  • Autre: ${section6.autreEncouragerVoteLibre}`, margin + 10, yPosition);
+        yPosition += lineHeight;
+      }
     }
     yPosition += lineHeight;
 
@@ -1085,7 +1259,7 @@ export class QuestionnaireComponent implements OnInit {
     // Score total
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text(`Score total: ${this.totalScore}/97`, margin, yPosition + 10);
+    doc.text(`Score total: ${this.totalScore}/${this.maxPossibleScore}`, margin, yPosition + 10);
 
     // Pied de page
     doc.setFontSize(10);
@@ -1095,5 +1269,4 @@ export class QuestionnaireComponent implements OnInit {
     // Sauvegarde du PDF
     doc.save(`recapitulatif_${name.replace(/ /g, '_')}.pdf`);
   }
-
 }
