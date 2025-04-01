@@ -33,6 +33,7 @@ export class QuestionnaireComponent implements OnInit {
     { value: 'jobPromise', label: 'Promesse d\'emploi', points: 2 },
     { value: 'subsidyToAssociations', label: 'Subvention versée à certaines associations', points: 2 },
     { value: 'contractWithCollectivity', label: 'Obtention d\'un contrat avec la collectivité', points: 2 },
+    { value: 'dontknow', label: 'Je ne sais pas' , points: 0 },
     { value: 'otherCorruption', label: 'Autre' , points: 1 }
   ];
 
@@ -243,7 +244,7 @@ export class QuestionnaireComponent implements OnInit {
       const voteIncentive = this.questionnaireForm.get('section3.voteIncentive')?.value;
       const votingPressure = this.questionnaireForm.get('section3.votingPressure')?.value;
 
-      if (corruptionExperience === 'Oui' || voteIncentive === 'Oui' || votingPressure === 'Oui') {
+     if (corruptionExperience === 'Oui' || voteIncentive === 'Oui' || votingPressure === 'Oui') {
         this.currentSection++;
       }
       else {

@@ -20,21 +20,23 @@
         "Capesterre-de-Marie-Galante",
         "Deshaies",
         "Grande-Terre",
-        "Gosier",
+        "Pointe-Noire",
+        "Terre de Haut",
+        "Terre de Bas",
+        "Bailiff",
+        "Gourbeyre",
+        "Petit Canal",
+        "Port-Louis",
+        "La Désirade",
         "Lamentin",
         "Le Haut-du-Cap",
         "Le Lamentin",
-        "Les Abymes",
         "Les Saintes",
-        "Morne-à-l'Eau",
-        "Petit-Bourg",
         "Saint-Louis",
         "Saint-Claude",
         "Sainte-Rose",
         "Trois-Rivières",
         "Vieux-Fort",
-        "Vieux-Habitants",
-        "Verger",
         "Vieux-Habitants"
       ]
     },
@@ -49,7 +51,6 @@
         "Sainte-Marie",
         "Le François",
         "Le Robert",
-        "Trinité",
         "Saint-Pierre",
         "Les Anses-d'Arlet",
         "Rivière-Salée",
@@ -58,14 +59,26 @@
         "Le Diamant",
         "Le Vauclin",
         "Le Carbet",
-        "Les Trois-Îlets",
+        "Les Trois-Îlêts",
         "Le Morne-Rouge",
         "L'Ajoupa-Bouillon",
         "Bellefontaine",
         "Case-Pilote",
         "Clement",
-        "Cayeux",
-        "La Plaine des Pitons"
+        "Basse Pointe",
+        "Fonds Saint Denis",
+        "Grand Rivière",
+        "Gros-Morne",
+        "Le Lorrain",
+        "Macouba",
+        "Le Marigot",
+        "Le Morne Vert",
+        "Le Prêcheur",
+        "Rivière-Pilote",
+        "Saint-Esprit",
+        "Sainte-Joseph",
+        "Sainte-Anne",
+        "Sainte-Luce"
       ]
     },
     {
@@ -87,7 +100,6 @@
         "Iracoubo",
         "Montsinéry-Tonnegrande",
         "Sinnamary",
-        "Cayenne",
         "Toules-Pointe",
         "Papillon"
       ]
@@ -106,12 +118,9 @@
         "Le Port",
         "Saint-Joseph",
         "La Possession",
-        "Saint-Benoît",
         "Cilaos",
         "L'Étang-Salé",
         "Saint-Leu",
-        "Saint-Joseph",
-        "Le Port",
         "Le Plaine des Cafres",
         "Les Hauts",
         "Rivière-Saint-Louis",
@@ -144,14 +153,6 @@
       ]
     },
     {
-      "nom": "Saint-Pierre-et-Miquelon",
-      "nombre_de_communes": 2,
-      "communes": [
-        "Saint-Pierre",
-        "Miquelon-Langlade"
-      ]
-    },
-    {
       "nom": "Saint-Barthélemy",
       "nombre_de_communes": 2,
       "communes": [
@@ -170,28 +171,6 @@
       ]
     },
     {
-      "nom": "Terres australes et antarctiques françaises",
-      "nombre_de_communes": 5,
-      "communes": [
-        "Archipel de Kerguelen",
-        "Îles Crozet",
-        "Îles Saint-Paul et Amsterdam",
-        "Terre Adélie",
-        "Îles Éparses"
-      ]
-    },
-    {
-      "nom": "Wallis-et-Futuna",
-      "nombre_de_communes": 5,
-      "communes": [
-        "Mata-Utu",
-        "Hahake",
-        "Hihifo",
-        "Alo",
-        "Sigave"
-      ]
-    },
-    {
       "nom": "Polynésie française",
       "nombre_de_communes": 48,
       "communes": [
@@ -207,7 +186,6 @@
         "Huahine",
         "Raiatea",
         "Tahiti",
-        "Huahine",
         "Arue",
         "Arahura",
         "Papeari",
@@ -229,16 +207,6 @@
         "Maré",
         "Ouvéa"
       ]
-    },
-    {
-      "nom": "Île de La Passion-Clipperton",
-      "nombre_de_communes": 0,
-      "communes": []
-    },
-    {
-      "nom": "Île des Faisans",
-      "nombre_de_communes": 0,
-      "communes": []
     }
   ]
 }
