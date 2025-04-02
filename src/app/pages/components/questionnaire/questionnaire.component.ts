@@ -508,16 +508,16 @@ export class QuestionnaireComponent implements OnInit {
                 showConfirmButton: false,
                 allowOutsideClick: false,
                 html: `
-                  <button id="btn-certificate" class="swal2-confirm swal2-styled">Générer le Certificat</button>
-                  <button id="btn-statistics" class="swal2-confirm swal2-styled" style="background-color: #28a745;">Générer les Statistiques</button>
-                  <button id="btn-summary" class="swal2-confirm swal2-styled" style="background-color: #17a2b8;">Générer le Résumé PDF</button>
-                  <button id="btn-share" class="swal2-confirm swal2-styled" style="background-color: #6c757d;">
-                    <i class="fas fa-share-alt"></i> Partager
-                  </button>
-                  <button id="btn-close" class="swal2-close" style="position: absolute; top: 10px; right: 10px; font-size: 24px;">×</button>
                   <button id="btn-price-average" class="swal2-confirm swal2-styled" style="background-color: #ffc107;">
                     <i class="fas fa-hand-holding-usd"></i> Voir le prix moyen des votes
                   </button>
+                  <button id="btn-certificate" class="swal2-confirm swal2-styled">Générer le Certificat</button>
+                  <button id="btn-statistics" class="swal2-confirm swal2-styled" style="background-color: #28a745;">Générer les Statistiques</button>
+                  <button id="btn-summary" class="swal2-confirm swal2-styled" style="background-color: #17a2b8;">Générer vos réponses</button>
+                  <button id="btn-share" class="swal2-confirm swal2-styled" style="background-color: #6c757d;">
+                    <i class="fas fa-share-alt"></i> Partager à vos amis
+                  </button>
+                  <button id="btn-close" class="swal2-close" style="position: absolute; top: 10px; right: 10px; font-size: 24px;">×</button>
                 `
               }).then(() => {
 
