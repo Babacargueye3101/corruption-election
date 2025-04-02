@@ -18,7 +18,7 @@ export class QuestionnaireComponent implements OnInit {
   currentSection: number = 1;
   totalScore: number = 0;
   formSubmitted: boolean = false;
-  maxPossibleScore: number = 97;
+  maxPossibleScore: number = 100;
 
   regions: any[] = [];
   communes: string[] = [];
@@ -54,7 +54,7 @@ export class QuestionnaireComponent implements OnInit {
     { value: 'no_representation', label: 'Manque de représentativité des candidats', points: 2 },
     { value: 'useless', label: 'Inutilité du vote', points: 2 },
     { value: 'practical_obstacles', label: 'Obstacles pratiques (déplacement, absence, etc.)', points: 2 },
-    { value: 'Autre', label: 'Autre', points: 1 }
+    { value: 'Autre', label: 'Autre', points: 2 }
   ];
 
   encourageVoteOptions = [
@@ -62,7 +62,7 @@ export class QuestionnaireComponent implements OnInit {
     { value: 'monitoring', label: 'Participer à des initiatives de surveillance électorale', points: 2 },
     { value: 'vote_free', label: 'Voter en toute conscience, sans pression', points: 2 },
     { value: 'dontknow', label: 'Je sais pas', points: 0 },
-    { value: 'Autre', label: 'Autre', points: 1 }
+    { value: 'Autre', label: 'Autre', points: 2 }
   ];
 
   impactOptions = [
@@ -578,6 +578,8 @@ export class QuestionnaireComponent implements OnInit {
                       title: 'Information',
                       text: 'Le prix moyen n\'est pas disponible car vous n\'avez pas indiqué de montant.',
                       icon: 'info'
+                    }).then(() => {
+                      this.modalShow(formData, name)
                     });
                     return;
                   }
@@ -646,6 +648,126 @@ export class QuestionnaireComponent implements OnInit {
     }
   }
 
+  async modalShow(formData: any, name: string) {
+    // Supposons que nous avons déjà les données nécessaires
+    const region = this.questionnaireForm.get('section1.region')?.value;
+    const commune = this.questionnaireForm.get('section1.commune')?.value;
+    const moneyForVote = this.questionnaireForm.get('section4.moneyForVote')?.value;
+
+    // Afficher directement le modal avec les boutons
+    Swal.fire({
+      title: '',
+      text: 'Votre questionnaire a été soumis avec succès. Les documents ont été générés.',
+      icon: 'success',
+      showCancelButton: false,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      html: `
+        <button id="btn-price-average" class="swal2-confirm swal2-styled" style="background-color: #ffc107;">
+          <i class="fas fa-hand-holding-usd"></i> Voir le prix moyen des votes
+        </button>
+        <button id="btn-certificate" class="swal2-confirm swal2-styled">Générer le Certificat</button>
+        <button id="btn-statistics" class="swal2-confirm swal2-styled" style="background-color: #28a745;">Générer les Statistiques</button>
+        <button id="btn-summary" class="swal2-confirm swal2-styled" style="background-color: #17a2b8;">Générer vos réponses</button>
+        <button id="btn-share" class="swal2-confirm swal2-styled" style="background-color: #6c757d;">
+          <i class="fas fa-share-alt"></i> Partager à vos amis
+        </button>
+        <button id="btn-close" class="swal2-close" style="position: absolute; top: 10px; right: 10px; font-size: 24px;">×</button>
+      `
+    });
+
+    // Ajouter les écouteurs d'événements immédiatement
+    document.getElementById("btn-certificate")?.addEventListener("click", () => {
+      this.generateCertificate(name, formData.totalScore);
+    });
+
+    document.getElementById("btn-statistics")?.addEventListener("click", async () => {
+      await this.generateStatistics(region, commune, moneyForVote);
+    });
+
+    document.getElementById("btn-summary")?.addEventListener("click", () => {
+      this.generateSummaryPdf(name);
+    });
+
+    document.getElementById('btn-share')?.addEventListener('click', () => {
+      const shareUrl = window.location.href;
+      const shareText = "Regardez ce questionnaire que j'ai complété !";
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'Mon Questionnaire',
+          text: shareText,
+          url: shareUrl
+        }).catch(console.error);
+      } else {
+        Swal.fire({
+          title: 'Partager sur',
+          html: `
+            <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}" target="_blank" style="margin: 5px; color: #3b5998; font-size: 24px;">
+              <i class="fab fa-facebook"></i>
+            </a>
+            <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}" target="_blank" style="margin: 5px; color: #1da1f2; font-size: 24px;">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareText)}" target="_blank" style="margin: 5px; color: #0077b5; font-size: 24px;">
+              <i class="fab fa-linkedin"></i>
+            </a>
+          `,
+          showConfirmButton: false,
+          showCloseButton: true
+        });
+      }
+    });
+
+    document.getElementById('btn-price-average')?.addEventListener('click', async () => {
+      if (!moneyForVote) {
+        Swal.fire({
+          title: 'Information',
+          text: 'Le prix moyen n\'est pas disponible car vous n\'avez pas indiqué de montant.',
+          icon: 'info'
+        });
+        return;
+      }
+
+      try {
+        const stats = await this.firebaseService.getStatistics(region, commune);
+        const today = new Date().toLocaleDateString('fr-FR');
+        const averagePrice = stats.commune?.averageVotePrice
+          ? parseFloat(stats.commune.averageVotePrice).toLocaleString('fr-FR', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })
+          : 'Non disponible';
+
+        Swal.fire({
+          title: `Prix moyen des votes à ${commune} au ${today}`,
+          html: `
+            <div style="text-align: center; padding: 1rem;">
+              <p style="font-size: 1.5rem; font-weight: bold; color: #1e40af;">
+                ${averagePrice} €
+              </p>
+              <p style="color: #6b7280; margin-top: 1rem;">
+                <i class="fas fa-info-circle"></i> Basé sur ${stats.commune?.participantsCount || 0} participants
+              </p>
+            </div>
+          `,
+          icon: 'info',
+          confirmButtonText: 'Fermer'
+        });
+      } catch (error) {
+        Swal.fire(
+          'Erreur',
+          `Impossible d'afficher la moyenne pour ${commune}`,
+          'error'
+        );
+      }
+    });
+
+    document.getElementById('btn-close')?.addEventListener('click', () => {
+      Swal.close();
+      window.location.href = '/';
+    });
+  }
   async generateStatistics(region: string, commune: string, userAmount: string) {
     try {
       const stats = await this.firebaseService.getStatistics(region, commune);
