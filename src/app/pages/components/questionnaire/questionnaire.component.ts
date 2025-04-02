@@ -608,6 +608,8 @@ export class QuestionnaireComponent implements OnInit {
                       `,
                       icon: 'info',
                       confirmButtonText: 'Fermer'
+                    }).then((res) =>{
+                      this.modalShow(formData, name)
                     });
                   } catch (error) {
                     Swal.fire(
@@ -810,9 +812,9 @@ export class QuestionnaireComponent implements OnInit {
       doc.text('Scores moyens', 15, 140);
 
       doc.setFont('helvetica', 'normal');
-      doc.text(`- Score moyen dans votre commune: ${stats.commune.averageScore}/97`, 20, 150);
-      doc.text(`- Score moyen dans votre région: ${stats.region.averageScore}/97`, 20, 160);
-      doc.text(`- Votre score: ${this.totalScore}/97`, 20, 170);
+      doc.text(`- Score moyen dans votre commune: ${stats.commune.averageScore}/100`, 20, 150);
+      doc.text(`- Score moyen dans votre région: ${stats.region.averageScore}/100`, 20, 160);
+      doc.text(`- Votre score: ${this.totalScore}/100`, 20, 170);
 
       // Conseils
       doc.setFont('helvetica', 'bold');
@@ -903,7 +905,7 @@ export class QuestionnaireComponent implements OnInit {
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
       doc.text(`Nom du participant : ${name}`, 20, 170);
-      doc.text(`Score obtenu : ${score} / 97`, 20, 180);
+      doc.text(`Score obtenu : ${score} / 100`, 20, 180);
       doc.text(`Date de délivrance : ${new Date().toLocaleDateString('fr-FR')}`, 20, 190);
 
       // Sauvegarde du PDF
