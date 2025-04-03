@@ -1,42 +1,24 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { FirebaseService } from '../../../services/firebase.service';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-
-
-interface VotePriceData {
-  region: string;
-  commune: string;
-  amount: number;
-}
-
-interface RegionStats {
-  totalAmount: number;
-  average: number;
-  maxAmount: number;
-  communeStats: { [commune: string]: CommuneStats };
-}
-
-interface CommuneStats {
-  totalAmount: number;
-  average: number;
-  maxAmount: number;
-  count: number;
-}
+// Enregistrer tous les composants de Chart.js
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-statistique',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './statistique.component.html',
-  styleUrl: './statistique.component.scss'
+  styleUrls: ['./statistique.component.scss']
 })
-export class StatistiqueComponent implements OnInit, AfterViewInit {
-  @ViewChild('genderChart') genderChartRef: any;
-  @ViewChild('priceChart') priceChartRef: any;
-  @ViewChild('corruptionTypesChart') corruptionTypesChartRef: any;
-  @ViewChild('ageDistributionChart') ageDistributionChartRef: any;
+export class StatistiqueComponent implements OnInit, OnDestroy {
+  @ViewChild('genderChart') genderChartRef!: ElementRef;
+  @ViewChild('priceChart') priceChartRef!: ElementRef;
+  @ViewChild('corruptionTypesChart') corruptionTypesChartRef!: ElementRef;
+  @ViewChild('ageDistributionChart') ageDistributionChartRef!: ElementRef;
 
   regions: string[] = [];
   communes: string[] = [];
@@ -48,10 +30,7 @@ export class StatistiqueComponent implements OnInit, AfterViewInit {
   loading = true;
   corruptionTypesArray: any[] = [];
 
-  private genderChart?: Chart;
-  private priceChart?: Chart;
-  private corruptionTypesChart?: Chart;
-  private ageDistributionChart?: Chart;
+  private charts: Chart[] = [];
 
   constructor(private firebaseService: FirebaseService) {}
 
@@ -60,49 +39,47 @@ export class StatistiqueComponent implements OnInit, AfterViewInit {
     await this.loadGlobalStats();
   }
 
-  ngAfterViewInit() {
-    this.initCharts();
+  ngOnDestroy() {
+    this.destroyAllCharts();
   }
 
-  private initCharts() {
-    if (this.stats) {
-      this.renderGenderChart();
-      this.renderPriceChart();
-      this.renderCorruptionTypesChart();
-      this.renderAgeDistributionChart();
+  private destroyAllCharts() {
+    this.charts.forEach(chart => chart.destroy());
+    this.charts = [];
+  }
+
+  private createChart(
+    canvasRef: ElementRef,
+    config: ChartConfiguration
+  ): Chart | undefined {
+    if (!canvasRef?.nativeElement) return undefined;
+
+    // Vérifier si le canvas est déjà utilisé
+    const existingChart = Chart.getChart(canvasRef.nativeElement);
+    if (existingChart) {
+      existingChart.destroy();
     }
-  }
 
-  private renderGenderChart() {
-    const ctx = this.genderChartRef.nativeElement.getContext('2d');
-    new Chart(ctx, this.getGenderChartConfig());
-  }
+    const ctx = canvasRef.nativeElement.getContext('2d');
+    if (!ctx) return undefined;
 
-  private renderPriceChart() {
-    const ctx = this.priceChartRef.nativeElement.getContext('2d');
-    new Chart(ctx, this.getPriceChartConfig());
+    const newChart = new Chart(ctx, config);
+    this.charts.push(newChart);
+    return newChart;
   }
-
-  private renderCorruptionTypesChart() {
-    const ctx = this.corruptionTypesChartRef.nativeElement.getContext('2d');
-    new Chart(ctx, this.getCorruptionTypesChartConfig());
-  }
-
-  private renderAgeDistributionChart() {
-    const ctx = this.ageDistributionChartRef.nativeElement.getContext('2d');
-    new Chart(ctx, this.getAgeDistributionChartConfig());
-  }
-
 
   async loadRegions() {
     this.regions = await this.firebaseService.getRegions();
   }
 
   async loadGlobalStats() {
-    this.loading = true;
-    this.stats = await this.firebaseService.getStatistics();
-    this.prepareCharts();
-    this.loading = false;
+    try {
+      this.loading = true;
+      this.stats = await this.firebaseService.getStatistics();
+      this.prepareCharts();
+    } finally {
+      this.loading = false;
+    }
   }
 
   async onRegionChange() {
@@ -112,22 +89,21 @@ export class StatistiqueComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.loading = true;
-    this.communes = await this.firebaseService.getCommunes(this.selectedRegion);
-    this.stats = await this.firebaseService.getStatistics(this.selectedRegion);
+    try {
+      this.loading = true;
+      this.communes = await this.firebaseService.getCommunes(this.selectedRegion);
+      this.stats = await this.firebaseService.getStatistics(this.selectedRegion);
 
-    // Charger les stats pour chaque commune
-    this.communesStats = [];
-    for (const commune of this.communes) {
-      const stats = await this.firebaseService.getStatistics(this.selectedRegion, commune);
-      this.communesStats.push({
-        name: commune,
-        ...stats
-      });
+      this.communesStats = [];
+      for (const commune of this.communes) {
+        const stats = await this.firebaseService.getStatistics(this.selectedRegion, commune);
+        this.communesStats.push({ name: commune, ...stats });
+      }
+
+      this.prepareCharts();
+    } finally {
+      this.loading = false;
     }
-
-    this.prepareCharts();
-    this.loading = false;
   }
 
   async onCommuneChange() {
@@ -136,14 +112,122 @@ export class StatistiqueComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.loading = true;
-    this.stats = await this.firebaseService.getStatistics(this.selectedRegion, this.selectedCommune);
-    this.prepareCharts();
-    this.loading = false;
+    try {
+      this.loading = true;
+      this.stats = await this.firebaseService.getStatistics(this.selectedRegion, this.selectedCommune);
+      this.prepareCharts();
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  private prepareCharts() {
+    this.corruptionTypesArray = this.stats.corruptionTypes
+      ? this.firebaseService.objectToArray(this.stats.corruptionTypes)
+      : [];
+
+    // Utiliser setTimeout pour s'assurer que la vue est mise à jour
+    setTimeout(() => {
+      this.createChart(this.genderChartRef, this.getGenderChartConfig());
+      this.createChart(this.priceChartRef, this.getPriceChartConfig());
+      this.createChart(this.corruptionTypesChartRef, this.getCorruptionTypesChartConfig());
+      this.createChart(this.ageDistributionChartRef, this.getAgeDistributionChartConfig());
+    });
+  }
+
+  private getGenderChartConfig(): ChartConfiguration {
+    return {
+      type: 'doughnut',
+      data: {
+        labels: ['Femmes', 'Hommes'],
+        datasets: [{
+          data: [
+            this.stats?.genderDistribution?.female || 0,
+            this.stats?.genderDistribution?.male || 0
+          ],
+          backgroundColor: ['#8b5cf6', '#3b82f6'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    };
+  }
+
+  private getPriceChartConfig(): ChartConfiguration {
+    return {
+      type: 'bar',
+      data: {
+        labels: ['Prix Moyen'],
+        datasets: [{
+          label: 'Prix (€)',
+          data: [this.stats?.averageVotePrice || 0],
+          backgroundColor: '#10b981'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    };
+  }
+
+  private getCorruptionTypesChartConfig(): ChartConfiguration {
+    return {
+      type: 'pie',
+      data: {
+        labels: this.corruptionTypesArray.map(t => t.key),
+        datasets: [{
+          data: this.corruptionTypesArray.map(t => t.value),
+          backgroundColor: [
+            '#ef4444', '#f97316', '#f59e0b', '#10b981',
+            '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
+    };
+  }
+
+  private getAgeDistributionChartConfig(): ChartConfiguration {
+    const ageGroups = this.stats?.participantsByAge ? Object.keys(this.stats.participantsByAge) : [];
+    const ageData = ageGroups.map(age => this.stats.participantsByAge[age]);
+
+    return {
+      type: 'bar',
+      data: {
+        labels: ageGroups,
+        datasets: [{
+          label: 'Participants',
+          data: ageData,
+          backgroundColor: '#3b82f6'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    };
   }
 
   onPeriodChange() {
-    // Implémentez le filtrage par période ici
     console.log('Période sélectionnée:', this.selectedPeriod);
   }
 
@@ -163,103 +247,6 @@ export class StatistiqueComponent implements OnInit, AfterViewInit {
   }
 
   exportToExcel() {
-    // Implémentez l'export Excel ici
     console.log('Exporting data to Excel...');
   }
-
-  private prepareCharts() {
-    this.corruptionTypesArray = this.firebaseService.objectToArray(this.stats.corruptionTypes || {});
-
-    // Détruire les anciens graphiques s'ils existent
-    [this.genderChart, this.priceChart, this.corruptionTypesChart, this.ageDistributionChart].forEach(chart => {
-      if (chart) chart.destroy();
-    });
-
-    // Graphique de répartition par genre
-    this.genderChart = new Chart(
-      this.genderChartRef.nativeElement,
-      this.getGenderChartConfig()
-    );
-
-    // Graphique du prix moyen
-    this.priceChart = new Chart(
-      this.priceChartRef.nativeElement,
-      this.getPriceChartConfig()
-    );
-
-    // Graphique des types de corruption
-    this.corruptionTypesChart = new Chart(
-      this.corruptionTypesChartRef.nativeElement,
-      this.getCorruptionTypesChartConfig()
-    );
-
-    // Graphique de répartition par âge
-    this.ageDistributionChart = new Chart(
-      this.ageDistributionChartRef.nativeElement,
-      this.getAgeDistributionChartConfig()
-    );
-  }
-
-  private getGenderChartConfig(): ChartConfiguration {
-    return {
-      type: 'doughnut',
-      data: this.firebaseService.getGenderChartData(this.stats),
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' }
-        }
-      }
-    };
-  }
-
-  private getPriceChartConfig(): ChartConfiguration {
-    return {
-      type: 'bar',
-      data: this.firebaseService.getPriceChartData(this.stats),
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    };
-  }
-
-  private getCorruptionTypesChartConfig(): ChartConfiguration {
-    return {
-      type: 'pie',
-      data: this.firebaseService.getCorruptionTypesChartData(this.stats),
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'right' }
-        }
-      }
-    };
-  }
-
-  private getAgeDistributionChartConfig(): ChartConfiguration {
-    const ageGroups = Object.keys(this.stats.participantsByAge || {});
-    const ageData = ageGroups.map(age => this.stats.participantsByAge[age]);
-
-    return {
-      type: 'bar',
-      data: {
-        labels: ageGroups,
-        datasets: [{
-          label: 'Participants',
-          data: ageData,
-          backgroundColor: '#3b82f6'
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    };
-  }
-
 }
