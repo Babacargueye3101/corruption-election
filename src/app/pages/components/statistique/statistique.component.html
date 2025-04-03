@@ -1,90 +1,161 @@
-<div class="p-6 bg-white rounded-lg shadow-md max-w-6xl mx-auto" style="margin-top: 10px;">
-  <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">
-    Statistiques des prix de vente des votes par région et commune
-  </h2>
-
-  <!-- Indicateur de chargement -->
-  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
-    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+<div class="admin-dashboard">
+  <div class="header">
+    <h1>
+      <i class="fas fa-chart-pie"></i> Tableau de Bord - Corruption Électorale
+    </h1>
+    <div class="actions">
+      <button class="export-btn" (click)="exportToExcel()">
+        <i class="fas fa-file-excel"></i> Exporter
+      </button>
+      <button class="refresh-btn" (click)="refreshData()">
+        <i class="fas fa-sync-alt"></i> Actualiser
+      </button>
+    </div>
   </div>
 
-  <!-- Contenu une fois chargé -->
-  <div *ngIf="!isLoading">
-    <!-- Message si aucune donnée -->
-    <div *ngIf="regions.length === 0" class="text-center py-8">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <h3 class="mt-4 text-lg font-medium text-gray-600">Aucune donnée disponible</h3>
-      <p class="mt-1 text-gray-500">Aucun participant n'a déclaré de montant pour la vente de vote.</p>
+  <div class="filters">
+    <div class="filter-group">
+      <label>Région</label>
+      <select [(ngModel)]="selectedRegion" (change)="onRegionChange()">
+        <option value="">Toutes les régions</option>
+        <option *ngFor="let region of regions" [value]="region">{{region}}</option>
+      </select>
     </div>
 
-    <!-- Statistiques par région -->
-    <div *ngIf="regions.length > 0" class="space-y-8">
-      <!-- Classement des régions -->
-      <div class="bg-blue-50 p-4 rounded-lg">
-        <h3 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">
-          Classement des régions par montant total
-        </h3>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Région</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant total (€)</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moyenne (€)</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max (€)</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Communes</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr *ngFor="let region of getSortedRegionsByAmount()" class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{{ region }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ regionStats[region].totalAmount | number:'1.0-0' }} €</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ regionStats[region].average | number:'1.0-0' }} €</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ regionStats[region].maxAmount | number:'1.0-0' }} €</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ getCommunes(region).length }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <div class="filter-group">
+      <label>Commune</label>
+      <select [(ngModel)]="selectedCommune" (change)="onCommuneChange()" [disabled]="!selectedRegion">
+        <option value="">Toutes les communes</option>
+        <option *ngFor="let commune of communes" [value]="commune">{{commune}}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Période</label>
+      <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()">
+        <option value="all">Toutes périodes</option>
+        <option value="7days">7 derniers jours</option>
+        <option value="30days">30 derniers jours</option>
+        <option value="90days">90 derniers jours</option>
+      </select>
+    </div>
+  </div>
+
+  <div  class="stats-grid">
+    <div class="stats-card">
+      <div class="icon text-blue-600">
+        <i class="fas fa-users"></i>
       </div>
+      <h3>Participants</h3>
+      <div class="value">{{stats?.totalParticipants || 0}}</div>
+    </div>
 
-      <!-- Détails par région -->
-      <div *ngFor="let region of getSortedRegionsByAmount()" class="bg-gray-50 p-4 rounded-lg">
-        <h3 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">
-          Détails pour la région: {{ region }}
-        </h3>
+    <div class="stats-card">
+      <div class="icon text-amber-600">
+        <i class="fas fa-money-bill-wave"></i>
+      </div>
+      <h3>Prix Moyen</h3>
+      <div class="value">{{stats?.averageVotePrice || 0}} €</div>
+    </div>
 
-        <div class="ml-4 space-y-4">
-          <h4 class="text-lg font-medium text-blue-600">
-            Classement des communes
-          </h4>
+    <div class="stats-card">
+      <div class="icon text-purple-600">
+        <i class="fas fa-venus"></i>
+      </div>
+      <h3>Femmes</h3>
+      <div class="value">{{stats?.genderDistribution?.female || 0}}</div>
+    </div>
 
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-100">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commune</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant total (€)</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moyenne (€)</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max (€)</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participants</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr *ngFor="let commune of getSortedCommunes(region)" class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap">{{ commune }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap">{{ regionStats[region].communeStats[commune].totalAmount | number:'1.0-0' }} €</td>
-                  <td class="px-6 py-4 whitespace-nowrap">{{ regionStats[region].communeStats[commune].average | number:'1.0-0' }} €</td>
-                  <td class="px-6 py-4 whitespace-nowrap">{{ regionStats[region].communeStats[commune].maxAmount | number:'1.0-0' }} €</td>
-                  <td class="px-6 py-4 whitespace-nowrap">{{ regionStats[region].communeStats[commune].count }}</td>
-                </tr>
-              </tbody>
-            </table>
+    <div class="stats-card">
+      <div class="icon text-green-600">
+        <i class="fas fa-mars"></i>
+      </div>
+      <h3>Hommes</h3>
+      <div class="value">{{stats?.genderDistribution?.male || 0}}</div>
+    </div>
+  </div>
+
+  <div  class="charts-grid">
+    <div class="chart-container">
+      <h3>Répartition par Genre</h3>
+      <canvas id="genderChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3>Prix Moyen des Votes</h3>
+      <canvas id="priceChart"></canvas>
+    </div>
+  </div>
+
+  <div *ngIf=" selectedRegion && !selectedCommune" class="communes-table">
+    <div class="table-header">
+      <h3>
+        <i class="fas fa-table"></i> Statistiques par Commune - {{selectedRegion}}
+      </h3>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Commune</th>
+          <th>Participants</th>
+          <th>Femmes</th>
+          <th>Hommes</th>
+          <th>Prix Moyen</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let commune of communesStats">
+          <td>{{commune.name}}</td>
+          <td>{{commune.totalParticipants}}</td>
+          <td>{{commune.genderDistribution?.female || 0}}</td>
+          <td>{{commune.genderDistribution?.male || 0}}</td>
+          <td>{{commune.averageVotePrice || 0}} €</td>
+          <td>
+            <button (click)="viewCommuneDetails(commune.name)">
+              <i class="fas fa-eye"></i> Voir
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="stats?.corruptionTypes" class="corruption-types">
+    <div class="types-header">
+      <h3>
+        <i class="fas fa-exclamation-triangle"></i> Types de Corruption
+      </h3>
+    </div>
+    <div class="types-content">
+      <div class="chart-wrapper">
+        <canvas id="corruptionTypesChart"></canvas>
+      </div>
+      <div class="types-list">
+        <div *ngFor="let type of corruptionTypesArray" class="type-item">
+          <div class="type-header">
+            <span class="type-name">{{type.key}}</span>
+            <span class="type-count">{{type.value}} cas ({{(type.value / stats.totalParticipants * 100).toFixed(1)}}%)</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width]="(type.value / stats.totalParticipants * 100) + '%'"></div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div *ngIf=" stats?.participantsByAge" class="age-distribution">
+    <div class="age-header">
+      <h3>
+        <i class="fas fa-user-friends"></i> Répartition par Âge
+      </h3>
+    </div>
+    <div class="age-content">
+      <canvas id="ageDistributionChart"></canvas>
+    </div>
+  </div>
+
+  <div class="loading-spinner">
+    <div class="spinner"></div>
   </div>
 </div>

@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { FirebaseService } from '../../../services/firebase.service';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -26,104 +28,238 @@ interface CommuneStats {
 
 @Component({
   selector: 'app-statistique',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './statistique.component.html',
   styleUrl: './statistique.component.scss'
 })
-export class StatistiqueComponent {
+export class StatistiqueComponent implements OnInit, AfterViewInit {
+  @ViewChild('genderChart') genderChartRef: any;
+  @ViewChild('priceChart') priceChartRef: any;
+  @ViewChild('corruptionTypesChart') corruptionTypesChartRef: any;
+  @ViewChild('ageDistributionChart') ageDistributionChartRef: any;
 
-  isLoading = true;
-  regionStats: { [region: string]: RegionStats } = {};
   regions: string[] = [];
+  communes: string[] = [];
+  communesStats: any[] = [];
+  selectedRegion: string = '';
+  selectedCommune: string = '';
+  selectedPeriod: string = 'all';
+  stats: any = {};
+  loading = true;
+  corruptionTypesArray: any[] = [];
 
-  constructor(private firebaseService: FirebaseService){}
+  private genderChart?: Chart;
+  private priceChart?: Chart;
+  private corruptionTypesChart?: Chart;
+  private ageDistributionChart?: Chart;
 
+  constructor(private firebaseService: FirebaseService) {}
 
   async ngOnInit() {
-    try {
-      // const data = await this.firebaseService.getStatistics("",);
-      // this.processData(data);
-    } catch (error) {
-      console.error('Error loading statistics:', error);
-    } finally {
-      this.isLoading = false;
+    await this.loadRegions();
+    await this.loadGlobalStats();
+  }
+
+  ngAfterViewInit() {
+    this.initCharts();
+  }
+
+  private initCharts() {
+    if (this.stats) {
+      this.renderGenderChart();
+      this.renderPriceChart();
+      this.renderCorruptionTypesChart();
+      this.renderAgeDistributionChart();
     }
   }
 
-  private processData(data: VotePriceData[]) {
-    // Initialiser la structure des données
-    this.regionStats = {};
+  private renderGenderChart() {
+    const ctx = this.genderChartRef.nativeElement.getContext('2d');
+    new Chart(ctx, this.getGenderChartConfig());
+  }
 
-    data.forEach(item => {
-      // Initialiser la région si elle n'existe pas
-      if (!this.regionStats[item.region]) {
-        this.regionStats[item.region] = {
-          totalAmount: 0,
-          average: 0,
-          maxAmount: 0,
-          communeStats: {}
-        };
-      }
+  private renderPriceChart() {
+    const ctx = this.priceChartRef.nativeElement.getContext('2d');
+    new Chart(ctx, this.getPriceChartConfig());
+  }
 
-      // Initialiser la commune si elle n'existe pas
-      if (!this.regionStats[item.region].communeStats[item.commune]) {
-        this.regionStats[item.region].communeStats[item.commune] = {
-          totalAmount: 0,
-          average: 0,
-          maxAmount: 0,
-          count: 0
-        };
-      }
+  private renderCorruptionTypesChart() {
+    const ctx = this.corruptionTypesChartRef.nativeElement.getContext('2d');
+    new Chart(ctx, this.getCorruptionTypesChartConfig());
+  }
 
-      // Mettre à jour les statistiques
-      const region = this.regionStats[item.region];
-      const commune = region.communeStats[item.commune];
+  private renderAgeDistributionChart() {
+    const ctx = this.ageDistributionChartRef.nativeElement.getContext('2d');
+    new Chart(ctx, this.getAgeDistributionChartConfig());
+  }
 
-      // Mise à jour des totaux
-      region.totalAmount += item.amount;
-      commune.totalAmount += item.amount;
-      commune.count += 1;
 
-      // Mise à jour des max
-      if (item.amount > region.maxAmount) {
-        region.maxAmount = item.amount;
-      }
-      if (item.amount > commune.maxAmount) {
-        commune.maxAmount = item.amount;
-      }
+  async loadRegions() {
+    this.regions = await this.firebaseService.getRegions();
+  }
+
+  async loadGlobalStats() {
+    this.loading = true;
+    this.stats = await this.firebaseService.getStatistics();
+    this.prepareCharts();
+    this.loading = false;
+  }
+
+  async onRegionChange() {
+    this.selectedCommune = '';
+    if (!this.selectedRegion) {
+      await this.loadGlobalStats();
+      return;
+    }
+
+    this.loading = true;
+    this.communes = await this.firebaseService.getCommunes(this.selectedRegion);
+    this.stats = await this.firebaseService.getStatistics(this.selectedRegion);
+
+    // Charger les stats pour chaque commune
+    this.communesStats = [];
+    for (const commune of this.communes) {
+      const stats = await this.firebaseService.getStatistics(this.selectedRegion, commune);
+      this.communesStats.push({
+        name: commune,
+        ...stats
+      });
+    }
+
+    this.prepareCharts();
+    this.loading = false;
+  }
+
+  async onCommuneChange() {
+    if (!this.selectedCommune) {
+      await this.onRegionChange();
+      return;
+    }
+
+    this.loading = true;
+    this.stats = await this.firebaseService.getStatistics(this.selectedRegion, this.selectedCommune);
+    this.prepareCharts();
+    this.loading = false;
+  }
+
+  onPeriodChange() {
+    // Implémentez le filtrage par période ici
+    console.log('Période sélectionnée:', this.selectedPeriod);
+  }
+
+  viewCommuneDetails(commune: string) {
+    this.selectedCommune = commune;
+    this.onCommuneChange();
+  }
+
+  refreshData() {
+    if (this.selectedCommune) {
+      this.onCommuneChange();
+    } else if (this.selectedRegion) {
+      this.onRegionChange();
+    } else {
+      this.loadGlobalStats();
+    }
+  }
+
+  exportToExcel() {
+    // Implémentez l'export Excel ici
+    console.log('Exporting data to Excel...');
+  }
+
+  private prepareCharts() {
+    this.corruptionTypesArray = this.firebaseService.objectToArray(this.stats.corruptionTypes || {});
+
+    // Détruire les anciens graphiques s'ils existent
+    [this.genderChart, this.priceChart, this.corruptionTypesChart, this.ageDistributionChart].forEach(chart => {
+      if (chart) chart.destroy();
     });
 
-    // Calculer les moyennes
-    for (const regionName in this.regionStats) {
-      const region = this.regionStats[regionName];
-      const communeCount = Object.keys(region.communeStats).length;
+    // Graphique de répartition par genre
+    this.genderChart = new Chart(
+      this.genderChartRef.nativeElement,
+      this.getGenderChartConfig()
+    );
 
-      region.average = communeCount > 0 ? region.totalAmount / communeCount : 0;
+    // Graphique du prix moyen
+    this.priceChart = new Chart(
+      this.priceChartRef.nativeElement,
+      this.getPriceChartConfig()
+    );
 
-      for (const communeName in region.communeStats) {
-        const commune = region.communeStats[communeName];
-        commune.average = commune.count > 0 ? commune.totalAmount / commune.count : 0;
+    // Graphique des types de corruption
+    this.corruptionTypesChart = new Chart(
+      this.corruptionTypesChartRef.nativeElement,
+      this.getCorruptionTypesChartConfig()
+    );
+
+    // Graphique de répartition par âge
+    this.ageDistributionChart = new Chart(
+      this.ageDistributionChartRef.nativeElement,
+      this.getAgeDistributionChartConfig()
+    );
+  }
+
+  private getGenderChartConfig(): ChartConfiguration {
+    return {
+      type: 'doughnut',
+      data: this.firebaseService.getGenderChartData(this.stats),
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
       }
-    }
-
-    this.regions = Object.keys(this.regionStats).sort();
+    };
   }
 
-  getCommunes(region: string): string[] {
-    return Object.keys(this.regionStats[region]?.communeStats || {}).sort();
+  private getPriceChartConfig(): ChartConfiguration {
+    return {
+      type: 'bar',
+      data: this.firebaseService.getPriceChartData(this.stats),
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    };
   }
 
-  getSortedRegionsByAmount(): string[] {
-    return this.regions.sort((a, b) =>
-      this.regionStats[b].totalAmount - this.regionStats[a].totalAmount
-    );
+  private getCorruptionTypesChartConfig(): ChartConfiguration {
+    return {
+      type: 'pie',
+      data: this.firebaseService.getCorruptionTypesChartData(this.stats),
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
+    };
   }
 
-  getSortedCommunes(region: string): string[] {
-    return this.getCommunes(region).sort((a, b) =>
-      this.regionStats[region].communeStats[b].totalAmount -
-      this.regionStats[region].communeStats[a].totalAmount
-    );
+  private getAgeDistributionChartConfig(): ChartConfiguration {
+    const ageGroups = Object.keys(this.stats.participantsByAge || {});
+    const ageData = ageGroups.map(age => this.stats.participantsByAge[age]);
+
+    return {
+      type: 'bar',
+      data: {
+        labels: ageGroups,
+        datasets: [{
+          label: 'Participants',
+          data: ageData,
+          backgroundColor: '#3b82f6'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    };
   }
 
 }
