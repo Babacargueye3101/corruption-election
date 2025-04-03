@@ -585,7 +585,7 @@ export class QuestionnaireComponent implements OnInit {
                   }
 
                   try {
-                    const stats = await this.firebaseService.getStatistics(region, commune);
+                    const stats = await this.firebaseService.getStatisticsLegacy(region, commune);
                     const today = new Date().toLocaleDateString('fr-FR');
                     const averagePrice = stats.commune?.averageVotePrice
                       ? parseFloat(stats.commune.averageVotePrice).toLocaleString('fr-FR', {
@@ -734,7 +734,7 @@ export class QuestionnaireComponent implements OnInit {
       }
 
       try {
-        const stats = await this.firebaseService.getStatistics(region, commune);
+        const stats = await this.firebaseService.getStatisticsLegacy(region, commune);
         const today = new Date().toLocaleDateString('fr-FR');
         const averagePrice = stats.commune?.averageVotePrice
           ? parseFloat(stats.commune.averageVotePrice).toLocaleString('fr-FR', {
@@ -776,7 +776,7 @@ export class QuestionnaireComponent implements OnInit {
   }
   async generateStatistics(region: string, commune: string, userAmount: string) {
     try {
-      const stats = await this.firebaseService.getStatistics(region, commune);
+      const stats = await this.firebaseService.getStatisticsLegacy(region, commune);
 
       const doc = new jsPDF();
 
