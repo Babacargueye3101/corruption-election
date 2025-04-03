@@ -11,7 +11,7 @@ export const routes: Routes = [
     {path: 'apropos', component: AproposComponent},
     {path: 'contact', component: ContactComponent},
     {path: 'questionnaire', component: QuestionnaireComponent},
-    {path: 'statistique', component: StatistiqueComponent},
+    {path: 'statistiques', component: StatistiqueComponent},
     {path: 'messages', component: MessagesComponent},
     { path: '**', redirectTo: '' }
 ];

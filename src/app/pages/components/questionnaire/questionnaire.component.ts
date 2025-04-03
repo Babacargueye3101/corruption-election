@@ -888,7 +888,7 @@ export class QuestionnaireComponent implements OnInit {
         doc.setFont('helvetica', 'normal');
         doc.text('Vous avez démontré une excellente compréhension des enjeux liés à la corruption électorale.', 20, 130);
         doc.text('Votre engagement est essentiel pour préserver la démocratie et l\'intégrité des élections.', 20, 140);
-      } else if (score >= 30) {
+      } else if (score >= 55 && score <= 59) {
         doc.text('Bon travail !', 20, 120);
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
