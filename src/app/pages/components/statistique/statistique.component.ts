@@ -4,6 +4,7 @@ import { FirebaseService } from '../../../services/firebase.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SortPipe } from '../../../pipes/sort.pipe';
+import { Router } from '@angular/router';
 
 Chart.register(...registerables);
 
@@ -32,7 +33,7 @@ export class StatistiqueComponent implements OnInit, OnDestroy {
 
   private charts: Chart[] = [];
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(private firebaseService: FirebaseService, private router: Router) {}
 
   async ngOnInit() {
     await this.loadRegions();
@@ -320,6 +321,9 @@ export class StatistiqueComponent implements OnInit, OnDestroy {
     } else {
       this.loadGlobalStats();
     }
+  }
+  gotoMessage() {
+    this.router.navigate(['/messages'])
   }
 
   exportToExcel() {

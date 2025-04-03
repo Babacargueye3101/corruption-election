@@ -1,39 +1,59 @@
 <nav class="bg-white shadow-lg">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex justify-between h-16 items-center">
-        <!-- Logo -->
-        <div class="flex-shrink-0">
-          <h1 class="text-xl font-normal text-blue-600">
-            Monvotemonprix
-            <span class="block text-lg font-light italic text-end">A quel prix ?</span>
-          </h1>
-        </div>
-
-        <!-- Bouton menu mobile -->
-        <button (click)="toggleMenu()" class="sm:hidden text-gray-600 focus:outline-none">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-
-        <!-- Menu Desktop -->
-        <div class="hidden sm:flex sm:space-x-8">
-          <a routerLink="/" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Accueil</a>
-          <a routerLink="/questionnaire" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Questionnaire</a>
-          <!-- <a routerLink="/statistique" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Statistique</a> -->
-          <a routerLink="/contact" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Contact</a>
-          <a routerLink="/apropos" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">À propos</a>
-          <button class="fas fa-sync-alt text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium" (click)="openLoginModal()">Login</button>
-        </div>
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between h-16 items-center">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <h1 class="text-xl font-normal text-blue-600">
+          Monvotemonprix
+          <span class="block text-lg font-light italic text-end">A quel prix ?</span>
+        </h1>
       </div>
 
-      <!-- Menu Mobile (affiché dynamiquement) -->
-      <div *ngIf="isMenuOpen" class="sm:hidden">
-        <a routerLink="/" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Accueil</a>
-        <a routerLink="/questionnaire" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Questionnaire</a>
-        <!-- <a routerLink="/statistique" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Statistique</a> -->
-        <a routerLink="/contact" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Contact</a>
-        <a routerLink="/apropos" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">À propos</a>
+      <!-- Bouton menu mobile -->
+      <button (click)="toggleMenu()" class="sm:hidden text-gray-600 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+
+      <!-- Menu Desktop -->
+      <div class="hidden sm:flex sm:space-x-8 items-center">
+        <a routerLink="/" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Accueil</a>
+        <a routerLink="/questionnaire" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Questionnaire</a>
+        <a routerLink="/contact" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Contact</a>
+        <a routerLink="/apropos" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">À propos</a>
+
+        <!-- Affichage conditionnel -->
+        <div *ngIf="isAuthenticated" class="flex items-center">
+          <span class="text-gray-500 px-3 py-2 text-normal font-medium">{{ userEmail }}</span>
+          <button (click)="logout()" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+          </button>
+        </div>
+
+        <button *ngIf="!isAuthenticated" (click)="openLoginModal()" class="text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
       </div>
     </div>
-  </nav>
+
+    <!-- Menu Mobile (affiché dynamiquement) -->
+    <div *ngIf="isMenuOpen" class="sm:hidden">
+      <a routerLink="/" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Accueil</a>
+      <a routerLink="/questionnaire" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Questionnaire</a>
+      <a routerLink="/contact" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">Contact</a>
+      <a routerLink="/apropos" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">À propos</a>
+
+      <div *ngIf="isAuthenticated" class="px-3 py-2">
+        <span class="text-gray-500">{{ userEmail }}</span>
+        <button (click)="logout()" class="block text-gray-500 hover:text-gray-700 text-normal font-medium mt-2">
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+      </div>
+
+      <button *ngIf="!isAuthenticated" (click)="openLoginModal()" class="block text-gray-500 hover:text-gray-700 px-3 py-2 text-normal font-medium">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+    </div>
+  </div>
+</nav>

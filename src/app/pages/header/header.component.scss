@@ -1,0 +1,23 @@
+/* Ajoutez ces styles à votre fichier existant */
+
+/* Style pour l'email de l'utilisateur */
+.user-email {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  /* Style pour les icônes Font Awesome */
+  .fas {
+    margin-right: 5px;
+  }
+
+  /* Style spécifique pour mobile */
+  @media (max-width: 640px) {
+    .user-email {
+      max-width: 100%;
+    }
+  }

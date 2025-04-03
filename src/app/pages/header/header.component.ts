@@ -1,23 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from "firebase/auth";
 import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-header',
+  standalone: true,
   imports: [RouterModule, CommonModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
-
+export class HeaderComponent implements OnInit {
   isMenuOpen = false;
+  isAuthenticated = false;
+  userEmail: string | null = null;
+  private auth = getAuth();
 
-  constructor(private router: Router, private firebaseService: FirebaseService){}
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+  constructor(private router: Router, private firebaseService: FirebaseService) {}
+
+  ngOnInit() {
+    onAuthStateChanged(this.auth, (user: User | null) => {
+      this.isAuthenticated = !!user;
+      this.userEmail = user?.email || null;
+    });
   }
 
   async openLoginModal() {
@@ -41,24 +48,38 @@ export class HeaderComponent {
     if (formValues) {
       const [email, password] = formValues;
       try {
-        const auth = getAuth();
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(this.auth, email, password);
         Swal.fire({
           icon: 'success',
           title: 'Connexion réussie!',
           showConfirmButton: false,
           timer: 1500
         });
-        this.router.navigate(['/statistiques'])
+        this.router.navigate(['/statistiques']);
       } catch (error) {
         let errorMessage = 'Erreur de connexion';
-        console.log(error);
-
         if (error instanceof Error) {
           errorMessage = this.getFirebaseErrorMessage(error);
         }
         Swal.fire('Erreur', errorMessage, 'error');
       }
+    }
+  }
+
+  async logout() {
+    try {
+      await signOut(this.auth);
+      this.isAuthenticated = false;
+      this.userEmail = null;
+      Swal.fire({
+        icon: 'success',
+        title: 'Déconnexion réussie!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      this.router.navigate(['/']);
+    } catch (error) {
+      Swal.fire('Erreur', 'Erreur lors de la déconnexion', 'error');
     }
   }
 
@@ -76,5 +97,9 @@ export class HeaderComponent {
       default:
         return 'Erreur de connexion';
     }
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
   }
 }
