@@ -4,9 +4,6 @@
       <i class="fas fa-chart-pie"></i> Tableau de Bord - Corruption Électorale
     </h1>
     <div class="actions">
-      <button class="export-btn" (click)="exportToExcel()">
-        <i class="fas fa-file-excel"></i> Exporter
-      </button>
       <button class="refresh-btn" (click)="refreshData()">
         <i class="fas fa-sync-alt"></i> Actualiser
       </button>
@@ -127,21 +124,31 @@
   <div *ngIf="stats?.corruptionTypes" class="corruption-types">
     <div class="types-header">
       <h3>
-        <i class="fas fa-exclamation-triangle"></i> Types de Corruption
+        <i class="fas fa-exclamation-triangle"></i> Types de Corruption Électorale
       </h3>
+      <p class="subtitle">Répartition des cas signalés (total: {{stats.totalParticipants || 0}} participants)</p>
     </div>
     <div class="types-content">
       <div class="chart-wrapper">
         <canvas #corruptionTypesChart></canvas>
       </div>
       <div class="types-list">
-        <div *ngFor="let type of corruptionTypesArray" class="type-item">
+        <!-- Modification ici - suppression du keyvalue -->
+        <div *ngFor="let type of corruptionTypesArray | sort: 'value':true" class="type-item">
           <div class="type-header">
-            <span class="type-name">{{type.key}}</span>
-            <span class="type-count">{{type.value}} cas ({{(type.value / stats.totalParticipants * 100).toFixed(1)}}%)</span>
+            <span class="type-name">
+              <i [class]="getTypeIcon(type.key)"></i>
+              {{getTypeLabel(type.key)}}
+            </span>
+            <span class="type-count">
+              {{type.value}} cas ({{getPercentage(type.value)}}%)
+            </span>
           </div>
           <div class="progress-bar">
-            <div class="progress-fill" [style.width]="(type.value / stats.totalParticipants * 100) + '%'"></div>
+            <div class="progress-fill"
+                 [style.width]="getPercentage(type.value) + '%'"
+                 [style.background-color]="getTypeColor(type.key)">
+            </div>
           </div>
         </div>
       </div>
