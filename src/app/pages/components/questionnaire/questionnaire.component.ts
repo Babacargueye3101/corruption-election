@@ -602,7 +602,7 @@ export class QuestionnaireComponent implements OnInit {
                             ${averagePrice} €
                           </p>
                           <p style="color: #6b7280; margin-top: 1rem;">
-                            <i class="fas fa-info-circle"></i> Basé sur ${stats.commune?.participantsCount || 0} participants
+                            <i class="fas fa-info-circle"></i> Basé sur ${stats.commune?.participantsCount || 0} participant (s)
                           </p>
                         </div>
                       `,
@@ -727,7 +727,9 @@ export class QuestionnaireComponent implements OnInit {
           title: 'Information',
           text: 'Le prix moyen n\'est pas disponible car vous n\'avez pas indiqué de montant.',
           icon: 'info'
-        });
+        }).then((res) =>{
+          this.modalShow(formData, name)
+        })
         return;
       }
 
@@ -755,6 +757,8 @@ export class QuestionnaireComponent implements OnInit {
           `,
           icon: 'info',
           confirmButtonText: 'Fermer'
+        }).then((res) =>{
+          this.modalShow(formData, name)
         });
       } catch (error) {
         Swal.fire(
@@ -863,7 +867,7 @@ export class QuestionnaireComponent implements OnInit {
       // Titre
       doc.setFontSize(24);
       doc.setFont('helvetica', 'bold');
-      doc.text(score >= 45 ? 'Certificat de Réussite' : 'Certificat de Participation', 105, 60, { align: 'center' });
+      doc.text(score >= 60 ? 'Certificat de Réussite' : 'Certificat de Participation', 105, 60, { align: 'center' });
 
       // Sous-titre
       doc.setFontSize(16);
@@ -878,7 +882,7 @@ export class QuestionnaireComponent implements OnInit {
       // Message selon le score
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      if (score >= 45) {
+      if (score >= 60) {
         doc.text('Félicitations !', 20, 120);
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
