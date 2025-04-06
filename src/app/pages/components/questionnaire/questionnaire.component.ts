@@ -540,7 +540,7 @@ export class QuestionnaireComponent implements OnInit {
                 // Gestionnaire pour le bouton de partage
                 document.getElementById('btn-share')?.addEventListener('click', function() {
                   // URL à partager (à adapter)
-                  const shareUrl = window.location.href;
+                  const shareUrl = "www.monvotemonprix.com"
                   // Texte à partager
                   const shareText = "Regardez ce questionnaire que j'ai complété !";
 
@@ -692,7 +692,7 @@ export class QuestionnaireComponent implements OnInit {
     });
 
     document.getElementById('btn-share')?.addEventListener('click', () => {
-      const shareUrl = window.location.href;
+      const shareUrl = "www.monvotemonprix.com"
       const shareText = "Regardez ce questionnaire que j'ai complété !";
 
       if (navigator.share) {
